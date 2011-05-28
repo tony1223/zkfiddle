@@ -59,12 +59,7 @@
 		<description>The asynchronous update engine for ZK</description>
 		<servlet-name>auEngine</servlet-name>
 		<servlet-class>org.zkoss.zk.au.http.DHtmlUpdateServlet</servlet-class>
-
-		<init-param>
-			<param-name>extension0</param-name>
-			<param-value>/upload=test.MyUploader</param-value>
-		</init-param>
-		
+	
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>auEngine</servlet-name>

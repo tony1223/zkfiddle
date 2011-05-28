@@ -3,6 +3,10 @@
     <wb-module deploy-name="datahandler">
         <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/texttab/texttab">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="datahandler"/>
         <property name="java-output-path" value="/datahandler/target/classes"/>
     </wb-module>

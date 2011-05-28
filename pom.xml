@@ -246,7 +246,14 @@
 		<artifactId>bsh</artifactId>
 		<version>${bsh.version}</version>
 		<scope>runtime</scope>
-	</dependency>	
+	</dependency>
+	<dependency>
+		<groupId>org.zkoss.fiddle</groupId>
+		<artifactId>texttab</artifactId>
+		<version>0.8.0</version>
+		<optional>true</optional>
+	</dependency>		
+	
   </dependencies>
   <build>
     <finalName>datahandler</finalName>
