@@ -4,9 +4,11 @@ import org.zkoss.fiddle.model.api.IResource;
 
 
 public class Resource implements IResource {
+	private Long id;
 	private String name;
 	private String content;
 	private Integer type ;
+	private Boolean isModified;
 	
 	public Resource(int pType){
 		this(pType,null,null);
@@ -16,6 +18,14 @@ public class Resource implements IResource {
 		type = pType;
 		name = pName;
 		content = pContent;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	public void setName(String name) {
@@ -33,6 +43,10 @@ public class Resource implements IResource {
 	public String getContent() {
 		return this.content;
 	}
+	
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
 	public Integer getType() {
 		return type;
@@ -40,24 +54,32 @@ public class Resource implements IResource {
 
 	public String getTypeName() {
 		switch(type){
-			case 0: return "zul";
-			case 1: return "java";
-			case 2: return "javascript";
-			case 3: return "html";
-			case 4: return "css";
+			case TYPE_ZUL: return "zul";
+			case TYPE_JAVA: return "java";
+			case TYPE_JS: return "javascript";
+			case TYPE_HTML: return "html";
+			case TYPE_CSS: return "css";
 			default: return "unknown";
 		}
 	}
 
 	public String getTypeMode() {
 		switch(type){
-			case 0: return "xml";
-			case 1: return "java";
-			case 2: return "javascript";
-			case 3: return "html";
-			case 4: return "css";
+			case TYPE_ZUL: return "xml";
+			case TYPE_JAVA: return "java";
+			case TYPE_JS: return "javascript";
+			case TYPE_HTML: return "html";
+			case TYPE_CSS: return "css";
 			default: return "unknown";
 		}
+	}
+
+	public boolean isModified() {
+		return isModified;
+	}
+
+	public void setModified(boolean enb) {
+		isModified = enb;
 	}
 	
 }

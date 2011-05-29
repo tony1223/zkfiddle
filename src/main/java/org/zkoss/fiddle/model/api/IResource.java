@@ -9,16 +9,26 @@ public interface IResource {
 	public static int TYPE_CSS 	= 4;
 	
 	
+	
+	public Long getId() ;
+	public void setId(Long id) ;
+	
+	
 	public void setName(String name);
 	public String getName();
 	
 	public void setContent(String content);
 	public String getContent();
 	
+	public void setType(Integer type);
 	public Integer getType();
 	
 	public String getTypeName();
 	
 	public String getTypeMode();
+	
+	public boolean isModified();
+	
+	public void setModified(boolean enb);
 
 }

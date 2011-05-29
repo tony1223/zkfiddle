@@ -16,6 +16,13 @@ public class SourceInsertEvent extends Event{
 		folder = pfolder;
 		fileName = pfileName;
 	}
+	
+	public SourceInsertEvent(Component target,String pfolder,String pfileName,int ptype){
+		super("onSourceInsert",target,null);
+		type = ptype;
+		folder = pfolder;
+		fileName = pfileName;
+	}
 
 	public String getFolder() {
 		return folder;

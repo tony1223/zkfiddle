@@ -14,6 +14,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
@@ -26,6 +27,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 	
 	private Tabs sourcetabs;
 	private Tabpanels sourcetabpanels;
+	private Combobox type;
+	private Textbox fileName;
 	
 	/**
 	 * we use desktop level event queue.
@@ -35,16 +38,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		resources = new ArrayList<IResource>();
-		resources.add(new Resource(Resource.TYPE_ZUL,"index.zul","<zk>\n  <window>hello world1 </window>\n</zk>"));
-		resources.add(new Resource(Resource.TYPE_JS,"index.js","function hello(){alert('hello');}"));
-		resources.add(new Resource(Resource.TYPE_CSS,"index.css",".hello{ \n color:red; \n }"));
-		resources.add(new Resource(Resource.TYPE_JAVA,"org/zkoss/fiddle/Index.java",
-				"package org.zkoss.fiddle; \n public class Index{ \n \n} "));
-
-		resources.add(new Resource(Resource.TYPE_HTML,"index_files/index.html",
-			"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n  <body>\n    hello\n  </body>\n</html>"));
 		
+		resources = new ArrayList<IResource>();
+		resources.addAll(getDefaultResources());
+	
 		applyResources(resources);
 		
 		queue.subscribe(new EventListener() {
@@ -60,6 +57,28 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		
 	}
 	
+	private List<Resource> getDefaultResources(){
+		List resources = new ArrayList<IResource>();
+		resources.add(new Resource(Resource.TYPE_ZUL,"index.zul","<zk>\n  <window>hello world1 </window>\n</zk>"));
+		resources.add(new Resource(Resource.TYPE_JS,"index.js","function hello(){alert('hello');}"));
+		resources.add(new Resource(Resource.TYPE_CSS,"index.css",".hello{ \n color:red; \n }"));
+		resources.add(new Resource(Resource.TYPE_JAVA,"org/zkoss/fiddle/Index.java",
+				"package org.zkoss.fiddle; \n public class Index{ \n \n} "));
+
+		resources.add(new Resource(Resource.TYPE_HTML,"index_files/index.html",
+			"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n  <body>\n    hello\n  </body>\n</html>"));
+		
+		return resources;
+	}
+	
+	public void onClick$insert(Event e){
+		int typeVal = type.getSelectedIndex();
+		String fileNameVal = fileName.getValue();
+
+		queue.publish(new SourceInsertEvent(null, null, fileNameVal, typeVal));
+	}
+	
+	
 	private void insertResource(IResource resource){
 		if(sourcetabs == null || sourcetabpanels == null){
 			throw new IllegalStateException("sourcetabpanels/sourcetabs is not ready !!\n"+
@@ -73,10 +92,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		
 		Textbox box = new Textbox(resource.getName());
 		box.setWidth("200px");
+		box.setConstraint("no empty");
 		texttab.appendChild(box);
 		
 		sourcetabs.appendChild(texttab);
-		
 		
 		
 		/* creating Tabpanel */
