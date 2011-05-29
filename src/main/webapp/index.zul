@@ -1,5 +1,31 @@
-<html>
-<body>
-<h2>Hello World!</h2>
-</body>
-</html>
+<?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="client">
+
+
+<borderlayout id="main" >
+	<north border="none" size="100px" sclass="demo-header" collapsible="true">
+		<div>
+			<div sclass="demo-logo pointer">
+				<n:a xmlns:n="native" href="http://www.zkoss.org">
+				<image width="90px" height="80px" src="/img/ZK-Logo.gif"/>
+				</n:a>
+			</div>
+
+		</div>
+	</north>
+	<west title="ZK " size="250px" flex="true" splittable="true"
+		minsize="210" maxsize="500" collapsible="true">
+		<panel>
+			<toolbar>
+				<label value="Search:"/><textbox id="searchBox" ctrlKeys="#down#up" focus="true" sclass="demo-search-inp"/>
+			</toolbar>
+			<panelchildren>
+				
+			</panelchildren>
+		</panel>
+	</west>
+	<center>
+		<include src="WEB-INF/sourceedtior.zul" />
+	</center>
+</borderlayout>
+</zk>
