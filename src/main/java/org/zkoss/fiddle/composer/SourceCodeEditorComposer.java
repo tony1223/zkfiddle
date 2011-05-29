@@ -6,13 +6,17 @@ import java.util.List;
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
+import org.zkoss.fiddle.dao.IResourceDao;
+import org.zkoss.fiddle.dao.ResourceDaoListImpl;
 import org.zkoss.fiddle.model.Resource;
+import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Tabpanel;
@@ -40,7 +44,19 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		super.doAfterCompose(comp);
 		
 		resources = new ArrayList<IResource>();
-		resources.addAll(getDefaultResources());
+		
+		//TODO review this , resource should be readonly,
+		//     every time we create a new version , that means we create a new resource.
+		
+		ICase c = null ; //new Case();
+		if( c == null || c.getId() == null){ // new case!
+			resources.addAll(getDefaultResources());
+		}else{ 
+			//NOT implemented yet
+			//TODO refactor this to spring 
+			IResourceDao dao = new ResourceDaoListImpl(); 
+			resources.addAll(dao.listByCase(c.getId()));
+		}
 	
 		applyResources(resources);
 		
@@ -64,7 +80,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		resources.add(new Resource(Resource.TYPE_CSS,"index.css",".hello{ \n color:red; \n }"));
 		resources.add(new Resource(Resource.TYPE_JAVA,"org/zkoss/fiddle/Index.java",
 				"package org.zkoss.fiddle; \n public class Index{ \n \n} "));
-
 		resources.add(new Resource(Resource.TYPE_HTML,"index_files/index.html",
 			"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n  <body>\n    hello\n  </body>\n</html>"));
 		
@@ -86,14 +101,36 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 					"(and be sure you called super.doAfterCompose()) or using in wrong page? ");
 		}
 		
+		//TODO using swifttab to replace this if possible
 		/* creating tab */
 		Texttab texttab = new Texttab(resource.getTypeName());
 		texttab.setAttribute("model", resource);
 		
 		Textbox box = new Textbox(resource.getName());
-		box.setWidth("200px");
+		box.setSclass("tab-textbox");
 		box.setConstraint("no empty");
 		texttab.appendChild(box);
+		texttab.setClosable(true);
+		
+		texttab.addEventListener("onClose",new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				Texttab tab = (Texttab)event.getTarget();
+				IResource ir = (IResource) tab.getAttribute("model");
+
+				
+				//remove the resource
+				int k = -1;
+				for(int i = 0 ; i < resources.size();++i){
+					if(resources.get(i) == ir){
+						k = i;
+						break;
+					}
+				}
+				if(k != -1)
+					resources.remove(k);
+
+			}
+		});
 		
 		sourcetabs.appendChild(texttab);
 		
@@ -107,6 +144,17 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		ce.setHeight("400px");
 		ce.setWidth("auto");
 		ce.setAttribute("model", resource);
+		
+		ce.addEventListener("onChange",new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				InputEvent inpEvt = (InputEvent) event;
+				CodeEditor ce = (CodeEditor) event.getTarget();
+				Resource r = (Resource) ce.getAttribute("model");
+				r.setContent(inpEvt.getValue());
+				r.setModified(true);
+			}
+		});
+		
 		sourcepanel.appendChild(ce);
 		
 		sourcetabpanels.appendChild(sourcepanel);

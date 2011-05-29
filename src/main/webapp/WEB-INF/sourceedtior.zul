@@ -1,9 +1,9 @@
 <?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:w="client">
 	<style>
-		.tab-tabbox{
+		.tab-textbox{
 			margin-left:5px;
-			width:100px;
+			width:200px;
 		}
 	</style>
 	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" 

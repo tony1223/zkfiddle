@@ -23,7 +23,7 @@
 				<label value="Search:"/><textbox id="searchBox" ctrlKeys="#down#up" focus="true" sclass="demo-search-inp"/>
 			</toolbar>
 			<panelchildren>
-				
+				Still building , coming soon......
 			</panelchildren>
 		</panel>
 	</west>
