@@ -1,15 +1,34 @@
 package org.zkoss.fiddle.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import org.zkoss.fiddle.model.api.IResource;
 
 
+@Entity
+@Table(name = "resources")
 public class Resource implements IResource {
 	private Long id;
 	private String name;
 	private String content;
 	private Integer type ;
-	private Boolean isModified;
+	private Integer caseId;
 	
+	public Integer getCaseId() {
+		return caseId;
+	}
+
+	
+	public void setCaseId(Integer caseId) {
+		this.caseId = caseId;
+	}
+
 	public Resource(int pType){
 		this(pType,null,null);
 	}
@@ -20,6 +39,8 @@ public class Resource implements IResource {
 		content = pContent;
 	}
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
@@ -32,6 +53,7 @@ public class Resource implements IResource {
 		this.name = name;
 	}
 
+	@Column
 	public String getName() {
 		return name;
 	}
@@ -40,6 +62,7 @@ public class Resource implements IResource {
 		this.content = content;
 	}
 
+	@Column
 	public String getContent() {
 		return this.content;
 	}
@@ -48,10 +71,12 @@ public class Resource implements IResource {
 		this.type = type;
 	}
 
+	@Column
 	public Integer getType() {
 		return type;
 	}
-
+	
+	@Transient
 	public String getTypeName() {
 		switch(type){
 			case TYPE_ZUL: return "zul";
@@ -62,7 +87,12 @@ public class Resource implements IResource {
 			default: return "unknown";
 		}
 	}
-
+	
+	
+	/**
+	 * @Transient means it's not a db field
+	 */
+	@Transient
 	public String getTypeMode() {
 		switch(type){
 			case TYPE_ZUL: return "xml";
@@ -74,12 +104,4 @@ public class Resource implements IResource {
 		}
 	}
 
-	public boolean isModified() {
-		return isModified;
-	}
-
-	public void setModified(boolean enb) {
-		isModified = enb;
-	}
-	
 }

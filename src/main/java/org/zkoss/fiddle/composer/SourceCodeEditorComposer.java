@@ -6,12 +6,17 @@ import java.util.List;
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
-import org.zkoss.fiddle.dao.IResourceDao;
-import org.zkoss.fiddle.dao.ResourceDaoListImpl;
+import org.zkoss.fiddle.dao.CaseDaoImpl;
+import org.zkoss.fiddle.dao.ResourceDaoImpl;
+import org.zkoss.fiddle.dao.api.ICaseDao;
+import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
+import org.zkoss.fiddle.util.DefaultCaseIDEncoder;
+import org.zkoss.fiddle.util.ICaseIDEncoder;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
@@ -49,12 +54,23 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		//     every time we create a new version , that means we create a new resource.
 		
 		ICase c = null ; //new Case();
+		String caseId = (String) Executions.getCurrent().getArg().get("caseId");
+		if(caseId != null){
+			ICaseDao caseDao = new CaseDaoImpl();
+			ICaseIDEncoder decoder = DefaultCaseIDEncoder.getInstance();
+			
+			try{
+				c = caseDao.get(decoder.decode(caseId));
+			}catch(IllegalArgumentException e){ //means caseId is not a valid string 
+				//TODO wrote a logger here.
+				c = null;
+			}
+		}
+		
 		if( c == null || c.getId() == null){ // new case!
 			resources.addAll(getDefaultResources());
 		}else{ 
-			//NOT implemented yet
-			//TODO refactor this to spring 
-			IResourceDao dao = new ResourceDaoListImpl(); 
+			IResourceDao dao = new ResourceDaoImpl(); 
 			resources.addAll(dao.listByCase(c.getId()));
 		}
 	
@@ -151,7 +167,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 				CodeEditor ce = (CodeEditor) event.getTarget();
 				Resource r = (Resource) ce.getAttribute("model");
 				r.setContent(inpEvt.getValue());
-				r.setModified(true);
 			}
 		});
 		

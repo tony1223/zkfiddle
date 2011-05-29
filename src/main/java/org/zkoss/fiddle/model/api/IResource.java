@@ -27,8 +27,4 @@ public interface IResource {
 	
 	public String getTypeMode();
 	
-	public boolean isModified();
-	
-	public void setModified(boolean enb);
-
 }

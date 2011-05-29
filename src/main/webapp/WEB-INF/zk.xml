@@ -2,22 +2,71 @@
 
 
 <zk>
-	<!-- Defines the application's name -->
-	<preference>
-		<name>org.zkoss.zk.ui.WebApp.name</name>
-		<value>ZK Fiddle</value>
-	</preference>
-	<library-property>
-		<name>org.zkoss.zul.grid.rod</name>
-		<value>true</value>
-	</library-property>
-	<library-property>
-		<name>org.zkoss.zul.listbox.rod</name>
-		<value>true</value>
-	</library-property>
-	
-	<library-property>
-		<name>org.zkoss.zul.Button.mold</name>
-		<value>trendy</value>
-	</library-property>
+    <!-- Defines the application's name -->
+    <preference>
+        <name>
+            org.zkoss.zk.ui.WebApp.name
+        </name>
+        <value>
+            ZK Fiddle
+        </value>
+    </preference>
+    <library-property>
+        <name>
+            org.zkoss.zul.grid.rod
+        </name>
+        <value>
+            true
+        </value>
+    </library-property>
+    <library-property>
+        <name>
+            org.zkoss.zul.listbox.rod
+        </name>
+        <value>
+            true
+        </value>
+    </library-property>
+    
+    <library-property>
+        <name>
+            org.zkoss.zul.Button.mold
+        </name>
+        <value>
+            trendy
+        </value>
+    </library-property>
+    
+    <!-- ===Hibernate START=== -->
+    
+    <!-- Hibernate SessionFactory lifecycle -->
+    <listener>
+        <description>
+            Hibernate SessionFactory lifecycle
+        </description>
+        <listener-class>
+            org.zkoss.zkplus.hibernate.HibernateSessionFactoryListener
+        </listener-class>
+    </listener>
+    
+    <!-- Hibernate OpenSessionInView Pattern -->
+    <listener>
+        <description>
+            Hibernate Open Session In View life-cycle
+        </description>
+        <listener-class>
+            org.zkoss.zkplus.hibernate.OpenSessionInViewListener
+        </listener-class>
+    </listener>
+    
+    <!-- Hibernate thread session context handler -->
+    <listener>
+        <description>
+            Hibernate thread session context handler
+        </description>
+        <listener-class>
+            org.zkoss.zkplus.hibernate.HibernateSessionContextListener
+        </listener-class>
+    </listener>
+    <!-- ===Hibernate end=== -->
 </zk>

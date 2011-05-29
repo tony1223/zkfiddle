@@ -259,6 +259,36 @@
 		<version>0.8.0</version>
 		<optional>true</optional>
 	</dependency>	
+	
+	<!-- hsqldb -->
+	<dependency>
+	    <groupId>hsqldb</groupId>
+	    <artifactId>hsqldb</artifactId>
+	    <version>1.8.0.10</version>
+	</dependency>
+
+	<!-- hibernate -->
+	<dependency>
+	    <groupId>org.hibernate</groupId>
+	    <artifactId>hibernate-core</artifactId>
+	    <version>3.6.4.Final</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.hibernate</groupId>
+	    <artifactId>hibernate-annotations</artifactId>
+	    <version>3.5.6-Final</version>
+	</dependency>
+    <dependency>
+	    <groupId>org.hibernate</groupId>
+	    <artifactId>hibernate-entitymanager</artifactId>
+	    <version>3.6.4.Final</version>
+	</dependency>
+	 <dependency>
+	    <groupId>commons-collections</groupId>
+	    <artifactId>commons-collections</artifactId>
+	    <version>3.2.1</version>
+	</dependency>
+	<!-- Hibernate end -->
   </dependencies>
   <build>
     <finalName>datahandler</finalName>
