@@ -1,20 +1,22 @@
 package org.zkoss.fiddle.composer;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
+import org.zkoss.fiddle.composer.event.SaveEvent;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
 import org.zkoss.fiddle.dao.CaseDaoImpl;
 import org.zkoss.fiddle.dao.ResourceDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
-import org.zkoss.fiddle.util.DefaultCaseIDEncoder;
-import org.zkoss.fiddle.util.ICaseIDEncoder;
+import org.zkoss.fiddle.util.CRCCaseIDEncoder;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -23,6 +25,7 @@ import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -32,12 +35,14 @@ import org.zkoss.zul.Textbox;
 
 public class SourceCodeEditorComposer extends GenericForwardComposer{
 	
-	public List<IResource> resources;
+	public List<Resource> resources;
 	
 	private Tabs sourcetabs;
 	private Tabpanels sourcetabpanels;
 	private Combobox type;
 	private Textbox fileName;
+	private ICase c = null ; 
+	private Button saveBtn;
 	
 	/**
 	 * we use desktop level event queue.
@@ -48,19 +53,23 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		resources = new ArrayList<IResource>();
+		resources = new ArrayList<Resource>();
 		
 		//TODO review this , resource should be readonly,
 		//     every time we create a new version , that means we create a new resource.
 		
-		ICase c = null ; //new Case();
-		String caseId = (String) Executions.getCurrent().getArg().get("caseId");
-		if(caseId != null){
+		c = null ; //new Case();
+		String caseToken = (String) Executions.getCurrent().getParameter("token");
+		String version = (String) Executions.getCurrent().getParameter("ver");
+		if(caseToken != null){
 			ICaseDao caseDao = new CaseDaoImpl();
-			ICaseIDEncoder decoder = DefaultCaseIDEncoder.getInstance();
 			
 			try{
-				c = caseDao.get(decoder.decode(caseId));
+				c = caseDao.findCaseByToken(caseToken,version == null ? null : Integer.parseInt(version));
+				if(c == null){
+					Executions.sendRedirect("/");
+				}
+				saveBtn.setLabel("Update");
 			}catch(IllegalArgumentException e){ //means caseId is not a valid string 
 				//TODO wrote a logger here.
 				c = null;
@@ -71,7 +80,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 			resources.addAll(getDefaultResources());
 		}else{ 
 			IResourceDao dao = new ResourceDaoImpl(); 
-			resources.addAll(dao.listByCase(c.getId()));
+			List<Resource> dbResources =  dao.listByCase(c.getId());
+			for(Resource r:dbResources){
+				//we clone it , since we will create a new resource instead 
+				// of updating old one..
+				Resource resource = r.clone();
+				resource.setId(null);
+				resource.setCaseId(null);
+				resource.setCreateDate(new Date());
+				resources.add(resource);
+			}
 		}
 	
 		applyResources(resources);
@@ -80,13 +98,58 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 			public void onEvent(Event event) throws Exception {
 				if( event instanceof SourceInsertEvent){
 					SourceInsertEvent insertEvent = (SourceInsertEvent) event;
-					IResource ir = new Resource(insertEvent.getType(),insertEvent.getFileName(),null);
+					Resource ir = new Resource(insertEvent.getType(),insertEvent.getFileName(),null);
 					resources.add(ir);
 					insertResource(ir);
+				}else if(event instanceof SaveEvent){
+					SaveEvent saveEvt = (SaveEvent) event;
+					saveCase(resources,saveEvt.isFork());
 				}
 			}
 		});
 		
+	}
+	
+	private void saveCase(List<Resource> resources , boolean fork){
+		Case nc= new Case();
+		nc.setCreateDate(new Date());
+		if( c == null || fork) { // Create a brand new case
+			
+			nc.setVersion(0);
+			nc.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
+			
+			if( c != null){ // fork
+				nc.setFrom( c.getId() );
+			}
+			
+		}else{ 
+			nc.setToken(c.getToken());
+			nc.setThread( c.getThread());
+			nc.setVersion(c.getVersion() + 1);
+		}
+		
+		/* TODO: review this and use transcation to speed up and 
+		 * 		be sure it's built as a unit. 
+		 */
+		ICaseDao caseDao = new CaseDaoImpl();
+		caseDao.saveOrUdate(nc);
+		
+		if( c == null || fork){ // A brand new case
+			// TonyQ:
+			// we have to set the thread information after we get the id.
+			// TODO:check if we could use trigger or something 
+			//		to handle this in DB. currently we have to live with it.
+			nc.setThread(nc.getId());
+			caseDao.saveOrUdate(nc);
+		}
+		
+		IResourceDao resourceDao= new ResourceDaoImpl();
+		for(Resource resource : resources){
+			resource.setId(null);
+			resource.setCaseId(nc.getId());
+			resourceDao.saveOrUdate(resource);
+		}
+		Executions.getCurrent().sendRedirect("/?token="+nc.getToken()+"&ver="+nc.getVersion());
 	}
 	
 	private List<Resource> getDefaultResources(){
@@ -174,7 +237,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		
 		sourcetabpanels.appendChild(sourcepanel);
 	}
-	private void applyResources(List<IResource> resources){
+	private void applyResources(List<Resource> resources){
 		for(IResource resource:resources){
 			insertResource(resource);
 		}

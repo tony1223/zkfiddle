@@ -75,7 +75,7 @@ public class ResourceDaoImpl implements IResourceDao {
 
 	public List<Resource> listByCase(Long caseId) {
 		return HibernateUtil.currentSession()
-			.createQuery("from Resource where caseId = :ccaseId")
+			.createQuery("from Resource where caseId = :caseId")
 			.setLong("caseId",caseId)
 			.list();
 	}

@@ -2,6 +2,8 @@ package org.zkoss.fiddle.dao;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.zkplus.hibernate.HibernateUtil;
@@ -61,6 +63,15 @@ public class CaseDaoImpl implements ICaseDao {
 			createQuery("delete from Case where id = :id").
 			setLong("id", id).
 			executeUpdate();
+	}
+
+	public Case findCaseByToken(String token, Integer version) {
+		Criteria crit = HibernateUtil.currentSession().createCriteria(Case.class);
+
+		crit.add(Restrictions.eq("token",token));
+		crit.add(Restrictions.eq("version",version == null ? 0 : version));
+		
+		return (Case) crit.uniqueResult();
 	}
 
 }

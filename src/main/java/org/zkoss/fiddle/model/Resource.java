@@ -1,5 +1,7 @@
 package org.zkoss.fiddle.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,22 +15,17 @@ import org.zkoss.fiddle.model.api.IResource;
 
 @Entity
 @Table(name = "resources")
-public class Resource implements IResource {
+public class Resource implements IResource,Cloneable {
 	private Long id;
 	private String name;
 	private String content;
 	private Integer type ;
-	private Integer caseId;
+	private Long caseId;
+	private Date createDate;
 	
-	public Integer getCaseId() {
-		return caseId;
+	public Resource(){
+		
 	}
-
-	
-	public void setCaseId(Integer caseId) {
-		this.caseId = caseId;
-	}
-
 	public Resource(int pType){
 		this(pType,null,null);
 	}
@@ -40,7 +37,7 @@ public class Resource implements IResource {
 	}
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Long getId() {
 		return id;
 	}
@@ -76,6 +73,17 @@ public class Resource implements IResource {
 		return type;
 	}
 	
+	@Column
+	public Long getCaseId() {
+		return caseId;
+	}
+
+	
+	public void setCaseId(Long caseId) {
+		this.caseId = caseId;
+	}
+
+	
 	@Transient
 	public String getTypeName() {
 		switch(type){
@@ -88,6 +96,15 @@ public class Resource implements IResource {
 		}
 	}
 	
+	
+	@Column
+	public Date getCreateDate() {
+		return createDate;
+	}
+	
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
 	
 	/**
 	 * @Transient means it's not a db field
@@ -103,5 +120,16 @@ public class Resource implements IResource {
 			default: return "unknown";
 		}
 	}
-
+	
+	public Resource clone(){
+		Resource r = new Resource();
+		r.setCaseId(this.caseId);
+		r.setContent(this.content);
+		r.setName(this.name);
+		r.setType(this.type);
+		r.setId(this.id);
+		
+		return r;
+	}
+	
 }

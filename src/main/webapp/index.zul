@@ -3,7 +3,7 @@
 
 
 <borderlayout id="main" >
-	<north border="none" size="90px" sclass="demo-header" collapsible="true">
+	<north apply="org.zkoss.fiddle.composer.TopNavigationComposer" border="none" size="90px" sclass="demo-header" collapsible="true">
 		<hlayout style="background:#82B3D1;">
 			<div sclass="demo-logo pointer">
 				<n:a xmlns:n="native" href="http://www.zkoss.org">
@@ -11,8 +11,8 @@
 				</n:a>
 			</div>
 			<hlayout style="margin-left:150px;">
-				<button width="100px" height="60px" label="Save" />
-				<button width="100px" height="60px" label="Fork" />
+				<button width="100px" id="saveBtn" height="60px" label="Save" />
+				<button width="100px" id="forkBtn" height="60px" label="Fork" />
 			</hlayout>
 		</hlayout>
 	</north>
