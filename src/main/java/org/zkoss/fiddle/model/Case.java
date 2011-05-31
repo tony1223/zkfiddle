@@ -22,11 +22,11 @@ public class Case implements ICase {
 	 * if it's a updated version , the thread should be first one's ID.
 	 */
 	private Long thread;
-	
+
 	/**
 	 * fork from
 	 */
-	private Long from;
+	private Long fromId;
 
 	private String token;
 
@@ -36,7 +36,7 @@ public class Case implements ICase {
 	private Integer version;
 
 	private Date createDate;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
@@ -47,7 +47,6 @@ public class Case implements ICase {
 		this.id = id;
 	}
 
-	
 	@Column
 	public Long getThread() {
 		return thread;
@@ -72,25 +71,25 @@ public class Case implements ICase {
 	public String getToken() {
 		return token;
 	}
-	
+
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
+
 	@Column
-	public Long getFrom() {
-		return from;
+	public Long getFromId() {
+		return fromId;
 	}
-	
-	public void setFrom(Long from) {
-		this.from = from;
+
+	public void setFromId(Long from) {
+		this.fromId = from;
 	}
-	
+
 	@Column
 	public Date getCreateDate() {
 		return createDate;
 	}
-	
+
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}

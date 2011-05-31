@@ -222,16 +222,6 @@
 		<version>${timelinez.version}</version>
 	</dependency>
 	<dependency>
-		<groupId>org.zkoss.zkforge</groupId>
-		<artifactId>timeplotz</artifactId>
-		<version>${timeplotz.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.zkoss.zkforge</groupId>
-		<artifactId>gmapsz</artifactId>
-		<version>${gmapsz.version}</version>
-	</dependency>
-	<dependency>
 		<groupId>org.zkoss.zk</groupId>
 		<artifactId>zuljsp</artifactId>
 		<version>${zuljsp.version}</version>
@@ -263,6 +253,12 @@
 		<artifactId>codeeditor</artifactId>
 		<version>0.8.0</version>
 		<optional>true</optional>
+	</dependency>	
+	
+	<dependency>
+		<groupId>org.zkoss.zest</groupId>
+		<artifactId>zest</artifactId>
+		<version>1.0.0</version>
 	</dependency>	
 	
 	<!-- hsqldb -->

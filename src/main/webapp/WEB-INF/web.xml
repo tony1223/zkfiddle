@@ -77,7 +77,17 @@
 		<servlet-name>dspLoader</servlet-name>
 		<url-pattern>*.dsp</url-pattern>
 	</servlet-mapping>
+
 	
+    <filter>
+        <filter-name>zest</filter-name>
+        <filter-class>org.zkoss.fiddle.filter.FiddleZestFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>zest</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+		
 	
 	<!-- Miscellaneous -->
 	<session-config>

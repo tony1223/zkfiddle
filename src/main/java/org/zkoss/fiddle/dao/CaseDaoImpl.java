@@ -69,9 +69,15 @@ public class CaseDaoImpl implements ICaseDao {
 		Criteria crit = HibernateUtil.currentSession().createCriteria(Case.class);
 
 		crit.add(Restrictions.eq("token",token));
-		crit.add(Restrictions.eq("version",version == null ? 0 : version));
+		crit.add(Restrictions.eq("version",version == null ? 1 : version));
 		
 		return (Case) crit.uniqueResult();
+	}
+
+	public Integer getLastVersionByToken(String token) {
+		return (Integer) HibernateUtil.currentSession().
+		createQuery("select max(version) from Case where token = :token ").
+		setString("token", token).uniqueResult();
 	}
 
 }

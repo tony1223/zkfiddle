@@ -24,7 +24,7 @@ public interface ICase {
 
 	public abstract Date getCreateDate();
 
-	public abstract void setFrom(Long from);
+	public abstract void setFromId(Long from);
 
-	public abstract Long getFrom();
+	public abstract Long getFromId();
 }

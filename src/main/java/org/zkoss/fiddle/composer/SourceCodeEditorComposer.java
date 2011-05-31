@@ -55,12 +55,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		
 		resources = new ArrayList<Resource>();
 		
-		//TODO review this , resource should be readonly,
-		//     every time we create a new version , that means we create a new resource.
-		
 		c = null ; //new Case();
-		String caseToken = (String) Executions.getCurrent().getParameter("token");
-		String version = (String) Executions.getCurrent().getParameter("ver");
+		String caseToken = (String) requestScope.get("token");
+		String version = (String) requestScope.get("ver");
 		if(caseToken != null){
 			ICaseDao caseDao = new CaseDaoImpl();
 			
@@ -113,25 +110,26 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 	private void saveCase(List<Resource> resources , boolean fork){
 		Case nc= new Case();
 		nc.setCreateDate(new Date());
+		
+		ICaseDao caseDao = new CaseDaoImpl();
 		if( c == null || fork) { // Create a brand new case
-			
-			nc.setVersion(0);
+			nc.setVersion(1);
 			nc.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
 			
 			if( c != null){ // fork
-				nc.setFrom( c.getId() );
+				nc.setFromId( c.getId() );
 			}
 			
 		}else{ 
 			nc.setToken(c.getToken());
 			nc.setThread( c.getThread());
-			nc.setVersion(c.getVersion() + 1);
+			nc.setVersion(caseDao.getLastVersionByToken(c.getToken()) + 1);
 		}
 		
 		/* TODO: review this and use transcation to speed up and 
 		 * 		be sure it's built as a unit. 
 		 */
-		ICaseDao caseDao = new CaseDaoImpl();
+		
 		caseDao.saveOrUdate(nc);
 		
 		if( c == null || fork){ // A brand new case
@@ -149,18 +147,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 			resource.setCaseId(nc.getId());
 			resourceDao.saveOrUdate(resource);
 		}
-		Executions.getCurrent().sendRedirect("/?token="+nc.getToken()+"&ver="+nc.getVersion());
+		Executions.getCurrent().sendRedirect("/"+nc.getToken()+ ( nc.getVersion() != 1 ? "/"+nc.getVersion():""));
 	}
 	
 	private List<Resource> getDefaultResources(){
 		List resources = new ArrayList<IResource>();
 		resources.add(new Resource(Resource.TYPE_ZUL,"index.zul","<zk>\n  <window>hello world1 </window>\n</zk>"));
-		resources.add(new Resource(Resource.TYPE_JS,"index.js","function hello(){alert('hello');}"));
-		resources.add(new Resource(Resource.TYPE_CSS,"index.css",".hello{ \n color:red; \n }"));
-		resources.add(new Resource(Resource.TYPE_JAVA,"org/zkoss/fiddle/Index.java",
-				"package org.zkoss.fiddle; \n public class Index{ \n \n} "));
-		resources.add(new Resource(Resource.TYPE_HTML,"index_files/index.html",
-			"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n  <body>\n    hello\n  </body>\n</html>"));
+//		resources.add(new Resource(Resource.TYPE_JS,"index.js","function hello(){alert('hello');}"));
+//		resources.add(new Resource(Resource.TYPE_CSS,"index.css",".hello{ \n color:red; \n }"));
+//		resources.add(new Resource(Resource.TYPE_JAVA,"org/zkoss/fiddle/Index.java",
+//				"package org.zkoss.fiddle; \n public class Index{ \n \n} "));
+//		resources.add(new Resource(Resource.TYPE_HTML,"index_files/index.html",
+//			"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n  <body>\n    hello\n  </body>\n</html>"));
 		
 		return resources;
 	}
@@ -173,7 +171,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 	}
 	
 	
-	private void insertResource(IResource resource){
+	private void insertResource(final IResource resource){
 		if(sourcetabs == null || sourcetabpanels == null){
 			throw new IllegalStateException("sourcetabpanels/sourcetabs is not ready !!\n"+
 					" do you call this after doAfterCompose "+
@@ -185,11 +183,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 		Texttab texttab = new Texttab(resource.getTypeName());
 		texttab.setAttribute("model", resource);
 		
-		Textbox box = new Textbox(resource.getName());
+		final Textbox box = new Textbox(resource.getName());
 		box.setSclass("tab-textbox");
 		box.setConstraint("no empty");
+		box.setInplace(true);
 		texttab.appendChild(box);
 		texttab.setClosable(true);
+		
+		box.addEventListener("onChange",new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				resource.setName(box.getValue());
+			}
+		});
 		
 		texttab.addEventListener("onClose",new EventListener() {
 			public void onEvent(Event event) throws Exception {

@@ -28,7 +28,7 @@
 		</panel>
 	</west>
 	<center>
-		<include src="WEB-INF/sourceedtior.zul" />
+		<include src="sourceedtior.zul" />
 	</center>
 </borderlayout>
 </zk>
