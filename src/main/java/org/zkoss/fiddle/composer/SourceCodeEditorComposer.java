@@ -32,54 +32,59 @@ import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 
+public class SourceCodeEditorComposer extends GenericForwardComposer {
 
-public class SourceCodeEditorComposer extends GenericForwardComposer{
-	
 	public List<Resource> resources;
-	
+
 	private Tabs sourcetabs;
+
 	private Tabpanels sourcetabpanels;
+
 	private Combobox type;
+
 	private Textbox fileName;
-	private ICase c = null ; 
+
+	private ICase c = null;
+
 	private Button saveBtn;
-	
+
 	/**
 	 * we use desktop level event queue.
 	 */
-	private EventQueue queue = EventQueues.lookup("source",true);
-	
+	private EventQueue queue = EventQueues.lookup("source", true);
+
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		
+
 		resources = new ArrayList<Resource>();
-		
-		c = null ; //new Case();
+
+		c = null; // new Case();
 		String caseToken = (String) requestScope.get("token");
 		String version = (String) requestScope.get("ver");
-		if(caseToken != null){
+		if (caseToken != null) {
 			ICaseDao caseDao = new CaseDaoImpl();
-			
-			try{
-				c = caseDao.findCaseByToken(caseToken,version == null ? null : Integer.parseInt(version));
-				if(c == null){
+
+			try {
+				c = caseDao.findCaseByToken(caseToken, version == null ? null : Integer.parseInt(version));
+				if (c == null) {
 					Executions.sendRedirect("/");
 				}
 				saveBtn.setLabel("Update");
-			}catch(IllegalArgumentException e){ //means caseId is not a valid string 
-				//TODO wrote a logger here.
+			} catch (IllegalArgumentException e) { // means caseId is not a
+													// valid string
+				// TODO wrote a logger here.
 				c = null;
 			}
 		}
-		
-		if( c == null || c.getId() == null){ // new case!
+
+		if (c == null || c.getId() == null) { // new case!
 			resources.addAll(getDefaultResources());
-		}else{ 
-			IResourceDao dao = new ResourceDaoImpl(); 
-			List<Resource> dbResources =  dao.listByCase(c.getId());
-			for(Resource r:dbResources){
-				//we clone it , since we will create a new resource instead 
+		} else {
+			IResourceDao dao = new ResourceDaoImpl();
+			List<Resource> dbResources = dao.listByCase(c.getId());
+			for (Resource r : dbResources) {
+				// we clone it , since we will create a new resource instead
 				// of updating old one..
 				Resource resource = r.clone();
 				resource.setId(null);
@@ -88,148 +93,186 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 				resources.add(resource);
 			}
 		}
-	
+
 		applyResources(resources);
-		
+
 		queue.subscribe(new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
-				if( event instanceof SourceInsertEvent){
+				if (event instanceof SourceInsertEvent) {
 					SourceInsertEvent insertEvent = (SourceInsertEvent) event;
-					Resource ir = new Resource(insertEvent.getType(),insertEvent.getFileName(),null);
+					Resource ir = getDefaultResource(insertEvent.getType(), insertEvent.getFileName());
 					resources.add(ir);
 					insertResource(ir);
-				}else if(event instanceof SaveEvent){
+				} else if (event instanceof SaveEvent) {
 					SaveEvent saveEvt = (SaveEvent) event;
-					saveCase(resources,saveEvt.isFork());
+					saveCase(resources, saveEvt.isFork());
 				}
 			}
 		});
-		
+
 	}
-	
-	private void saveCase(List<Resource> resources , boolean fork){
-		Case nc= new Case();
+
+	private void saveCase(List<Resource> resources, boolean fork) {
+		Case nc = new Case();
 		nc.setCreateDate(new Date());
-		
+
 		ICaseDao caseDao = new CaseDaoImpl();
-		if( c == null || fork) { // Create a brand new case
+		if (c == null || fork) { // Create a brand new case
 			nc.setVersion(1);
 			nc.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
-			
-			if( c != null){ // fork
-				nc.setFromId( c.getId() );
+
+			if (c != null) { // fork
+				nc.setFromId(c.getId());
 			}
-			
-		}else{ 
+
+		} else {
 			nc.setToken(c.getToken());
-			nc.setThread( c.getThread());
+			nc.setThread(c.getThread());
 			nc.setVersion(caseDao.getLastVersionByToken(c.getToken()) + 1);
 		}
-		
-		/* TODO: review this and use transcation to speed up and 
-		 * 		be sure it's built as a unit. 
+
+		/*
+		 * TODO: review this and use transcation to speed up and be sure it's
+		 * built as a unit.
 		 */
-		
+
 		caseDao.saveOrUdate(nc);
-		
-		if( c == null || fork){ // A brand new case
+
+		if (c == null || fork) { // A brand new case
 			// TonyQ:
 			// we have to set the thread information after we get the id.
-			// TODO:check if we could use trigger or something 
-			//		to handle this in DB. currently we have to live with it.
+			// TODO:check if we could use trigger or something
+			// to handle this in DB. currently we have to live with it.
 			nc.setThread(nc.getId());
 			caseDao.saveOrUdate(nc);
 		}
-		
-		IResourceDao resourceDao= new ResourceDaoImpl();
-		for(Resource resource : resources){
+
+		IResourceDao resourceDao = new ResourceDaoImpl();
+		for (Resource resource : resources) {
 			resource.setId(null);
 			resource.setCaseId(nc.getId());
 			resourceDao.saveOrUdate(resource);
 		}
-		Executions.getCurrent().sendRedirect("/"+nc.getToken()+ ( nc.getVersion() != 1 ? "/"+nc.getVersion():""));
+		Executions.getCurrent().sendRedirect("/" + nc.getToken() + (nc.getVersion() != 1 ? "/" + nc.getVersion() : ""));
 	}
-	
-	private List<Resource> getDefaultResources(){
+
+	/**
+	 * TODO move it to resource
+	 * 
+	 * @param type
+	 * @param name
+	 * @return
+	 */
+	private Resource getDefaultResource(int type, String name) {
+		if (Resource.TYPE_ZUL == type)
+			return new Resource(Resource.TYPE_ZUL, name, "<zk>\n  <window>hello world1 </window>\n</zk>");
+		else if (Resource.TYPE_JS == type)
+			return new Resource(Resource.TYPE_JS, name, "function hello(){alert('hello');}");
+		else if (Resource.TYPE_CSS == type)
+			return new Resource(Resource.TYPE_CSS, name, ".hello{ \n color:red; \n }");
+		else if (Resource.TYPE_HTML == type)
+			return (new Resource(Resource.TYPE_HTML, name, "<html>\n  <head>\n    <title>Hello</title>\n  </head>\n"
+					+ "<body>\n    hello\n  </body>\n</html>"));
+		else
+			return null;
+	}
+
+	/**
+	 * TODO move it to resource
+	 * @param type
+	 * @return
+	 */
+	private Resource getDefaultResource(int type) {
+		if (Resource.TYPE_ZUL == type)
+			return getDefaultResource(type, "index.zul");
+		else if (Resource.TYPE_JS == type)
+			return getDefaultResource(type, "index.js");
+		else if (Resource.TYPE_CSS == type)
+			return getDefaultResource(type, "index.css");
+		else if (Resource.TYPE_HTML == type)
+			return getDefaultResource(type, "index.html");
+		else
+			return null;
+	}
+
+	private List<Resource> getDefaultResources() {
 		List resources = new ArrayList<IResource>();
-		resources.add(new Resource(Resource.TYPE_ZUL,"index.zul","<zk>\n  <window>hello world1 </window>\n</zk>"));
-//		resources.add(new Resource(Resource.TYPE_JS,"index.js","function hello(){alert('hello');}"));
-//		resources.add(new Resource(Resource.TYPE_CSS,"index.css",".hello{ \n color:red; \n }"));
-//		resources.add(new Resource(Resource.TYPE_JAVA,"org/zkoss/fiddle/Index.java",
-//				"package org.zkoss.fiddle; \n public class Index{ \n \n} "));
-//		resources.add(new Resource(Resource.TYPE_HTML,"index_files/index.html",
-//			"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n  <body>\n    hello\n  </body>\n</html>"));
+		resources.add(getDefaultResource(Resource.TYPE_ZUL));
+		resources.add(getDefaultResource(Resource.TYPE_JS));
+		resources.add(getDefaultResource(Resource.TYPE_CSS));
+		resources.add(getDefaultResource(Resource.TYPE_HTML));
 		
 		return resources;
 	}
-	
-	public void onClick$insert(Event e){
+
+	public void onClick$insert(Event e) {
 		int typeVal = type.getSelectedIndex();
 		String fileNameVal = fileName.getValue();
 
 		queue.publish(new SourceInsertEvent(null, null, fileNameVal, typeVal));
 	}
-	
-	
-	private void insertResource(final IResource resource){
-		if(sourcetabs == null || sourcetabpanels == null){
-			throw new IllegalStateException("sourcetabpanels/sourcetabs is not ready !!\n"+
-					" do you call this after doAfterCompose "+
-					"(and be sure you called super.doAfterCompose()) or using in wrong page? ");
+
+	private void insertResource(final IResource resource) {
+		if (sourcetabs == null || sourcetabpanels == null) {
+			throw new IllegalStateException("sourcetabpanels/sourcetabs is not ready !!\n"
+					+ " do you call this after doAfterCompose "
+					+ "(and be sure you called super.doAfterCompose()) or using in wrong page? ");
 		}
-		
-		//TODO using swifttab to replace this if possible
+
+		// TODO using swifttab to replace this if possible
 		/* creating tab */
 		Texttab texttab = new Texttab(resource.getTypeName());
 		texttab.setAttribute("model", resource);
-		
+
 		final Textbox box = new Textbox(resource.getName());
 		box.setSclass("tab-textbox");
 		box.setConstraint("no empty");
 		box.setInplace(true);
 		texttab.appendChild(box);
 		texttab.setClosable(true);
-		
-		box.addEventListener("onChange",new EventListener() {
+
+		box.addEventListener("onChange", new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
 				resource.setName(box.getValue());
 			}
 		});
-		
-		texttab.addEventListener("onClose",new EventListener() {
+
+		texttab.addEventListener("onClose", new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
-				Texttab tab = (Texttab)event.getTarget();
+				Texttab tab = (Texttab) event.getTarget();
 				IResource ir = (IResource) tab.getAttribute("model");
 
-				
-				//remove the resource
+				// remove the resource
 				int k = -1;
-				for(int i = 0 ; i < resources.size();++i){
-					if(resources.get(i) == ir){
+				for (int i = 0; i < resources.size(); ++i) {
+					if (resources.get(i) == ir) {
 						k = i;
 						break;
 					}
 				}
-				if(k != -1)
+				if (k != -1)
 					resources.remove(k);
 
 			}
 		});
-		
+
 		sourcetabs.appendChild(texttab);
-		
-		
+
 		/* creating Tabpanel */
 		Tabpanel sourcepanel = new Tabpanel();
-		
+
 		CodeEditor ce = new CodeEditor();
 		ce.setMode(resource.getTypeMode());
 		ce.setValue(resource.getContent());
 		ce.setHeight("400px");
 		ce.setWidth("auto");
 		ce.setAttribute("model", resource);
-		
-		ce.addEventListener("onChange",new EventListener() {
+
+		ce.addEventListener("onChange", new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
 				InputEvent inpEvt = (InputEvent) event;
 				CodeEditor ce = (CodeEditor) event.getTarget();
@@ -237,13 +280,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer{
 				r.setContent(inpEvt.getValue());
 			}
 		});
-		
+
 		sourcepanel.appendChild(ce);
-		
+
 		sourcetabpanels.appendChild(sourcepanel);
 	}
-	private void applyResources(List<Resource> resources){
-		for(IResource resource:resources){
+
+	private void applyResources(List<Resource> resources) {
+		for (IResource resource : resources) {
 			insertResource(resource);
 		}
 	}

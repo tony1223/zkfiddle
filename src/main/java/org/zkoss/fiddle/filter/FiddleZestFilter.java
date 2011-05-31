@@ -17,10 +17,11 @@ public class FiddleZestFilter extends ZestFilter {
 			ServletException {
 		HttpServletRequest httprequest = ((HttpServletRequest)request);
 		String path = httprequest.getRequestURI();
-  		if(path.startsWith(httprequest.getContextPath()+"/zkau")) 
+  		if(path.startsWith(httprequest.getContextPath()+"/zkau")) {
   			chain.doFilter(httprequest, response);
-  		else
-  			super.doFilter(request, response, chain);
+  		}else{
+			super.doFilter(request, response, chain);
+  		}
 		
 	}
 }
