@@ -91,6 +91,7 @@ public class FiddleDataFilter implements Filter {
 
 		response.getWriter().println(jsonres);
 		s.close();
+		response.getWriter().close();
 
 	}
 
