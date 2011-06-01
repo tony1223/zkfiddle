@@ -92,7 +92,6 @@ public class FiddleDataFilter implements Filter {
 		response.getWriter().println(jsonres);
 		s.close();
 		response.getWriter().close();
-
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {

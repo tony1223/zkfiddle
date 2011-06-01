@@ -2,6 +2,7 @@
 
 
 <zk>
+	
     <!-- Defines the application's name -->
     <preference>
         <name>
@@ -11,6 +12,9 @@
             ZK Fiddle
         </value>
     </preference>
+	<client-config>
+		<debug-js>true</debug-js>
+	</client-config>	
     <library-property>
         <name>
             org.zkoss.zul.grid.rod
@@ -27,7 +31,11 @@
             true
         </value>
     </library-property>
-    
+
+	 <listener>
+	  <description>[Optional] Mointor the statistic</description>
+	  <listener-class>org.zkoss.zk.ui.util.Statistic</listener-class>
+	 </listener>	
     <library-property>
         <name>
             org.zkoss.zul.Button.mold

@@ -18,7 +18,8 @@ public class SourceInsertEvent extends Event{
 	}
 	
 	public SourceInsertEvent(Component target,String pfolder,String pfileName,int ptype){
-		super("onSourceInsert",target,null);
+		super(FiddleEvents.ON_SOURCE_INSERT,target,null);
+		
 		type = ptype;
 		folder = pfolder;
 		fileName = pfileName;

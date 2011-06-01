@@ -31,7 +31,7 @@ public class InstanceManager {
 			throw new IllegalArgumentException("instance and instance path can't be null ");
 		}
 		
-		instances.put(instance.getPath(),instance);
+		instances.put(instance.getHash(),instance);
 	}
 
 	/**

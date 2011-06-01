@@ -1,0 +1,22 @@
+<?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="client">
+	<!-- TODO check if we need to load it at first. -->
+	<window id="viewEditor" visible="false"
+		closable="true" apply="org.zkoss.fiddle.composer.ViewResultComposer"
+		height="100%" width="100%">
+		<vlayout sclass="source-vlayout" height="100%">
+			<div>
+				<div style="float:left;">
+					<label value="ZK Version:" />
+					<label id="zkver" />
+				</div>
+				<div style="float:right;">
+					<label value="Direct Link:" />
+					<textbox id="directly" readonly="true" />
+				</div>
+			</div>
+			<iframe id="content" height="100%" width="100%" style="border:1px solid black" />
+		</vlayout>
+	</window>
+
+</zk>

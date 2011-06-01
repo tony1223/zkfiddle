@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
+import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.SaveEvent;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
 import org.zkoss.fiddle.dao.CaseDaoImpl;
@@ -51,7 +52,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	/**
 	 * we use desktop level event queue.
 	 */
-	private EventQueue queue = EventQueues.lookup("source", true);
+	private EventQueue queue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -97,7 +98,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		applyResources(resources);
 
 		queue.subscribe(new EventListener() {
-
 			public void onEvent(Event event) throws Exception {
 				if (event instanceof SourceInsertEvent) {
 					SourceInsertEvent insertEvent = (SourceInsertEvent) event;

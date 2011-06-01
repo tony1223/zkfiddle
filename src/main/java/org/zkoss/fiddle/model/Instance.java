@@ -2,8 +2,12 @@ package org.zkoss.fiddle.model;
 
 import java.util.Date;
 
+import org.zkoss.fiddle.util.CRCCaseIDEncoder;
+
 public class Instance {
 
+	private String hash;
+	
 	private String name;
 
 	private String path;
@@ -26,6 +30,7 @@ public class Instance {
 
 	public void setPath(String path) {
 		this.path = path;
+		this.hash = CRCCaseIDEncoder.getInstance().encode(path);
 	}
 
 	public String getVersion() {
@@ -42,6 +47,10 @@ public class Instance {
 
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+
+	public String getHash() {
+		return hash;
 	}
 
 }

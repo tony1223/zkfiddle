@@ -13,7 +13,7 @@ public class SaveEvent extends Event{
 	}
 
 	public SaveEvent(boolean fork) {
-		this("onSaveCase",fork);
+		this(FiddleEvents.ON_SAVE_CASE,fork);
 	}
 	
 	public SaveEvent() {

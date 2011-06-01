@@ -246,13 +246,11 @@
 		<groupId>org.zkoss.fiddle</groupId>
 		<artifactId>texttab</artifactId>
 		<version>0.8.0</version>
-		<optional>true</optional>
 	</dependency>		
 	<dependency>
 		<groupId>org.zkoss.external</groupId>
 		<artifactId>codeeditor</artifactId>
 		<version>0.8.0</version>
-		<optional>true</optional>
 	</dependency>	
 	
 	<dependency>

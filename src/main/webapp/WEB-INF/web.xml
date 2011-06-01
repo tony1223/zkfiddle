@@ -9,7 +9,8 @@
 	<listener>
 		<description>ZK listener for session cleanup</description>
 		<listener-class>org.zkoss.zk.ui.http.HttpSessionListener</listener-class>
-	</listener>
+	</listener>	
+	
 	<servlet>
 		<description>ZK loader for ZUML pages</description>
 		<servlet-name>zkLoader</servlet-name>
@@ -25,7 +26,7 @@
 		<!-- [Optional] Specifies whether to compress the output
 		of the ZK loader. It speeds up the transmission over slow Internet.
 		However, if you configure a filter to post-processing the
-		output or your server will do the compression, you might have to disable it.
+		output or your server will do the compr id="ParamValue_1306928171232"ession, you might have to disable it.
 
 		Default: true
 		<init-param>
