@@ -174,6 +174,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		else if (Resource.TYPE_HTML == type)
 			return (new Resource(Resource.TYPE_HTML, name, "<html>\n  <head>\n    <title>Hello</title>\n  </head>\n"
 					+ "<body>\n    hello\n  </body>\n</html>"));
+		else if (Resource.TYPE_JAVA == type)
+			return (new Resource(Resource.TYPE_JAVA, name, "public class "+name.replaceAll("\\.java", "")+"{\n public void hello(){ \n    System.out.println(\"Hello\"); \n }\n\n}"));
 		else
 			return null;
 	}
@@ -192,6 +194,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			return getDefaultResource(type, "index.css");
 		else if (Resource.TYPE_HTML == type)
 			return getDefaultResource(type, "index.html");
+		else if (Resource.TYPE_JAVA == type)
+			return getDefaultResource(type, "Test.java");
 		else
 			return null;
 	}
@@ -202,6 +206,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		resources.add(getDefaultResource(Resource.TYPE_JS));
 		resources.add(getDefaultResource(Resource.TYPE_CSS));
 		resources.add(getDefaultResource(Resource.TYPE_HTML));
+		resources.add(getDefaultResource(Resource.TYPE_JAVA));
 		
 		return resources;
 	}

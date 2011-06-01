@@ -87,7 +87,7 @@ public class FiddleDataFilter implements Filter {
 		JSONObject jsonres = new JSONObject();
 		jsonres.put("token", caseToken);
 		jsonres.put("ver", version);
-		jsonres.put("resouces", json);
+		jsonres.put("resources", json);
 
 		response.getWriter().println(jsonres);
 		s.close();
