@@ -11,8 +11,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.zkoss.fiddle.instance.InstanceManager;
-import org.zkoss.fiddle.model.Instance;
+import org.zkoss.fiddle.instance.FiddleInstanceManager;
+import org.zkoss.fiddle.model.FiddleInstance;
 
 public class FiddleInstanceFilter implements Filter {
 
@@ -20,15 +20,15 @@ public class FiddleInstanceFilter implements Filter {
 			ServletException {
 		HttpServletRequest httprequest = ((HttpServletRequest) request);
 
-		Instance in = new Instance();
+		FiddleInstance in = new FiddleInstance();
 		in.setName(httprequest.getParameter("name"));
 		in.setPath(httprequest.getParameter("path"));
 		in.setVersion(httprequest.getParameter("ver"));
 		in.setLastUpdate(new Date());
 		
 		try {
-			InstanceManager im = InstanceManager.getInstance();
-			im.addInstance(in);
+			FiddleInstanceManager im = FiddleInstanceManager.getInstance();
+			im.addFiddleInstance(in);
 			response.getWriter().println("true");
 		} catch (Exception e) {
 			e.printStackTrace();

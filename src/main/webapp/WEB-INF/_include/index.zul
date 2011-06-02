@@ -7,7 +7,7 @@
 			border="none" size="90px" sclass="demo-header" collapsible="true">
 			<hlayout style="background:#82B3D1;">
 				<div sclass="demo-logo pointer">
-					<n:a xmlns:n="native" href="http://www.zkoss.org">
+					<n:a xmlns:n="native" href="/">
 						<image width="90px" src="/img/ZK-Logo.gif" />
 					</n:a>
 				</div>

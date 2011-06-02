@@ -6,8 +6,8 @@ import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.SaveEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.instance.InstanceManager;
-import org.zkoss.fiddle.model.Instance;
+import org.zkoss.fiddle.instance.FiddleInstanceManager;
+import org.zkoss.fiddle.model.FiddleInstance;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -43,23 +43,22 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		token = (String) requestScope.get("token");
 		ver = (String) requestScope.get("ver");
 
-		InstanceManager instanceManager = InstanceManager.getInstance();
+		FiddleInstanceManager instanceManager = FiddleInstanceManager.getInstance();
 
-		Collection<Instance> acounts = instanceManager.listInstances().values();
+		Collection<FiddleInstance> acounts = instanceManager.listFiddleInstances().values();
 
 		if (acounts.size() == 0) {
 			instances.setModel(new ListModelList(new String[] { "No available Instance now" }));
 			viewBtn.setDisabled(true);
 		} else {
 			instances.setItemRenderer(new ComboitemRenderer() {
-
 				public void render(Comboitem item, Object data) throws Exception {
-					Instance inst = (Instance) data;
-					item.setLabel(inst.getName() + "["+inst.getVersion()+"]");
+					FiddleInstance inst = (FiddleInstance) data;
+					item.setLabel(inst.getName() + "["+inst.getZKVersion()+"]");
 					item.setValue(data);
 				}
 			});
-			instances.setModel(new ListModelList(instanceManager.listInstances().values()));
+			instances.setModel(new ListModelList(instanceManager.listFiddleInstances().values()));
 		}
 		instances.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
 
@@ -71,11 +70,11 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	}
 
 	public void onClick$viewBtn() {
-		Instance inst = null;
+		FiddleInstance inst = null;
 		if (instances.getSelectedIndex() == -1)
-			inst = (Instance) instances.getItemAtIndex(0).getValue();
+			inst = (FiddleInstance) instances.getItemAtIndex(0).getValue();
 		else
-			inst = (Instance) instances.getSelectedItem().getValue();
+			inst = (FiddleInstance) instances.getSelectedItem().getValue();
 
 		EventQueue eq = EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true);
 		eq.publish(new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, token, ver, inst));

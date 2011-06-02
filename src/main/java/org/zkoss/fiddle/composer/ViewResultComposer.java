@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.model.Instance;
+import org.zkoss.fiddle.model.FiddleInstance;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -13,6 +13,7 @@ import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
@@ -27,11 +28,17 @@ public class ViewResultComposer extends GenericForwardComposer {
 	private Window viewEditor;
 
 	private Label zkver;
+	
+	private Label msg;
+	
+	private A directlyLink;
 
 	/**
 	 * we use desktop level event queue.
 	 */
 	private EventQueue queue = EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true);
+
+	private String viewpath;
 
 	@Override
 	public void doAfterCompose(final Component comp) throws Exception {
@@ -44,25 +51,34 @@ public class ViewResultComposer extends GenericForwardComposer {
 					ShowResultEvent evt = (ShowResultEvent) event;
 					viewEditor.setVisible(true);
 
-					HttpServletRequest request = (HttpServletRequest) Executions.getCurrent().getNativeRequest();
-					StringBuffer hostName = new StringBuffer(request.getServerName());
-					if (request.getLocalPort() != 80) {
-						hostName.append(":" + request.getLocalPort());
-					}
-					if ("".equals(request.getContextPath())) {
-						hostName.append("/" + request.getContextPath());
-					} else {
-						hostName.append("/");
+					if (viewpath == null) {
+						HttpServletRequest request = (HttpServletRequest) Executions.getCurrent().getNativeRequest();
+						StringBuffer hostName = new StringBuffer(request.getServerName());
+						if (request.getLocalPort() != 80) {
+							hostName.append(":" + request.getLocalPort());
+						}
+						if ("".equals(request.getContextPath())) {
+							hostName.append("/" + request.getContextPath());
+						} else {
+							hostName.append("/");
+						}
+						viewpath = "http://" + hostName.toString() + "view/";
 					}
 
-					Instance inst = evt.getInstance();
+					FiddleInstance inst = evt.getInstance();
 
-					zkver.setValue(inst.getVersion());
+					zkver.setValue(inst.getZKVersion());
 
 					viewEditor.setTitle("Runnign sandbox:" + inst.getName());
-					directly.setText("http://" + hostName.toString() + "view/" + evt.getToken() + "/"
-							+ evt.getVersion() + "/" + inst.getHash());
 
+					String url = viewpath + evt.getToken() + "/" + evt.getVersion() + "/v" + inst.getZKVersion()
+							+ "?run=" + inst.getName();
+
+					directly.setText(url);
+					directlyLink.setHref(url);
+					
+					msg.setValue(""); //force it doing the update job 
+					msg.setValue("loading");
 					content.setSrc(inst.getPath() + evt.getToken() + "/" + evt.getVersion());
 					// content.setSrc("http://localhost:8080/");
 					// content.setSrc(inst.getPath()+"dbn96j/7");
@@ -73,11 +89,11 @@ public class ViewResultComposer extends GenericForwardComposer {
 				}
 			}
 		});
-
 	}
-
+	
 	public void onClose$viewEditor(ForwardEvent e) {
 		viewEditor.setVisible(false);
+		content.setSrc("");
 		e.getOrigin().stopPropagation();
 	}
 }

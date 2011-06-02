@@ -4,10 +4,10 @@ import java.util.Date;
 
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
 
-public class Instance {
+public class FiddleInstance {
 
 	private String hash;
-	
+
 	private String name;
 
 	private String path;
@@ -33,7 +33,7 @@ public class Instance {
 		this.hash = CRCCaseIDEncoder.getInstance().encode(path);
 	}
 
-	public String getVersion() {
+	public String getZKVersion() {
 		return version;
 	}
 
@@ -53,4 +53,23 @@ public class Instance {
 		return hash;
 	}
 
+	public int hashCode() {
+
+		if (name != null)
+			return name.hashCode();
+		else
+			return super.hashCode();
+	}
+
+	public boolean equals(Object obj) {
+		
+		if (!(obj instanceof FiddleInstance)) {
+			return super.equals(obj);
+		}
+		if (this.getName() == null) {
+			throw new IllegalStateException("FiddleInstance didn't contains name information");
+		}
+		FiddleInstance out = (FiddleInstance) obj;
+		return this.getName().equals(out.getName());
+	}
 }

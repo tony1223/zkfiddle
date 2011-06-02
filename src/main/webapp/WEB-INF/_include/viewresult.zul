@@ -5,17 +5,37 @@
 		closable="true" apply="org.zkoss.fiddle.composer.ViewResultComposer"
 		height="100%" width="100%">
 		<vlayout sclass="source-vlayout" height="100%">
-			<div>
-				<div style="float:left;">
+			<div height="20px">
+				<div style="float:left;padding:3px;padding-left:15px;">
 					<label value="ZK Version:" />
 					<label id="zkver" />
+					
+					<label id="msg" style="margin-left:30px;color:red;" />
 				</div>
 				<div style="float:right;">
 					<label value="Direct Link:" />
-					<textbox id="directly" style="width:250px;" readonly="true" />
+					<textbox id="directly" w:onClick="this.select()" style="width:350px;" readonly="true" />
+					<a id="directlyLink" target="_blank">
+						<image src="/img/arrow.png" height="20px;" />
+					</a>
 				</div>
 			</div>
-			<iframe id="content" height="100%" width="100%" style="border:1px solid black" />
+			<iframe id="content" height="96%" width="98%" style="border:5px solid black;margin-left:10px;" vflex="1" >
+				<attribute w:name="bind_">
+					function(){
+						this.$bind_.apply(this,arguments);
+						/*
+						TonyQ:2011/6/2 
+						since we can't find the right event in server side , 
+						so that seems we have to do it by ourself in client side.
+						*/
+						jq(this.$n()).bind("load",function(){
+							zk.Widget.$(jq("$viewEditor $msg")).setValue("Finished");
+						});
+					}
+				</attribute>
+				
+			</iframe>
 		</vlayout>
 	</window>
 

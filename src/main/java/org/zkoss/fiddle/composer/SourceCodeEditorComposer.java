@@ -7,14 +7,18 @@ import java.util.List;
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
+import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.SaveEvent;
+import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
 import org.zkoss.fiddle.dao.CaseDaoImpl;
 import org.zkoss.fiddle.dao.ResourceDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Case;
+import org.zkoss.fiddle.model.FiddleInstance;
 import org.zkoss.fiddle.model.Resource;
+import org.zkoss.fiddle.model.ViewRequest;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
@@ -24,6 +28,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
@@ -58,6 +63,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
+		//TODO ask user to have index.zul as a must have.
+		
 		resources = new ArrayList<Resource>();
 
 		c = null; // new Case();
@@ -110,7 +117,25 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				}
 			}
 		});
+		// @see FiddleDispatcherFilter for those use this directly
+		ViewRequest vr = (ViewRequest) requestScope.get("runview");
+		if (vr != null) {
+			FiddleInstance inst = vr.getInstance();
 
+			if (inst != null) { // inst muse be null
+				// TODO review this
+				// use echo event to find a good timing
+				ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, vr.getToken(), vr.getVer(),
+						vr.getInstance());
+				Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, sv));
+			} else {
+				alert("Can't find sandbox from specific version ");
+			}
+		}
+	}
+
+	public void onShowResult(Event e) {
+		EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish((ShowResultEvent) e.getData());
 	}
 
 	private void saveCase(List<Resource> resources, boolean fork) {
@@ -154,7 +179,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resource.setCaseId(nc.getId());
 			resourceDao.saveOrUdate(resource);
 		}
-		Executions.getCurrent().sendRedirect("/" + nc.getToken() + ( "/" + nc.getVersion()));
+		Executions.getCurrent().sendRedirect("/code/" + nc.getToken() + ("/" + nc.getVersion()));
 	}
 
 	/**
@@ -175,13 +200,15 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			return (new Resource(Resource.TYPE_HTML, name, "<html>\n  <head>\n    <title>Hello</title>\n  </head>\n"
 					+ "<body>\n    hello\n  </body>\n</html>"));
 		else if (Resource.TYPE_JAVA == type)
-			return (new Resource(Resource.TYPE_JAVA, name, "public class "+name.replaceAll("\\.java", "")+"{\n public void hello(){ \n    System.out.println(\"Hello\"); \n }\n\n}"));
+			return (new Resource(Resource.TYPE_JAVA, name, "public class " + name.replaceAll("\\.java", "")
+					+ "{\n public void hello(){ \n    System.out.println(\"Hello\"); \n }\n\n}"));
 		else
 			return null;
 	}
 
 	/**
 	 * TODO move it to resource
+	 * 
 	 * @param type
 	 * @return
 	 */
@@ -207,7 +234,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		resources.add(getDefaultResource(Resource.TYPE_CSS));
 		resources.add(getDefaultResource(Resource.TYPE_HTML));
 		resources.add(getDefaultResource(Resource.TYPE_JAVA));
-		
+
 		return resources;
 	}
 

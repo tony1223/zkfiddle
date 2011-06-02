@@ -1,6 +1,6 @@
 package org.zkoss.fiddle.composer.event;
 
-import org.zkoss.fiddle.model.Instance;
+import org.zkoss.fiddle.model.FiddleInstance;
 import org.zkoss.zk.ui.event.Event;
 
 public class ShowResultEvent extends Event {
@@ -9,10 +9,10 @@ public class ShowResultEvent extends Event {
 
 	private String version;
 
-	private Instance instance;
+	private FiddleInstance instance;
 
-	public ShowResultEvent(String name, String token, String version, Instance inst) {
-		super(name);
+	public ShowResultEvent(String evtName, String token, String version, FiddleInstance inst) {
+		super(evtName);
 		this.token = token;
 		this.version = version;
 		this.instance = inst;
@@ -30,11 +30,11 @@ public class ShowResultEvent extends Event {
 		this.version = version;
 	}
 
-	public Instance getInstance() {
+	public FiddleInstance getInstance() {
 		return instance;
 	}
 
-	public void setInstance(Instance instance) {
+	public void setInstance(FiddleInstance instance) {
 		this.instance = instance;
 	}
 
