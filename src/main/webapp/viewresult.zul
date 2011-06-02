@@ -12,7 +12,7 @@
 				</div>
 				<div style="float:right;">
 					<label value="Direct Link:" />
-					<textbox id="directly" style="width:250px;" readonly="true" />
+					<textbox id="directly"  />
 				</div>
 			</div>
 			<iframe id="content" height="100%" width="100%" style="border:1px solid black" />

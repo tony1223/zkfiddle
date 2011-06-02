@@ -5,7 +5,7 @@
   <artifactId>datahandler</artifactId>
   <packaging>jar</packaging>
 	<properties>
-		<zk.version>5.0.7.1</zk.version>
+		<zk.version>5.0.8-SNAPSHOT</zk.version>
 		<zk.theme.version>5.0.7</zk.theme.version>
 		<zkel.version>1.1.0</zkel.version>
 		<commons-lang.version>2.4</commons-lang.version>

@@ -41,5 +41,4 @@
 			<include src="sourceedtior.zul" />
 		</center>
 	</borderlayout>
-	<include src="viewresult.zul" />
 </zk>

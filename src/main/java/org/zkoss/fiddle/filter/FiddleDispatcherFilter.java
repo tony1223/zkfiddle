@@ -46,7 +46,6 @@ public class FiddleDispatcherFilter implements Filter {
 		if (match.find()) {
 			request.setAttribute("token", match.group(1));
 			request.setAttribute("ver", match.group(2));
-			System.out.println("casePath:"+path);
 			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			return ;
 		} else {
