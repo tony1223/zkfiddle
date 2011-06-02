@@ -20,6 +20,7 @@ import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
+import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.zkplus.hibernate.HibernateUtil;
@@ -75,7 +76,7 @@ public class FiddleDataFilter implements Filter {
 
 		JSONArray json = new JSONArray();
 
-		for (Resource ir : dbResources) {
+		for (IResource ir : dbResources) {
 			JSONObject obj = new JSONObject();
 			obj.put("type", ir.getType());
 			obj.put("name", ir.getName());

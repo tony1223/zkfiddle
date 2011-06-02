@@ -24,7 +24,7 @@
 				</hlayout>
 			</hlayout>
 		</north>
-		<west title="ZK " size="250px" flex="true" splittable="true"
+		<west title="ZK Fiddle ,Powered by TonyQ" size="250px" flex="true" splittable="true"
 			minsize="210" maxsize="500" collapsible="true">
 			<panel>
 				<toolbar>

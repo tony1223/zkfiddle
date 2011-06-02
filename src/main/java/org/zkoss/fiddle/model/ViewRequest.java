@@ -10,11 +10,11 @@ public class ViewRequest {
 
 	private String zkversion;
 
-	public FiddleInstance getInstance() {
+	public FiddleInstance getFiddleInstance() {
 		return inst;
 	}
 
-	public void setInst(FiddleInstance inst) {
+	public void setFiddleInstance(FiddleInstance inst) {
 		this.inst = inst;
 	}
 
@@ -26,11 +26,11 @@ public class ViewRequest {
 		this.token = token;
 	}
 
-	public String getVer() {
+	public String getTokenVersion() {
 		return ver;
 	}
 
-	public void setVer(String ver) {
+	public void setTokenVersion(String ver) {
 		this.ver = ver;
 	}
 

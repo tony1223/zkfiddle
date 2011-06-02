@@ -1,5 +1,7 @@
 package org.zkoss.fiddle.model.api;
 
+import org.zkoss.fiddle.model.Resource;
+
 public interface IResource {
 
 	public static int TYPE_ZUL = 0;
@@ -36,4 +38,9 @@ public interface IResource {
 
 	public void setCaseId(Long caseId);
 
+	public void setCanDelete(boolean canDelete);
+
+	public boolean isCanDelete();
+
+	public Resource clone();
 }

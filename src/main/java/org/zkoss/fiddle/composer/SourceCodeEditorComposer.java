@@ -91,7 +91,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		} else {
 			IResourceDao dao = new ResourceDaoImpl();
 			List<Resource> dbResources = dao.listByCase(c.getId());
-			for (Resource r : dbResources) {
+			for (IResource r : dbResources) {
 				// we clone it , since we will create a new resource instead
 				// of updating old one..
 				Resource resource = r.clone();
@@ -120,13 +120,13 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		// @see FiddleDispatcherFilter for those use this directly
 		ViewRequest vr = (ViewRequest) requestScope.get("runview");
 		if (vr != null) {
-			FiddleInstance inst = vr.getInstance();
+			FiddleInstance inst = vr.getFiddleInstance();
 
 			if (inst != null) { // inst muse be null
 				// TODO review this
 				// use echo event to find a good timing
-				ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, vr.getToken(), vr.getVer(),
-						vr.getInstance());
+				ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, vr.getToken(), vr.getTokenVersion(),
+						vr.getFiddleInstance());
 				Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, sv));
 			} else {
 				alert("Can't find sandbox from specific version ");
@@ -190,17 +190,17 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	 * @return
 	 */
 	private Resource getDefaultResource(int type, String name) {
-		if (Resource.TYPE_ZUL == type)
-			return new Resource(Resource.TYPE_ZUL, name, "<zk>\n  <window>hello world1 </window>\n</zk>");
-		else if (Resource.TYPE_JS == type)
-			return new Resource(Resource.TYPE_JS, name, "function hello(){alert('hello');}");
-		else if (Resource.TYPE_CSS == type)
-			return new Resource(Resource.TYPE_CSS, name, ".hello{ \n color:red; \n }");
-		else if (Resource.TYPE_HTML == type)
-			return (new Resource(Resource.TYPE_HTML, name, "<html>\n  <head>\n    <title>Hello</title>\n  </head>\n"
+		if (IResource.TYPE_ZUL == type)
+			return new Resource(IResource.TYPE_ZUL, name, "<zk>\n  <window>hello world1 </window>\n</zk>");
+		else if (IResource.TYPE_JS == type)
+			return new Resource(IResource.TYPE_JS, name, "function hello(){alert('hello');}");
+		else if (IResource.TYPE_CSS == type)
+			return new Resource(IResource.TYPE_CSS, name, ".hello{ \n color:red; \n }");
+		else if (IResource.TYPE_HTML == type)
+			return (new Resource(IResource.TYPE_HTML, name, "<html>\n  <head>\n    <title>Hello</title>\n  </head>\n"
 					+ "<body>\n    hello\n  </body>\n</html>"));
-		else if (Resource.TYPE_JAVA == type)
-			return (new Resource(Resource.TYPE_JAVA, name, "public class " + name.replaceAll("\\.java", "")
+		else if (IResource.TYPE_JAVA == type)
+			return (new Resource(IResource.TYPE_JAVA, name, "public class " + name.replaceAll("\\.java", "")
 					+ "{\n public void hello(){ \n    System.out.println(\"Hello\"); \n }\n\n}"));
 		else
 			return null;
@@ -212,16 +212,19 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	 * @param type
 	 * @return
 	 */
-	private Resource getDefaultResource(int type) {
-		if (Resource.TYPE_ZUL == type)
-			return getDefaultResource(type, "index.zul");
-		else if (Resource.TYPE_JS == type)
+	private IResource getDefaultResource(int type) {
+		if (IResource.TYPE_ZUL == type){
+			IResource r =getDefaultResource(type, "index.zul");
+			r.setCanDelete(false);
+			return r;
+		}
+		else if (IResource.TYPE_JS == type)
 			return getDefaultResource(type, "index.js");
-		else if (Resource.TYPE_CSS == type)
+		else if (IResource.TYPE_CSS == type)
 			return getDefaultResource(type, "index.css");
-		else if (Resource.TYPE_HTML == type)
+		else if (IResource.TYPE_HTML == type)
 			return getDefaultResource(type, "index.html");
-		else if (Resource.TYPE_JAVA == type)
+		else if (IResource.TYPE_JAVA == type)
 			return getDefaultResource(type, "Test.java");
 		else
 			return null;
@@ -229,11 +232,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private List<Resource> getDefaultResources() {
 		List resources = new ArrayList<IResource>();
-		resources.add(getDefaultResource(Resource.TYPE_ZUL));
-		resources.add(getDefaultResource(Resource.TYPE_JS));
-		resources.add(getDefaultResource(Resource.TYPE_CSS));
-		resources.add(getDefaultResource(Resource.TYPE_HTML));
-		resources.add(getDefaultResource(Resource.TYPE_JAVA));
+		resources.add(getDefaultResource(IResource.TYPE_ZUL));
+		resources.add(getDefaultResource(IResource.TYPE_JS));
+		resources.add(getDefaultResource(IResource.TYPE_CSS));
+		resources.add(getDefaultResource(IResource.TYPE_HTML));
+		resources.add(getDefaultResource(IResource.TYPE_JAVA));
 
 		return resources;
 	}
@@ -262,7 +265,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		box.setConstraint("no empty");
 		box.setInplace(true);
 		texttab.appendChild(box);
-		texttab.setClosable(true);
+		texttab.setClosable(resource.isCanDelete());
 
 		box.addEventListener("onChange", new EventListener() {
 

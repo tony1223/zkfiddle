@@ -3,7 +3,8 @@
 	<!-- TODO check if we need to load it at first. -->
 	<window id="viewEditor" visible="false"
 		closable="true" apply="org.zkoss.fiddle.composer.ViewResultComposer"
-		height="100%" width="100%">
+		height="100%"
+		width="100%">
 		<vlayout sclass="source-vlayout" height="100%">
 			<div height="20px">
 				<div style="float:left;padding:3px;padding-left:15px;">
@@ -20,10 +21,11 @@
 					</a>
 				</div>
 			</div>
-			<iframe id="content" height="96%" width="98%" style="border:5px solid black;margin-left:10px;" vflex="1" >
+			<iframe id="content" width="98%" style="border:5px solid black;margin-left:10px;" height="95%">
 				<attribute w:name="bind_">
 					function(){
 						this.$bind_.apply(this,arguments);
+						jq(this.$n()).parent().css("height","100%")
 						/*
 						TonyQ:2011/6/2 
 						since we can't find the right event in server side , 

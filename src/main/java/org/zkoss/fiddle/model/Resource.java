@@ -15,13 +15,18 @@ import org.zkoss.fiddle.model.api.IResource;
 
 @Entity
 @Table(name = "resources")
-public class Resource implements IResource,Cloneable {
+public class Resource implements IResource {
 	private Long id;
 	private String name;
 	private String content;
 	private Integer type ;
 	private Long caseId;
 	private Date createDate;
+	
+	/**
+	 * for the default index.zul 
+	 */
+	private boolean canDelete = true;
 	
 	public Resource(){
 		
@@ -128,8 +133,18 @@ public class Resource implements IResource,Cloneable {
 		r.setName(this.name);
 		r.setType(this.type);
 		r.setId(this.id);
+		r.setCanDelete(canDelete);
 		
 		return r;
+	}
+	
+	@Transient
+	public boolean isCanDelete() {
+		return canDelete;
+	}
+	
+	public void setCanDelete(boolean canDelete) {
+		this.canDelete = canDelete;
 	}
 	
 }

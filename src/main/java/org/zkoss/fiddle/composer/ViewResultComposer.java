@@ -38,7 +38,7 @@ public class ViewResultComposer extends GenericForwardComposer {
 	 */
 	private EventQueue queue = EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true);
 
-	private String viewpath;
+	private String hostpath;
 
 	@Override
 	public void doAfterCompose(final Component comp) throws Exception {
@@ -51,7 +51,7 @@ public class ViewResultComposer extends GenericForwardComposer {
 					ShowResultEvent evt = (ShowResultEvent) event;
 					viewEditor.setVisible(true);
 
-					if (viewpath == null) {
+					if (hostpath == null) {
 						HttpServletRequest request = (HttpServletRequest) Executions.getCurrent().getNativeRequest();
 						StringBuffer hostName = new StringBuffer(request.getServerName());
 						if (request.getLocalPort() != 80) {
@@ -62,23 +62,22 @@ public class ViewResultComposer extends GenericForwardComposer {
 						} else {
 							hostName.append("/");
 						}
-						viewpath = "http://" + hostName.toString() + "view/";
+						hostpath = "http://" + hostName.toString() ;
 					}
 
 					FiddleInstance inst = evt.getInstance();
 
 					zkver.setValue(inst.getZKVersion());
 
-					viewEditor.setTitle("Runnign sandbox:" + inst.getName());
+					viewEditor.setTitle("Running sandbox:" + inst.getName());
 
-					String url = viewpath + evt.getToken() + "/" + evt.getVersion() + "/v" + inst.getZKVersion()
-							+ "?run=" + inst.getName();
-
-					directly.setText(url);
-					directlyLink.setHref(url);
+					
+					String tokenpath = evt.getToken() + "/" + evt.getVersion() + "/v" + inst.getZKVersion();
+					directly.setText( hostpath + "view/" + tokenpath	+ "?run=" + inst.getName());
+					directlyLink.setHref( hostpath + "direct/" + tokenpath	+ "?run=" + inst.getName());
 					
 					msg.setValue(""); //force it doing the update job 
-					msg.setValue("loading");
+					msg.setValue("loading...");
 					content.setSrc(inst.getPath() + evt.getToken() + "/" + evt.getVersion());
 					// content.setSrc("http://localhost:8080/");
 					// content.setSrc(inst.getPath()+"dbn96j/7");

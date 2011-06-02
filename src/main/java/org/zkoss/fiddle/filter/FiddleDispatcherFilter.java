@@ -35,7 +35,7 @@ public class FiddleDispatcherFilter implements Filter {
 
 	Pattern code = Pattern.compile("^/code/([^/.]{5,}?)/(\\d+)/?.*$");
 
-	Pattern view = Pattern.compile("^/view/([^/.]{5,}?)/(\\d+)(/v([0-9\\.]+)/?)?.*$");
+	Pattern view = Pattern.compile("^/([^/.]{5,}?)/(\\d+)(/v([0-9\\.]+)/?)?.*$");
 
 	public void doFilter(ServletRequest request2, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
@@ -50,9 +50,13 @@ public class FiddleDispatcherFilter implements Filter {
 			return;
 		}
 
-		if (path.startsWith("/view")) {
+		if (path.startsWith("/view") || path.startsWith("/direct")) {
+
+			boolean directly = path.startsWith("/direct");
+			String newpath = directly ? path.substring(7) : path.substring(5);
+			// inst.getPath() + evt.getToken() + "/" + evt.getVersion()
 			// http://localhost:9999/view/3591l7m/3/v5.0.7?run=TonyQ
-			Matcher match = view.matcher(path);
+			Matcher match = view.matcher(newpath);
 			if (match.find()) {
 				/*
 				 * if(vr.getInstance() == null){ inst =
@@ -60,15 +64,15 @@ public class FiddleDispatcherFilter implements Filter {
 				 * redirect this }
 				 */
 
-				request.setAttribute("token", match.group(1)); //For SourceCodeEditorComposer
+				request.setAttribute("token", match.group(1)); // For
+																// SourceCodeEditorComposer
 				request.setAttribute("ver", match.group(2));
-				
-				
+
 				ViewRequest vr = new ViewRequest();
 				vr.setToken(match.group(1));
-				vr.setVer(match.group(2));
+				vr.setTokenVersion(match.group(2));
 				vr.setZkversion(match.group(4));
-				
+
 				FiddleInstanceManager im = FiddleInstanceManager.getInstance();
 
 				String instName = (String) request.getAttribute("run");
@@ -78,7 +82,7 @@ public class FiddleDispatcherFilter implements Filter {
 				if (instName != null) {
 					inst = im.getFiddleInstance(instName);
 					if (inst == null) {
-						newurl = ("/view/" + vr.getToken() + "/" + vr.getVer() + "/v" + vr.getZkversion());
+						newurl = ("/view/" + vr.getToken() + "/" + vr.getTokenVersion() + "/v" + vr.getZkversion());
 						((HttpServletResponse) response).sendRedirect(newurl);
 						return;
 					}
@@ -87,7 +91,7 @@ public class FiddleDispatcherFilter implements Filter {
 					inst = im.getFiddleInstanceByVersion(vr.getZkversion());
 
 					if (inst == null) {
-						newurl = ("/view/" + vr.getToken() + "/" + vr.getVer());
+						newurl = ("/view/" + vr.getToken() + "/" + vr.getTokenVersion());
 						((HttpServletResponse) response).sendRedirect(newurl);
 						return;
 					}
@@ -96,8 +100,12 @@ public class FiddleDispatcherFilter implements Filter {
 					inst = im.getFiddleInstanceForLastestVersion();
 				}
 
-				vr.setInst(inst);
-				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
+				vr.setFiddleInstance(inst);
+
+				if (directly) {
+					((HttpServletResponse) response).sendRedirect(inst.getPath() + vr.getToken() + "/" + vr.getTokenVersion());
+				} else
+					Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 				return;
 			}
 		} else if (path.startsWith("/code")) {
@@ -108,8 +116,8 @@ public class FiddleDispatcherFilter implements Filter {
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 				return;
 			}
-		} 
-		
+		}
+
 		chain.doFilter(request2, response);
 
 	}
