@@ -1,0 +1,39 @@
+<?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="client">
+	<style>
+		.tab-textbox{
+			margin-left:5px;
+			width:200px;
+		}
+	</style>
+	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" 
+		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" height="100%">
+		<vlayout sclass="source-vlayout" height="100%">
+			<div >
+				<label value="Insert new file" 
+					style="padding-left:20px;padding-right:10px;" />  
+				<zscript><![CDATA[
+				    String[] data = new String[]{
+				    		"zul",
+				    		"java",
+				    		"javascript",
+				    		"html",
+				    		"css"
+				    };
+				    ListModel typeset = new ListModelList(data);
+				]]></zscript>
+				 <combobox id="type" readonly="true" model="${typeset}" width="200px"  >
+				 	<attribute name="onCreate">
+				 		self.setSelectedIndex(0);
+				 	</attribute>
+				 </combobox>
+				 <textbox id="fileName" /> 
+				 <button id="insert" label="insert" />
+			</div>
+			<tabbox height="100%" hflex="1" >
+			    <tabs id="sourcetabs" />
+			    <tabpanels  id="sourcetabpanels" />
+			</tabbox>
+		</vlayout>
+	</div>
+</zk>

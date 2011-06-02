@@ -154,7 +154,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resource.setCaseId(nc.getId());
 			resourceDao.saveOrUdate(resource);
 		}
-		Executions.getCurrent().sendRedirect("/" + nc.getToken() + (nc.getVersion() != 1 ? "/" + nc.getVersion() : ""));
+		Executions.getCurrent().sendRedirect("/" + nc.getToken() + ( "/" + nc.getVersion()));
 	}
 
 	/**

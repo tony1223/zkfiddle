@@ -57,13 +57,16 @@ public class ViewResultComposer extends GenericForwardComposer {
 					zkver.setValue(inst.getVersion());
 					
 					viewEditor.setTitle("Runnign sandbox:"+inst.getName());
-					directly.setText(hostName.toString()+"view/" + evt.getToken() + "/" + 
+					directly.setText("http://"+hostName.toString()+"view/" + evt.getToken() + "/" + 
 							evt.getVersion()+"/"+inst.getHash());
+					
 					content.setSrc(inst.getPath()+evt.getToken()+"/"+evt.getVersion());
+//					content.setSrc("http://localhost:8080/");
+//					content.setSrc(inst.getPath()+"dbn96j/7");
+					
+					
 					viewEditor.doModal();
-					// Clients.evalJavaScript("window.open('" +
-					// evt.getInstance().getPath() + evt.getToken() + "/"
-					// + evt.getVersion() + "')");
+//					 Clients.evalJavaScript("window.open('" +inst.getPath()+"dbn96j/7"+ "')");
 				}
 			}
 		});

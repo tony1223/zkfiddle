@@ -42,9 +42,9 @@ public class FiddleDataFilter implements Filter {
 		Integer version = null;
 
 		try {
-			if (match.find()) {
+ 			if (match.find()) {
 				token = match.group(1);
-				version = match.group(3) == null ? 1 : Integer.parseInt(match.group(3));
+ 				version = match.group(3) == null ? 1 : Integer.parseInt(match.group(3));
 			}
 		} catch (Exception e) {
 			return;

@@ -1,6 +1,7 @@
 package org.zkoss.fiddle.filter;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -23,16 +24,17 @@ public class FiddleInstanceFilter implements Filter {
 		in.setName(httprequest.getParameter("name"));
 		in.setPath(httprequest.getParameter("path"));
 		in.setVersion(httprequest.getParameter("ver"));
-
+		in.setLastUpdate(new Date());
+		
 		try {
 			InstanceManager im = InstanceManager.getInstance();
 			im.addInstance(in);
 			response.getWriter().println("true");
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.getWriter().println("false");
 		}
 		response.getWriter().close();
-
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {
