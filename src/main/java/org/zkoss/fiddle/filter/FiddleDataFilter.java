@@ -80,7 +80,7 @@ public class FiddleDataFilter implements Filter {
 			JSONObject obj = new JSONObject();
 			obj.put("type", ir.getType());
 			obj.put("name", ir.getName());
-			obj.put("content", ir.getContent());
+			obj.put("content", ir.getFinalContent());
 
 			json.push(obj);
 		}

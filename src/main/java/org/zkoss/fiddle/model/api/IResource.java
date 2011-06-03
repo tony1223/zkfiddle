@@ -43,4 +43,12 @@ public interface IResource {
 	public boolean isCanDelete();
 
 	public Resource clone();
+
+	public void setPkg(String pkg);
+
+	public String getPkg();
+
+	public void setFinalContent(String rawContent);
+
+	public String getFinalContent();
 }

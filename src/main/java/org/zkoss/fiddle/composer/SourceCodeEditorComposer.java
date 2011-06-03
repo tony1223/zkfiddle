@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.zkoss.codemirror.CodeEditor;
-import org.zkoss.fiddle.component.Texttab;
+import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.SaveEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
+import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
 import org.zkoss.fiddle.dao.CaseDaoImpl;
 import org.zkoss.fiddle.dao.ResourceDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
@@ -22,6 +22,7 @@ import org.zkoss.fiddle.model.ViewRequest;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
+import org.zkoss.fiddle.util.StringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -29,11 +30,9 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
-import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
-import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
@@ -59,12 +58,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	 */
 	private EventQueue queue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
 
-	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		//TODO ask user to have index.zul as a must have.
-		
+		// FIXME add logger for counting
+		// TODO ask user to have index.zul as a must have.
+
 		resources = new ArrayList<Resource>();
 
 		c = null; // new Case();
@@ -102,31 +101,50 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		}
 
-		applyResources(resources);
+		for (IResource resource : resources) {
+			SourceTabRendererFactory.getRenderer(resource.getType()).appendSourceTab(sourcetabs, sourcetabpanels,
+					resource);
+		}
 
 		queue.subscribe(new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
 				if (event instanceof SourceInsertEvent) {
 					SourceInsertEvent insertEvent = (SourceInsertEvent) event;
 					Resource ir = getDefaultResource(insertEvent.getType(), insertEvent.getFileName());
 					resources.add(ir);
-					insertResource(ir);
+					SourceTabRendererFactory.getRenderer(ir.getType()).appendSourceTab(sourcetabs, sourcetabpanels, ir);
 				} else if (event instanceof SaveEvent) {
 					SaveEvent saveEvt = (SaveEvent) event;
 					saveCase(resources, saveEvt.isFork());
+				} else if (event instanceof SourceRemoveEvent) {
+					SourceRemoveEvent sourceRmEvt = (SourceRemoveEvent) event;
+					if (sourceRmEvt.getResource() == null) {
+						throw new IllegalStateException("removing null resource ");
+					}
+					int k = -1;
+					for (int i = 0; i < resources.size(); ++i) {
+						if (resources.get(i) == sourceRmEvt.getResource()) {
+							k = i;
+							break;
+						}
+					}
+					if (k != -1)
+						resources.remove(k);
 				}
 			}
 		});
 		// @see FiddleDispatcherFilter for those use this directly
 		ViewRequest vr = (ViewRequest) requestScope.get("runview");
+
 		if (vr != null) {
+
 			FiddleInstance inst = vr.getFiddleInstance();
 
-			if (inst != null) { // inst muse be null
-				// TODO review this
+			if (inst != null) { // inst can't be null
 				// use echo event to find a good timing
-				ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, vr.getToken(), vr.getTokenVersion(),
-						vr.getFiddleInstance());
+				ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, vr.getToken(),
+						vr.getTokenVersion(), vr.getFiddleInstance());
 				Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, sv));
 			} else {
 				alert("Can't find sandbox from specific version ");
@@ -177,6 +195,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		for (Resource resource : resources) {
 			resource.setId(null);
 			resource.setCaseId(nc.getId());
+			resource.buildFinalConetnt(nc.getToken(), nc.getVersion());
 			resourceDao.saveOrUdate(resource);
 		}
 		Executions.getCurrent().sendRedirect("/code/" + nc.getToken() + ("/" + nc.getVersion()));
@@ -190,19 +209,24 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	 * @return
 	 */
 	private Resource getDefaultResource(int type, String name) {
-		if (IResource.TYPE_ZUL == type)
+		if (IResource.TYPE_ZUL == type) {
 			return new Resource(IResource.TYPE_ZUL, name, "<zk>\n  <window>hello world1 </window>\n</zk>");
-		else if (IResource.TYPE_JS == type)
+		} else if (IResource.TYPE_JS == type) {
 			return new Resource(IResource.TYPE_JS, name, "function hello(){alert('hello');}");
-		else if (IResource.TYPE_CSS == type)
+		} else if (IResource.TYPE_CSS == type) {
 			return new Resource(IResource.TYPE_CSS, name, ".hello{ \n color:red; \n }");
-		else if (IResource.TYPE_HTML == type)
-			return (new Resource(IResource.TYPE_HTML, name, "<html>\n  <head>\n    <title>Hello</title>\n  </head>\n"
-					+ "<body>\n    hello\n  </body>\n</html>"));
-		else if (IResource.TYPE_JAVA == type)
-			return (new Resource(IResource.TYPE_JAVA, name, "public class " + name.replaceAll("\\.java", "")
-					+ "{\n public void hello(){ \n    System.out.println(\"Hello\"); \n }\n\n}"));
-		else
+		} else if (IResource.TYPE_HTML == type) {
+			return (new Resource(IResource.TYPE_HTML, name, StringUtil.concatln(
+					"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n", "<body>\n    hello\n  </body>\n</html>")));
+		} else if (IResource.TYPE_JAVA == type) {
+			return (new Resource(IResource.TYPE_JAVA, name, 
+					StringUtil.concatln("import org.zkoss.zk.ui.*;",
+					"import org.zkoss.zk.ui.event.*;",
+					"import org.zkoss.zk.ui.util.*;",
+					"import org.zkoss.zul.*;\n")+
+					"public class "	+ name.replaceAll("\\.[jJ][aA][Vv][Aa]", "")+
+					 "{\n public void hello(){ \n    System.out.println(\"Hello\"); \n }\n\n}"));
+		} else
 			return null;
 	}
 
@@ -213,19 +237,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	 * @return
 	 */
 	private IResource getDefaultResource(int type) {
-		if (IResource.TYPE_ZUL == type){
-			IResource r =getDefaultResource(type, "index.zul");
+		if (IResource.TYPE_ZUL == type) {
+			IResource r = getDefaultResource(type, "index.zul");
 			r.setCanDelete(false);
 			return r;
-		}
-		else if (IResource.TYPE_JS == type)
+		} else if (IResource.TYPE_JS == type)
 			return getDefaultResource(type, "index.js");
 		else if (IResource.TYPE_CSS == type)
 			return getDefaultResource(type, "index.css");
 		else if (IResource.TYPE_HTML == type)
 			return getDefaultResource(type, "index.html");
 		else if (IResource.TYPE_JAVA == type)
-			return getDefaultResource(type, "Test.java");
+			return getDefaultResource(type, "TestComposer.java");
 		else
 			return null;
 	}
@@ -233,9 +256,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private List<Resource> getDefaultResources() {
 		List resources = new ArrayList<IResource>();
 		resources.add(getDefaultResource(IResource.TYPE_ZUL));
-		resources.add(getDefaultResource(IResource.TYPE_JS));
-		resources.add(getDefaultResource(IResource.TYPE_CSS));
-		resources.add(getDefaultResource(IResource.TYPE_HTML));
+		// resources.add(getDefaultResource(IResource.TYPE_JS));
+		// resources.add(getDefaultResource(IResource.TYPE_CSS));
+		// resources.add(getDefaultResource(IResource.TYPE_HTML));
 		resources.add(getDefaultResource(IResource.TYPE_JAVA));
 
 		return resources;
@@ -248,82 +271,4 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		queue.publish(new SourceInsertEvent(null, null, fileNameVal, typeVal));
 	}
 
-	private void insertResource(final IResource resource) {
-		if (sourcetabs == null || sourcetabpanels == null) {
-			throw new IllegalStateException("sourcetabpanels/sourcetabs is not ready !!\n"
-					+ " do you call this after doAfterCompose "
-					+ "(and be sure you called super.doAfterCompose()) or using in wrong page? ");
-		}
-
-		// TODO using swifttab to replace this if possible
-		/* creating tab */
-		Texttab texttab = new Texttab(resource.getTypeName());
-		texttab.setAttribute("model", resource);
-
-		final Textbox box = new Textbox(resource.getName());
-		box.setSclass("tab-textbox");
-		box.setConstraint("no empty");
-		box.setInplace(true);
-		texttab.appendChild(box);
-		texttab.setClosable(resource.isCanDelete());
-
-		box.addEventListener("onChange", new EventListener() {
-
-			public void onEvent(Event event) throws Exception {
-				resource.setName(box.getValue());
-			}
-		});
-
-		texttab.addEventListener("onClose", new EventListener() {
-
-			public void onEvent(Event event) throws Exception {
-				Texttab tab = (Texttab) event.getTarget();
-				IResource ir = (IResource) tab.getAttribute("model");
-
-				// remove the resource
-				int k = -1;
-				for (int i = 0; i < resources.size(); ++i) {
-					if (resources.get(i) == ir) {
-						k = i;
-						break;
-					}
-				}
-				if (k != -1)
-					resources.remove(k);
-
-			}
-		});
-
-		sourcetabs.appendChild(texttab);
-
-		/* creating Tabpanel */
-		Tabpanel sourcepanel = new Tabpanel();
-
-		CodeEditor ce = new CodeEditor();
-		ce.setMode(resource.getTypeMode());
-		ce.setValue(resource.getContent());
-		ce.setHeight("400px");
-		ce.setWidth("auto");
-		ce.setAttribute("model", resource);
-
-		ce.addEventListener("onChange", new EventListener() {
-
-			public void onEvent(Event event) throws Exception {
-				InputEvent inpEvt = (InputEvent) event;
-				CodeEditor ce = (CodeEditor) event.getTarget();
-				Resource r = (Resource) ce.getAttribute("model");
-				r.setContent(inpEvt.getValue());
-			}
-		});
-
-		sourcepanel.appendChild(ce);
-
-		sourcetabpanels.appendChild(sourcepanel);
-	}
-
-	private void applyResources(List<Resource> resources) {
-		for (IResource resource : resources) {
-			insertResource(resource);
-		}
-	}
 }
