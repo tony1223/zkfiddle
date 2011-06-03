@@ -16,7 +16,7 @@
 						label="Save" />
 					<button width="100px" id="forkBtn" height="60px"
 						label="Fork" />
-					<hlayout style="margin-left:100px;">
+					<hlayout id="views" style="margin-left:100px;">
 						<combobox id="instances" readonly="true" width="180px" />
 						<button width="100px" id="viewBtn" style="color:red;"
 							height="30px" label="View" />

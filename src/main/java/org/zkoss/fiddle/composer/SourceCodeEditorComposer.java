@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
@@ -22,6 +24,7 @@ import org.zkoss.fiddle.model.ViewRequest;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
+import org.zkoss.fiddle.util.FileUtil;
 import org.zkoss.fiddle.util.StringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -209,8 +212,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	 * @return
 	 */
 	private Resource getDefaultResource(int type, String name) {
+		
+		ServletContext req = (ServletContext) Executions.getCurrent().getDesktop().getWebApp().getNativeContext();
+		
 		if (IResource.TYPE_ZUL == type) {
-			return new Resource(IResource.TYPE_ZUL, name, "<zk>\n  <window>hello world1 </window>\n</zk>");
+			return new Resource(IResource.TYPE_ZUL, name,FileUtil.readIfExist(req.getRealPath("/WEB-INF/_templates/index.zul")));
 		} else if (IResource.TYPE_JS == type) {
 			return new Resource(IResource.TYPE_JS, name, "function hello(){alert('hello');}");
 		} else if (IResource.TYPE_CSS == type) {
@@ -219,13 +225,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			return (new Resource(IResource.TYPE_HTML, name, StringUtil.concatln(
 					"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n", "<body>\n    hello\n  </body>\n</html>")));
 		} else if (IResource.TYPE_JAVA == type) {
-			return (new Resource(IResource.TYPE_JAVA, name, 
-					StringUtil.concatln("import org.zkoss.zk.ui.*;",
-					"import org.zkoss.zk.ui.event.*;",
-					"import org.zkoss.zk.ui.util.*;",
-					"import org.zkoss.zul.*;\n")+
-					"public class "	+ name.replaceAll("\\.[jJ][aA][Vv][Aa]", "")+
-					 "{\n public void hello(){ \n    System.out.println(\"Hello\"); \n }\n\n}"));
+			
+			return new Resource(IResource.TYPE_JAVA, name, 
+				FileUtil.readIfExist(req.getRealPath("/WEB-INF/_templates/TestComposer.java"))
+			);
 		} else
 			return null;
 	}

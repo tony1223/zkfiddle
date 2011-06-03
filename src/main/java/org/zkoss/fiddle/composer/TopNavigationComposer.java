@@ -17,6 +17,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.ComboitemRenderer;
+import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.api.Button;
 import org.zkoss.zul.event.ZulEvents;
@@ -35,6 +36,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	private String token;
 
 	private String ver;
+	
+	private Hlayout views; 
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -43,8 +46,11 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		token = (String) requestScope.get("token");
 		ver = (String) requestScope.get("ver");
 
+		if(token == null){
+			views.detach();
+		}
+		
 		FiddleInstanceManager instanceManager = FiddleInstanceManager.getInstance();
-
 		Collection<FiddleInstance> acounts = instanceManager.listFiddleInstances().values();
 
 		if (acounts.size() == 0) {
@@ -66,6 +72,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 				instances.setSelectedIndex(0);
 			}
 		});
+
 
 	}
 

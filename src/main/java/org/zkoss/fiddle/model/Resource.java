@@ -1,7 +1,6 @@
 package org.zkoss.fiddle.model;
 
 import java.util.Date;
-import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.zkoss.fiddle.component.renderer.JavaTabRenderer;
+import org.zkoss.fiddle.component.renderer.JavaSourceTabRenderer;
 import org.zkoss.fiddle.model.api.IResource;
 
 @Entity
@@ -175,6 +174,7 @@ public class Resource implements IResource {
 		Resource resource = new Resource();
 		resource.setCaseId(this.caseId);
 		resource.setContent(this.content);
+		resource.setCanDelete(this.canDelete);
 		resource.setName(this.name);
 		resource.setType(this.type);
 		resource.setId(this.id);
@@ -197,23 +197,27 @@ public class Resource implements IResource {
 			throw new IllegalStateException("content is null ");
 		}
 
-		String finalcontent, cont = (this.content == null ? this.content : "");
-		String escape = Pattern.quote(JavaTabRenderer.PACKAGE_TOKEN);
+		String finalcontent, cont = (this.content != null ? this.content : "");
 
-		String replacedtoken = token + "$$" + version;
+		String replacedtoken = "j"+token + "\\$v" + version;
 
 		if (type == TYPE_JAVA) {
-			finalcontent = "package " + JavaTabRenderer.PACKAGE_PREFIX + pkg + ";\n\n" + cont;
-			this.finalContent = finalcontent.replaceAll(escape, replacedtoken);
+			finalcontent = "package " + JavaSourceTabRenderer.PACKAGE_PREFIX + JavaSourceTabRenderer.PACKAGE_TOKEN + pkg + ";\n\n" + cont;
+			this.finalContent = finalcontent.replaceAll(JavaSourceTabRenderer.PACKAGE_TOKEN_ESCAPE, replacedtoken);
 		} else if (type == TYPE_ZUL) {
 			finalcontent = cont;
-			this.finalContent = cont.replaceAll(escape, replacedtoken);
+			this.finalContent = finalcontent.replaceAll(JavaSourceTabRenderer.PACKAGE_TOKEN_ESCAPE, replacedtoken);
+			
 		} else {
 			this.finalContent = this.content;
 		}
 
 	}
 
+	public static void main(String[] args) {
+		System.out.println("123456".replaceAll("(123)","\\$v1"));
+	}
+	
 	public void setCanDelete(boolean canDelete) {
 		this.canDelete = canDelete;
 	}

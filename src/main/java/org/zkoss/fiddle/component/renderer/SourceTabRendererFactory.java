@@ -13,7 +13,7 @@ public class SourceTabRendererFactory {
 	private static ISourceTabRenderer defRenderer = null;
 	
 	static{
-		renderer.put(IResource.TYPE_JAVA,new JavaTabRenderer());
+		renderer.put(IResource.TYPE_JAVA,new JavaSourceTabRenderer());
 		defRenderer = new SourceTabRenderer();
 	}
 	

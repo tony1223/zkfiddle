@@ -15,10 +15,11 @@ import org.zkoss.zul.Label;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 
-public class JavaTabRenderer extends SourceTabRenderer {
+public class JavaSourceTabRenderer extends SourceTabRenderer {
 
-	public static final String PACKAGE_TOKEN = "$$fiddle$$";
-	public static final String PACKAGE_PREFIX = "org." + PACKAGE_TOKEN;
+	public static final String PACKAGE_TOKEN = "$pkg$";
+	public static final String PACKAGE_TOKEN_ESCAPE = "\\$pkg\\$";
+	public static final String PACKAGE_PREFIX = "fiddle.";
 	
 	private Pattern packageRule = Pattern.compile("^[a-zA-Z_\\$][\\w\\$]*(?:\\.[a-zA-Z_\\$][\\w\\$]*)*$");
 
@@ -45,7 +46,7 @@ public class JavaTabRenderer extends SourceTabRenderer {
 
 		txtPkg.setConstraint(new Constraint() {
 			public void validate(Component comp, Object value) throws WrongValueException {
-				if (!packageRule.matcher( PACKAGE_PREFIX + (String) value).matches()) {
+				if (!packageRule.matcher( PACKAGE_PREFIX + PACKAGE_TOKEN + (String) value).matches()) {
 					throw new WrongValueException("Not a valid package name");
 				}
 			}

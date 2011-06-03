@@ -8,6 +8,14 @@ import java.io.InputStreamReader;
 
 public class FileUtil {
 
+	public static String readIfExist(String path){
+		try{
+			return read(new File(path), "UTF-8");
+		}catch(Exception e){
+			return "";
+		}
+	}
+	
 	public static String read(String path) throws IOException{
 		return read(new File(path), "UTF-8");
 	}
@@ -24,7 +32,7 @@ public class FileUtil {
 
 		String input = br.readLine();
 		while (input != null) {
-			content.append(input);
+			content.append(input+"\n");
 			input = br.readLine();
 		}
 
