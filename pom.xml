@@ -239,13 +239,7 @@
 		<groupId>org.zkoss.external</groupId>
 		<artifactId>codeeditor</artifactId>
 		<version>0.8.0</version>
-	</dependency>	
-	
-	<dependency>
-		<groupId>org.zkoss.zest</groupId>
-		<artifactId>zest</artifactId>
-		<version>1.0.0</version>
-	</dependency>	
+	</dependency>
 	
 	<!-- hsqldb -->
 	<dependency>
