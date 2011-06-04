@@ -32,9 +32,9 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		label.setSclass("c-like-keyword");
 		hlayout.appendChild(label);
 		 
-		Label label2 = new Label("org." + PACKAGE_TOKEN);
-		label2.setTooltiptext("since we have to prevent package conflict ,"
-				+ " so we use org.$$fiddle$$ as your class package prefix.");
+		Label label2 = new Label("fiddle." + PACKAGE_TOKEN);
+		label2.setTooltiptext("since we have to prevent package conflict for every version ,"
+				+ " so we use org.$$fiddle$$ as your class package by default.");
 		hlayout.appendChild(label2);
 		
 		Textbox txtPkg = new Textbox();
