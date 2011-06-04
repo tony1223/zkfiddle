@@ -12,6 +12,7 @@
 			<div >
 				<label value="Insert new file" 
 					style="padding-left:20px;padding-right:10px;" />  
+					<!-- TODO use selectbox instead. -->
 				<zscript><![CDATA[
 				    String[] data = new String[]{
 				    		"zul",

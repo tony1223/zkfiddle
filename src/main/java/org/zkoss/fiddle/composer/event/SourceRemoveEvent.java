@@ -13,6 +13,11 @@ public class SourceRemoveEvent extends Event{
 		resource =ir;
 	}
 	
+	public SourceRemoveEvent(Component target,IResource ir){
+		super(FiddleEvents.ON_SOURCE_REMOVE,target,null);
+		resource =ir;
+	}
+	
 	public IResource getResource() {
 		return resource;
 	}

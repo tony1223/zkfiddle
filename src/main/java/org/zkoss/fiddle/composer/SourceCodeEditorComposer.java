@@ -11,6 +11,7 @@ import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.SaveEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
+import org.zkoss.fiddle.composer.event.SourceChangedEvent;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
 import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
 import org.zkoss.fiddle.dao.CaseDaoImpl;
@@ -59,7 +60,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	/**
 	 * we use desktop level event queue.
 	 */
-	private EventQueue queue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
+	private EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -88,7 +89,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		}
 
-		if (c == null || c.getId() == null) { // new case!
+		boolean newCase= (c == null || c.getId() == null);
+		if (newCase) { // new case!
 			resources.addAll(getDefaultResources());
 		} else {
 			IResourceDao dao = new ResourceDaoImpl();
@@ -107,12 +109,24 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		for (IResource resource : resources) {
 			SourceTabRendererFactory.getRenderer(resource.getType()).appendSourceTab(sourcetabs, sourcetabpanels,
 					resource);
+			
+			
+			if(newCase){
+				//Notify content to do some processing,
+				//since we use desktop scope eventQueue,
+				//it will not be a performance issue.
+				sourceQueue.publish(new SourceChangedEvent(null,resource));
+			}
 		}
 
-		queue.subscribe(new EventListener() {
+		sourceQueue.subscribe(new EventListener() {
 
 			public void onEvent(Event event) throws Exception {
-				if (event instanceof SourceInsertEvent) {
+				
+				if (event instanceof SourceChangedEvent){
+					SourceChangedEvent insertEvent = (SourceChangedEvent) event;
+					//FIXME source change
+				}else if (event instanceof SourceInsertEvent) {
 					SourceInsertEvent insertEvent = (SourceInsertEvent) event;
 					Resource ir = getDefaultResource(insertEvent.getType(), insertEvent.getFileName());
 					resources.add(ir);
@@ -125,15 +139,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					if (sourceRmEvt.getResource() == null) {
 						throw new IllegalStateException("removing null resource ");
 					}
-					int k = -1;
-					for (int i = 0; i < resources.size(); ++i) {
-						if (resources.get(i) == sourceRmEvt.getResource()) {
-							k = i;
-							break;
-						}
-					}
-					if (k != -1)
-						resources.remove(k);
+					removeResource(sourceRmEvt.getResource());
 				}
 			}
 		});
@@ -155,6 +161,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 	}
 
+	private void removeResource(IResource ir){
+		int k = -1;
+		for (int i = 0; i < resources.size(); ++i) {
+			if (resources.get(i) == ir) {
+				k = i;
+				break;
+			}
+		}
+		if (k != -1)
+			resources.remove(k);
+	}
+	
 	public void onShowResult(Event e) {
 		EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish((ShowResultEvent) e.getData());
 	}
@@ -271,7 +289,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		int typeVal = type.getSelectedIndex();
 		String fileNameVal = fileName.getValue();
 
-		queue.publish(new SourceInsertEvent(null, null, fileNameVal, typeVal));
+		sourceQueue.publish(new SourceInsertEvent(null, null, fileNameVal, typeVal));
 	}
 
 }

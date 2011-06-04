@@ -2,11 +2,15 @@ package org.zkoss.fiddle.component.renderer;
 
 import java.util.regex.Pattern;
 
+import org.zkoss.fiddle.composer.event.FiddleEventQueues;
+import org.zkoss.fiddle.composer.event.SourceChangedEvent;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zul.Constraint;
@@ -32,10 +36,13 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		label.setSclass("c-like-keyword");
 		hlayout.appendChild(label);
 		 
-		Label label2 = new Label("fiddle." + PACKAGE_TOKEN);
+		Label label2 = new Label(PACKAGE_PREFIX + PACKAGE_TOKEN);
 		label2.setTooltiptext("since we have to prevent package conflict for every version ,"
 				+ " so we use org.$$fiddle$$ as your class package by default.");
 		hlayout.appendChild(label2);
+		
+		//we use desktop scope , so it's ok to lookup every time.
+		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
 		
 		Textbox txtPkg = new Textbox();
 		txtPkg.setInplace(true);
@@ -54,6 +61,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		txtPkg.addEventListener(Events.ON_CHANGE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				resource.setPkg(((InputEvent) event).getValue());
+				sourceQueue.publish(new SourceChangedEvent(null,resource));
 			}
 		});
 
