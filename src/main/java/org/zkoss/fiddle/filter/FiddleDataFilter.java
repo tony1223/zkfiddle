@@ -81,10 +81,6 @@ public class FiddleDataFilter implements Filter {
 			obj.put("type", ir.getType());
 			obj.put("name", ir.getName());
 			obj.put("content", ir.getFinalContent());
-			System.out.println("name:"+ir.getName());
-			System.out.println("content:"+ir.getFinalContent());
-			
-
 			json.push(obj);
 		}
 
