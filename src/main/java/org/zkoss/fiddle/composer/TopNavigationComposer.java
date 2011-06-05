@@ -6,7 +6,8 @@ import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.SaveEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.instance.FiddleInstanceManager;
+import org.zkoss.fiddle.composer.event.SourceChangedEvent;
+import org.zkoss.fiddle.manager.FiddleInstanceManager;
 import org.zkoss.fiddle.model.FiddleInstance;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -17,7 +18,6 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.ComboitemRenderer;
-import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.api.Button;
 import org.zkoss.zul.event.ZulEvents;
@@ -27,29 +27,15 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	/**
 	 * we use desktop level event queue.
 	 */
-	private EventQueue queue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
+	private EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
 
-	private Combobox instances;
+	private Combobox instances = null;
 
-	private Button viewBtn;
+	private Button viewBtn = null;
 
-	private String token;
-
-	private String ver;
-	
-	private Hlayout views; 
-
-	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		token = (String) requestScope.get("token");
-		ver = (String) requestScope.get("ver");
-
-		if(token == null){
-			views.detach();
-		}
-		
 		FiddleInstanceManager instanceManager = FiddleInstanceManager.getInstance();
 		Collection<FiddleInstance> acounts = instanceManager.listFiddleInstances().values();
 
@@ -67,15 +53,21 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			instances.setModel(new ListModelList(instanceManager.listFiddleInstances().values()));
 		}
 		instances.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
-
 			public void onEvent(Event event) throws Exception {
 				instances.setSelectedIndex(0);
 			}
 		});
-
-
+		
+		sourceQueue.subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if(event instanceof SourceChangedEvent){
+					viewBtn.setLabel("*Run");
+				}
+			}
+		});
+		
 	}
-
+	
 	public void onClick$viewBtn() {
 		FiddleInstance inst = null;
 		if (instances.getSelectedIndex() == -1)
@@ -83,15 +75,15 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		else
 			inst = (FiddleInstance) instances.getSelectedItem().getValue();
 
-		EventQueue eq = EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true);
-		eq.publish(new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, token, ver, inst));
+		//TODO review this
+		sourceQueue.publish(new ShowResultEvent(FiddleEvents.ON_SOURCE_SHOW_RESULT , null, inst));
 	}
 
 	public void onClick$saveBtn() {
-		queue.publish(new SaveEvent());
+		sourceQueue.publish(new SaveEvent());
 	}
 
 	public void onClick$forkBtn() {
-		queue.publish(new SaveEvent(true));
+		sourceQueue.publish(new SaveEvent(true));
 	}
 }

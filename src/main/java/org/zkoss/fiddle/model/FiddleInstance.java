@@ -2,6 +2,8 @@ package org.zkoss.fiddle.model;
 
 import java.util.Date;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
 
 public class FiddleInstance {
@@ -53,23 +55,14 @@ public class FiddleInstance {
 		return hash;
 	}
 
-	public int hashCode() {
-
-		if (name != null)
-			return name.hashCode();
-		else
-			return super.hashCode();
+	public boolean equals(final Object other) {
+		if (!(other instanceof FiddleInstance))
+			return false;
+		FiddleInstance castOther = (FiddleInstance) other;
+		return new EqualsBuilder().append(name, castOther.name).isEquals();
 	}
 
-	public boolean equals(Object obj) {
-		
-		if (!(obj instanceof FiddleInstance)) {
-			return super.equals(obj);
-		}
-		if (this.getName() == null) {
-			throw new IllegalStateException("FiddleInstance didn't contains name information");
-		}
-		FiddleInstance out = (FiddleInstance) obj;
-		return this.getName().equals(out.getName());
+	public int hashCode() {
+		return new HashCodeBuilder().append(name).toHashCode();
 	}
 }

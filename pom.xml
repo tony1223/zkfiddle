@@ -5,7 +5,7 @@
   <artifactId>datahandler</artifactId>
   <packaging>jar</packaging>
 	<properties>
-		<zk.version>5.0.8-SNAPSHOT</zk.version>
+		<zk.version>5.0.7.1</zk.version>
 		<zk.theme.version>5.0.7</zk.theme.version>
 		<zkel.version>1.1.0</zkel.version>
 		<commons-lang.version>2.4</commons-lang.version>
@@ -170,6 +170,16 @@
 		<version>${zk.theme.version}</version>
 	</dependency>
 	<dependency>
+		<groupId>org.zkoss.zk</groupId>
+		<artifactId>zk</artifactId>
+		<version>${zk.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.zkoss.zk</groupId>
+		<artifactId>zul</artifactId>
+		<version>${zk.version}</version>
+	</dependency>	
+	<dependency>
 		<groupId>org.zkoss.common</groupId>
 		<artifactId>zweb</artifactId>
 		<version>${zk.version}</version>
@@ -270,6 +280,13 @@
 	    <version>3.2.1</version>
 	</dependency>
 	<!-- Hibernate end -->
+	
+	<dependency>
+	    <groupId>log4j</groupId>
+	    <artifactId>log4j</artifactId>
+	    <version>1.2.16</version>
+	</dependency>	
+	
   </dependencies>
   <build>
     <finalName>datahandler</finalName>

@@ -1,8 +1,9 @@
 package org.zkoss.fiddle.model.api;
 
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
 
-public interface IResource {
+public interface IResource{
 
 	public static int TYPE_ZUL = 0;
 
@@ -51,4 +52,7 @@ public interface IResource {
 	public void setFinalContent(String rawContent);
 
 	public String getFinalContent();
+	
+	public void buildFinalConetnt(Case c) ;
+	
 }

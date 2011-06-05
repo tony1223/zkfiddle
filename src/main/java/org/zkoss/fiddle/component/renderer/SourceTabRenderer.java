@@ -34,9 +34,11 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		ce.addEventListener(Events.ON_CHANGE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 
-				InputEvent inpEvt = (InputEvent) event;
-				resource.setContent(inpEvt.getValue());
-				sourceQueue.publish(new SourceChangedEvent(null,resource));
+				if(event instanceof InputEvent){
+					InputEvent inpEvt = (InputEvent) event;
+					resource.setContent(inpEvt.getValue());
+					sourceQueue.publish(new SourceChangedEvent(null,resource));
+				}
 			}
 		});
 		return ce;
@@ -52,7 +54,10 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		box.setSclass("tab-textbox");
 		box.setConstraint("no empty");
 		box.setInplace(true);
-		box.setDisabled(!resource.isCanDelete());
+		if(!resource.isCanDelete()){
+			box.setReadonly(true);
+			box.setTooltiptext("you can't edit this file name since it's a must have.");
+		}
 
 		texttab.appendChild(box);
 		texttab.setClosable(resource.isCanDelete());

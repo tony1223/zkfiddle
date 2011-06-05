@@ -14,6 +14,7 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.A;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
@@ -32,6 +33,8 @@ public class ViewResultComposer extends GenericForwardComposer {
 	private Label msg;
 	
 	private A directlyLink;
+	
+	private Div directLinkContainer;
 
 	/**
 	 * we use desktop level event queue.
@@ -40,7 +43,24 @@ public class ViewResultComposer extends GenericForwardComposer {
 
 	private String hostpath;
 
-	@Override
+	private String getHostpath(){
+		if (hostpath == null) {
+			HttpServletRequest request = (HttpServletRequest) Executions.getCurrent().getNativeRequest();
+			StringBuffer hostName = new StringBuffer(request.getServerName());
+			if (request.getLocalPort() != 80) {
+				hostName.append(":" + request.getLocalPort());
+			}
+			if ("".equals(request.getContextPath())) {
+				hostName.append("/" + request.getContextPath());
+			} else {
+				hostName.append("/");
+			}
+			hostpath = "http://" + hostName.toString() ;
+		}
+		
+		return hostpath;
+
+	}
 	public void doAfterCompose(final Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
@@ -51,34 +71,25 @@ public class ViewResultComposer extends GenericForwardComposer {
 					ShowResultEvent evt = (ShowResultEvent) event;
 					viewEditor.setVisible(true);
 
-					if (hostpath == null) {
-						HttpServletRequest request = (HttpServletRequest) Executions.getCurrent().getNativeRequest();
-						StringBuffer hostName = new StringBuffer(request.getServerName());
-						if (request.getLocalPort() != 80) {
-							hostName.append(":" + request.getLocalPort());
-						}
-						if ("".equals(request.getContextPath())) {
-							hostName.append("/" + request.getContextPath());
-						} else {
-							hostName.append("/");
-						}
-						hostpath = "http://" + hostName.toString() ;
-					}
 
 					FiddleInstance inst = evt.getInstance();
 
 					zkver.setValue(inst.getZKVersion());
-
 					viewEditor.setTitle("Running sandbox:" + inst.getName());
 
 					
-					String tokenpath = evt.getToken() + "/" + evt.getVersion() + "/v" + inst.getZKVersion();
-					directly.setText( hostpath + "view/" + tokenpath	+ "?run=" + inst.getName());
-					directlyLink.setHref( hostpath + "direct/" + tokenpath	+ "?run=" + inst.getName());
+					if(evt.getCase().getVersion() != 0){
+						String tokenpath = evt.getCase().getToken() + "/" + evt.getCase().getVersion() + "/v" + inst.getZKVersion();
+						directly.setText( getHostpath() + "view/" + tokenpath	+ "?run=" + inst.getName());
+						directlyLink.setHref( getHostpath() + "direct/" + tokenpath	+ "?run=" + inst.getName());
+						directLinkContainer.setVisible(true);
+					}else{
+						directLinkContainer.setVisible(false);
+					}
 					
 					msg.setValue(""); //force it doing the update job 
 					msg.setValue("loading...");
-					content.setSrc(inst.getPath() + evt.getToken() + "/" + evt.getVersion());
+					content.setSrc(inst.getPath() + evt.getCase().getToken() + "/" + evt.getCase().getVersion());
 					// content.setSrc("http://localhost:8080/");
 					// content.setSrc(inst.getPath()+"dbn96j/7");
 

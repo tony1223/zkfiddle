@@ -60,8 +60,10 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		});
 		txtPkg.addEventListener(Events.ON_CHANGE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				resource.setPkg(((InputEvent) event).getValue());
-				sourceQueue.publish(new SourceChangedEvent(null,resource));
+				if(event instanceof InputEvent){
+					resource.setPkg(((InputEvent) event).getValue());
+					sourceQueue.publish(new SourceChangedEvent(null,resource));
+				}
 			}
 		});
 

@@ -35,6 +35,9 @@
 			    <tabs id="sourcetabs" />
 			    <tabpanels  id="sourcetabpanels" />
 			</tabbox>
+			<div id="contentDesc">
+			
+			</div>
 		</vlayout>
 	</div>
 </zk>

@@ -1,4 +1,4 @@
-package org.zkoss.fiddle.instance;
+package org.zkoss.fiddle.manager;
 
 import java.util.ArrayList;
 import java.util.Collections;

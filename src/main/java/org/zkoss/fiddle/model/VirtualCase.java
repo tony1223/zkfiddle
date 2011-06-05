@@ -1,0 +1,74 @@
+package org.zkoss.fiddle.model;
+
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang.builder.CompareToBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.zkoss.fiddle.model.api.IResource;
+
+/**
+ * a virtual case object used for visual case.
+ * 
+ * @author tony
+ * 
+ */
+public class VirtualCase implements Comparable {
+
+	private Case $case;
+
+	private List<IResource> resources;
+	
+	private Date createDate;
+
+	public VirtualCase(){
+		createDate = new Date();
+	}
+	
+	public VirtualCase(Case $case,List<IResource> res){
+		this.$case = $case;
+		this.resources = res;
+		createDate = new Date();
+	}
+
+	public Case getCase() {
+		return $case;
+	}
+
+	public void setCase(Case $case) {
+		this.$case = $case;
+	}
+
+	public List<IResource> getResources() {
+		return resources;
+	}
+
+	public void setResources(List<IResource> resources) {
+		this.resources = resources;
+	}
+
+	public boolean equals(final Object other) {
+		if (!(other instanceof VirtualCase))
+			return false;
+		VirtualCase castOther = (VirtualCase) other;
+		return new EqualsBuilder()
+			.append($case.getToken(), castOther.$case.getToken())
+			.append(resources, castOther.resources).isEquals();
+	}
+
+	public int hashCode() {
+		return new HashCodeBuilder().append($case).append(resources).toHashCode();
+	}
+
+	public int compareTo(final Object other) {
+		VirtualCase castOther = (VirtualCase) other;
+		return new CompareToBuilder().append(createDate, castOther.createDate).toComparison();
+	}
+
+	
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+}

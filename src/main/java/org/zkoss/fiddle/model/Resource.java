@@ -10,12 +10,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.zkoss.fiddle.component.renderer.JavaSourceTabRenderer;
 import org.zkoss.fiddle.model.api.IResource;
 
 @Entity
 @Table(name = "resources")
-public class Resource implements IResource {
+public class Resource implements IResource,Cloneable {
 
 	private Long id;
 
@@ -183,12 +187,16 @@ public class Resource implements IResource {
 		return resource;
 	}
 
-	@Transient
+	@Column
 	public boolean isCanDelete() {
 		return canDelete;
 	}
 
-	public void buildFinalConetnt(String token, int version) {
+	public void buildFinalConetnt(Case c) {
+		buildFinalConetnt(c.getToken(),c.getVersion());		
+	}
+	
+	private void buildFinalConetnt(String token, int version) {
 
 		if (token == null) {
 			throw new IllegalArgumentException("token is null ");
@@ -197,15 +205,15 @@ public class Resource implements IResource {
 			throw new IllegalStateException("content is null ");
 		}
 
-		String finalcontent, cont = (this.content != null ? this.content : "");
+		String finalcontent;
 
 		String replacedtoken = "j"+token + "\\$v" + version;
 
 		if (type == TYPE_JAVA) {
-			finalcontent = "package " + JavaSourceTabRenderer.PACKAGE_PREFIX + JavaSourceTabRenderer.PACKAGE_TOKEN + pkg + ";\n\n" + cont;
+			finalcontent = "package " + JavaSourceTabRenderer.PACKAGE_PREFIX + JavaSourceTabRenderer.PACKAGE_TOKEN + pkg + ";\n\n" + this.content;
 			this.finalContent = finalcontent.replaceAll(JavaSourceTabRenderer.PACKAGE_TOKEN_ESCAPE, replacedtoken);
 		} else if (type == TYPE_ZUL) {
-			finalcontent = cont;
+			finalcontent = this.content;
 			this.finalContent = finalcontent.replaceAll(JavaSourceTabRenderer.PACKAGE_TOKEN_ESCAPE, replacedtoken);
 			
 		} else {
@@ -222,4 +230,21 @@ public class Resource implements IResource {
 		this.canDelete = canDelete;
 	}
 
+	public boolean equals(final Object other) {
+		if (!(other instanceof Resource))
+			return false;
+		Resource castOther = (Resource) other;
+		return new EqualsBuilder().append(id, castOther.id).isEquals();
+	}
+
+	public int hashCode() {
+		return new HashCodeBuilder().append(id).toHashCode();
+	}
+
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("id", id).append("name", name)
+				.append("content", content).append("type", type).append("caseId", caseId)
+				.append("createDate", createDate).append("finalContent", finalContent).append("pkg", pkg)
+				.append("canDelete", canDelete).toString();
+	}
 }

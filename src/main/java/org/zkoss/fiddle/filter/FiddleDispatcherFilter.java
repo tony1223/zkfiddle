@@ -14,13 +14,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.zkoss.fiddle.instance.FiddleInstanceManager;
+import org.zkoss.fiddle.manager.FiddleInstanceManager;
 import org.zkoss.fiddle.model.FiddleInstance;
 import org.zkoss.fiddle.model.ViewRequest;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleDispatcherFilter implements Filter {
-
+	private Pattern code = Pattern.compile("^/sample/([^/.]{5,}?)/(\\d+)/?.*$");
+	private Pattern view = Pattern.compile("^/([^/.]{5,}?)/(\\d+)(/v([0-9\\.]+)/?)?.*$");
+	
 	public static void main(String[] args) {
 		String path = "/3591l7m/2";
 
@@ -32,10 +34,6 @@ public class FiddleDispatcherFilter implements Filter {
 		}
 
 	}
-
-	Pattern code = Pattern.compile("^/code/([^/.]{5,}?)/(\\d+)/?.*$");
-
-	Pattern view = Pattern.compile("^/([^/.]{5,}?)/(\\d+)(/v([0-9\\.]+)/?)?.*$");
 
 	public void doFilter(ServletRequest request2, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
@@ -52,6 +50,7 @@ public class FiddleDispatcherFilter implements Filter {
 
 		if (path.startsWith("/view") || path.startsWith("/direct")) {
 
+			//TODO: Redirect if case not found here
 			boolean directly = path.startsWith("/direct");
 			String newpath = directly ? path.substring(7) : path.substring(5);
 			// inst.getPath() + evt.getToken() + "/" + evt.getVersion()
@@ -108,7 +107,7 @@ public class FiddleDispatcherFilter implements Filter {
 					Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 				return;
 			}
-		} else if (path.startsWith("/code")) {
+		} else if (path.startsWith("/sample")) {
 			Matcher match = code.matcher(path);
 			if (match.find()) {
 				request.setAttribute("token", match.group(1));

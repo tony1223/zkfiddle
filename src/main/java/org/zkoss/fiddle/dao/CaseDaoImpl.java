@@ -21,7 +21,7 @@ public class CaseDaoImpl implements ICaseDao {
 		current = s;
 	}
 
-	public Session getCurrentSession() {
+	private Session getCurrentSession() {
 		return current == null ? HibernateUtil.currentSession() : current;
 	}
 

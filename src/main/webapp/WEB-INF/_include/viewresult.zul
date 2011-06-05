@@ -13,7 +13,7 @@
 					
 					<label id="msg" style="margin-left:30px;color:red;" />
 				</div>
-				<div style="float:right;">
+				<div style="float:right;" id="directLinkContainer">
 					<label value="Direct Link:" />
 					<textbox id="directly" w:onClick="this.select()" style="width:350px;" readonly="true" />
 					<a id="directlyLink" target="_blank">

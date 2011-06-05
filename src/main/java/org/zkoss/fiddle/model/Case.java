@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Index;
 import org.zkoss.fiddle.model.api.ICase;
 
@@ -93,4 +95,11 @@ public class Case implements ICase {
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
+
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("id", id).append("thread", thread)
+				.append("fromId", fromId).append("token", token).append("version", version)
+				.append("createDate", createDate).toString();
+	}
+
 }

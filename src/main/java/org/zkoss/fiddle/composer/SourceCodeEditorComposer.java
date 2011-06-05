@@ -18,10 +18,12 @@ import org.zkoss.fiddle.dao.CaseDaoImpl;
 import org.zkoss.fiddle.dao.ResourceDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
+import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.FiddleInstance;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.ViewRequest;
+import org.zkoss.fiddle.model.VirtualCase;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
@@ -53,9 +55,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Textbox fileName;
 
-	private ICase c = null;
+	private ICase $case = null;
 
 	private Button saveBtn;
+	
+	/**
+	 * a state for if content is changed.
+	 * 
+	 * Note: For implementation ,
+	 * 		 If user modify the content and then modify it back ,
+	 *       we think taht's a source changed state ,too.
+	 */
+	private boolean sourceChange = false;
 
 	/**
 	 * we use desktop level event queue.
@@ -70,31 +81,31 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		resources = new ArrayList<Resource>();
 
-		c = null; // new Case();
+		$case = null; // new Case();
 		String caseToken = (String) requestScope.get("token");
 		String version = (String) requestScope.get("ver");
 		if (caseToken != null) {
 			ICaseDao caseDao = new CaseDaoImpl();
 
 			try {
-				c = caseDao.findCaseByToken(caseToken, version == null ? null : Integer.parseInt(version));
-				if (c == null) {
+				$case = caseDao.findCaseByToken(caseToken, version == null ? null : Integer.parseInt(version));
+				if ($case == null) {
 					Executions.sendRedirect("/");
 				}
 				saveBtn.setLabel("Update");
 			} catch (IllegalArgumentException e) { // means caseId is not a
 													// valid string
 				// TODO wrote a logger here.
-				c = null;
+				$case = null;
 			}
 		}
 
-		boolean newCase= (c == null || c.getId() == null);
+		boolean newCase= ($case == null || $case.getId() == null);
 		if (newCase) { // new case!
 			resources.addAll(getDefaultResources());
 		} else {
 			IResourceDao dao = new ResourceDaoImpl();
-			List<Resource> dbResources = dao.listByCase(c.getId());
+			List<Resource> dbResources = dao.listByCase($case.getId());
 			for (IResource r : dbResources) {
 				// we clone it , since we will create a new resource instead
 				// of updating old one..
@@ -124,8 +135,37 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			public void onEvent(Event event) throws Exception {
 				
 				if (event instanceof SourceChangedEvent){
-					SourceChangedEvent insertEvent = (SourceChangedEvent) event;
-					//FIXME source change
+					sourceChange = true;
+				}else if (event instanceof ShowResultEvent){
+					ShowResultEvent result = (ShowResultEvent) event;
+										
+					if(sourceChange){
+						Case tmpcase = new Case();
+						CRCCaseIDEncoder encoder = CRCCaseIDEncoder.getInstance();
+						String token = encoder.encode(new Date().getTime());
+						tmpcase.setToken(token);
+						tmpcase.setVersion(0);
+						
+						
+						
+						List<IResource> newlist= new ArrayList<IResource>();
+						for(IResource current :resources){
+							IResource cloneResource = current.clone();
+							cloneResource.buildFinalConetnt(tmpcase);
+							newlist.add(cloneResource);
+						}
+						VirtualCase virtualCase = new VirtualCase(tmpcase,newlist);
+						VirtualCaseManager.getInstance().save(virtualCase);
+						result.setCase(tmpcase);
+					}else{
+						result.setCase($case);
+					}
+					
+					
+					//TODO review if we really need to build such compiclated...
+					//forward to another queue
+					EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish(result);
+					
 				}else if (event instanceof SourceInsertEvent) {
 					SourceInsertEvent insertEvent = (SourceInsertEvent) event;
 					Resource ir = getDefaultResource(insertEvent.getType(), insertEvent.getFileName());
@@ -152,13 +192,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 			if (inst != null) { // inst can't be null
 				// use echo event to find a good timing
-				ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, vr.getToken(),
-						vr.getTokenVersion(), vr.getFiddleInstance());
+				ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT,$case, vr.getFiddleInstance());
 				Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, sv));
 			} else {
 				alert("Can't find sandbox from specific version ");
 			}
 		}
+	}
+	
+	public void onShowResult(Event e) {
+		EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish((ShowResultEvent) e.getData());
 	}
 
 	private void removeResource(IResource ir){
@@ -173,27 +216,23 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resources.remove(k);
 	}
 	
-	public void onShowResult(Event e) {
-		EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish((ShowResultEvent) e.getData());
-	}
-
 	private void saveCase(List<Resource> resources, boolean fork) {
-		Case nc = new Case();
-		nc.setCreateDate(new Date());
+		Case newCase = new Case();
+		newCase.setCreateDate(new Date());
 
 		ICaseDao caseDao = new CaseDaoImpl();
-		if (c == null || fork) { // Create a brand new case
-			nc.setVersion(1);
-			nc.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
+		if ($case == null || fork) { // Create a brand new case
+			newCase.setVersion(1);
+			newCase.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
 
-			if (c != null) { // fork
-				nc.setFromId(c.getId());
+			if ($case != null) { // fork
+				newCase.setFromId($case.getId());
 			}
 
 		} else {
-			nc.setToken(c.getToken());
-			nc.setThread(c.getThread());
-			nc.setVersion(caseDao.getLastVersionByToken(c.getToken()) + 1);
+			newCase.setToken($case.getToken());
+			newCase.setThread($case.getThread());
+			newCase.setVersion(caseDao.getLastVersionByToken($case.getToken()) + 1);
 		}
 
 		/*
@@ -201,25 +240,25 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		 * built as a unit.
 		 */
 
-		caseDao.saveOrUdate(nc);
+		caseDao.saveOrUdate(newCase);
 
-		if (c == null || fork) { // A brand new case
+		if ($case == null || fork) { // A brand new case
 			// TonyQ:
 			// we have to set the thread information after we get the id.
 			// TODO:check if we could use trigger or something
 			// to handle this in DB. currently we have to live with it.
-			nc.setThread(nc.getId());
-			caseDao.saveOrUdate(nc);
+			newCase.setThread(newCase.getId());
+			caseDao.saveOrUdate(newCase);
 		}
 
 		IResourceDao resourceDao = new ResourceDaoImpl();
 		for (Resource resource : resources) {
 			resource.setId(null);
-			resource.setCaseId(nc.getId());
-			resource.buildFinalConetnt(nc.getToken(), nc.getVersion());
+			resource.setCaseId(newCase.getId());
+			resource.buildFinalConetnt(newCase);
 			resourceDao.saveOrUdate(resource);
 		}
-		Executions.getCurrent().sendRedirect("/code/" + nc.getToken() + ("/" + nc.getVersion()));
+		Executions.getCurrent().sendRedirect("/sample/" + newCase.getToken() + ("/" + newCase.getVersion()));
 	}
 
 	/**

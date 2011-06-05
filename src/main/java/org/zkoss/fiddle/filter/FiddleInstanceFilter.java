@@ -11,7 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.zkoss.fiddle.instance.FiddleInstanceManager;
+import org.zkoss.fiddle.manager.FiddleInstanceManager;
 import org.zkoss.fiddle.model.FiddleInstance;
 
 public class FiddleInstanceFilter implements Filter {
