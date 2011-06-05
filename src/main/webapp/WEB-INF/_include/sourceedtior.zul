@@ -9,7 +9,14 @@
 	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" 
 		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" height="100%">
 		<vlayout sclass="source-vlayout" height="100%">
-			<div >
+			<div>
+				<label value="Title:" 
+					style="padding-left:20px;padding-right:10px;" />  
+				<textbox id="caseTitle" value="" maxlength="20" cols="25" tooltiptext="Describe your case here! (allowed only 20 chars)"/>
+				<label value="(Optional)"/>
+			</div>
+			<separator bar="true" spacing="5px" />		
+			<div>
 				<label value="Insert new file" 
 					style="padding-left:20px;padding-right:10px;" />  
 					<!-- TODO use selectbox instead. -->

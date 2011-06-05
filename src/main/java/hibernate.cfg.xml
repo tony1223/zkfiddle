@@ -27,6 +27,16 @@
         <!-- Disable the second-level cache -->
         <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
 
+        <!-- Echo all executed SQL to stdout -->
+		<!--
+        <property name="show_sql">true</property>
+		-->
+
+        <!-- Drop and re-create the database schema on startup -->
+		<!--
+        <property name="hbm2ddl.auto">create</property>
+		-->
+  
         <mapping class="org.zkoss.fiddle.model.Resource" />
 		<mapping class="org.zkoss.fiddle.model.Case" />
 		

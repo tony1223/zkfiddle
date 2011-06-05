@@ -153,9 +153,6 @@ public class Resource implements IResource,Cloneable {
 		this.createDate = createDate;
 	}
 
-	/**
-	 * @Transient means it's not a db field
-	 */
 	@Transient
 	public String getTypeMode() {
 		switch (type) {

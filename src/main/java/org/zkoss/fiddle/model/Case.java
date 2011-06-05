@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -39,6 +40,11 @@ public class Case implements ICase {
 
 	private Date createDate;
 
+	/**
+	 * A title for seo friendly and data collection 
+	 */
+	private String title;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
@@ -94,6 +100,28 @@ public class Case implements ICase {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	@Column(length=50)
+	public String getTitle() {
+		return title;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	@Transient
+	public String getURLFriendlyTitle() {
+		if (this.title == null || "".equals(this.title.trim()))
+			return "";
+
+		StringBuffer sb = new StringBuffer();
+		String[] tokens = this.title.split("[^a-zA-Z0-9]+");
+		for (String str : tokens) {
+			sb.append("-" + str);
+		}
+		return sb.toString();
 	}
 
 	public String toString() {

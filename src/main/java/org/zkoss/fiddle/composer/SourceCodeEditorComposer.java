@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
@@ -45,6 +47,11 @@ import org.zkoss.zul.Textbox;
 
 public class SourceCodeEditorComposer extends GenericForwardComposer {
 
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = Logger.getLogger(SourceCodeEditorComposer.class);
+
 	public List<Resource> resources;
 
 	private Tabs sourcetabs;
@@ -58,6 +65,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private ICase $case = null;
 
 	private Button saveBtn;
+	
+	private Textbox caseTitle;
 	
 	/**
 	 * a state for if content is changed.
@@ -84,6 +93,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		$case = null; // new Case();
 		String caseToken = (String) requestScope.get("token");
 		String version = (String) requestScope.get("ver");
+		
+		//TODO move this to filter to prevent content loaded before redirect
 		if (caseToken != null) {
 			ICaseDao caseDao = new CaseDaoImpl();
 
@@ -95,8 +106,15 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				saveBtn.setLabel("Update");
 			} catch (IllegalArgumentException e) { // means caseId is not a
 													// valid string
-				// TODO wrote a logger here.
+				
+				if (logger.isEnabledFor(Level.WARN)) {
+					logger.warn("doAfterCompose(Component) - caseId is not valid - Component comp=" + comp
+							+ ", String caseToken=" + caseToken + ", String version=" + version + ", ICaseDao caseDao="
+							+ caseDao);
+				}
+
 				$case = null;
+				Executions.sendRedirect("/");
 			}
 		}
 
@@ -161,8 +179,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						result.setCase($case);
 					}
 					
-					
-					//TODO review if we really need to build such compiclated...
+					//TODO review if we really need to build this for such complicated, I am still thinking
 					//forward to another queue
 					EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish(result);
 					
@@ -173,7 +190,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					SourceTabRendererFactory.getRenderer(ir.getType()).appendSourceTab(sourcetabs, sourcetabpanels, ir);
 				} else if (event instanceof SaveEvent) {
 					SaveEvent saveEvt = (SaveEvent) event;
-					saveCase(resources, saveEvt.isFork());
+					Case saved = saveCase($case,resources, caseTitle.getValue(), saveEvt.isFork());
+					if(saved != null){
+						Executions.getCurrent().sendRedirect("/sample/" + saved.getToken() + "/" + saved.getVersion() + saved.getURLFriendlyTitle());
+					}
 				} else if (event instanceof SourceRemoveEvent) {
 					SourceRemoveEvent sourceRmEvt = (SourceRemoveEvent) event;
 					if (sourceRmEvt.getResource() == null) {
@@ -216,24 +236,28 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resources.remove(k);
 	}
 	
-	private void saveCase(List<Resource> resources, boolean fork) {
+	/*
+	 * TODO  move this to a case manager.
+	 */
+	private Case saveCase(ICase _case,List<Resource> resources,String title, boolean fork) {
 		Case newCase = new Case();
 		newCase.setCreateDate(new Date());
 
 		ICaseDao caseDao = new CaseDaoImpl();
-		if ($case == null || fork) { // Create a brand new case
+		if (_case == null || fork) { // Create a brand new case
 			newCase.setVersion(1);
 			newCase.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
 
-			if ($case != null) { // fork
-				newCase.setFromId($case.getId());
+			if (_case != null) { // fork
+				newCase.setFromId(_case.getId());
 			}
 
 		} else {
-			newCase.setToken($case.getToken());
-			newCase.setThread($case.getThread());
-			newCase.setVersion(caseDao.getLastVersionByToken($case.getToken()) + 1);
+			newCase.setToken(_case.getToken());
+			newCase.setThread(_case.getThread());
+			newCase.setVersion(caseDao.getLastVersionByToken(_case.getToken()) + 1);
 		}
+		newCase.setTitle(title);
 
 		/*
 		 * TODO: review this and use transcation to speed up and be sure it's
@@ -242,7 +266,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		caseDao.saveOrUdate(newCase);
 
-		if ($case == null || fork) { // A brand new case
+		if (_case == null || fork) { // A brand new case
 			// TonyQ:
 			// we have to set the thread information after we get the id.
 			// TODO:check if we could use trigger or something
@@ -258,7 +282,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resource.buildFinalConetnt(newCase);
 			resourceDao.saveOrUdate(resource);
 		}
-		Executions.getCurrent().sendRedirect("/sample/" + newCase.getToken() + ("/" + newCase.getVersion()));
+		return newCase;
 	}
 
 	/**
