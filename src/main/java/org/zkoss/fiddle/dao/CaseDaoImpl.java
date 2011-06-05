@@ -11,17 +11,16 @@ import org.zkoss.zkplus.hibernate.HibernateUtil;
 
 public class CaseDaoImpl implements ICaseDao {
 
-	Session current = null;
-
+	private Session current = null;
+	
 	public CaseDaoImpl() {
 
 	}
-
 	public CaseDaoImpl(Session s) {
 		current = s;
 	}
-
-	private Session getCurrentSession() {
+	
+	protected Session getCurrentSession() {
 		return current == null ? HibernateUtil.currentSession() : current;
 	}
 

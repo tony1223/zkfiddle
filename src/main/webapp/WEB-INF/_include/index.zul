@@ -1,14 +1,25 @@
-<?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
-<zk xmlns:w="client">
-
-
+<?page title="ZK Fiddle - Share your ZK sample ONLINE" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute" >
+	
+	<div style="position:absolute;top:90px;z-index:100;height:26px;overflow: hidden;">
+		<n:img id="loader" src="/img/ajax-loader.gif" style="position:absolute;" width="20px" height="20px" />
+		<fb:like send="true" >
+			<attribute w:name="onFbInit">
+				setTimeout(function(){
+					jq("#loader").remove();
+				},1000);
+				this.$onFbInit.apply(this,arguments);
+			</attribute>
+		</fb:like>
+	</div>
 	<borderlayout id="main">
 		<north apply="org.zkoss.fiddle.composer.TopNavigationComposer"
-			border="none" size="90px" sclass="demo-header" collapsible="true">
+			border="none" size="120px" sclass="demo-header" collapsible="true">
 			<hlayout style="background:#82B3D1;">
 				<div sclass="demo-logo pointer">
-					<n:a xmlns:n="native" href="/">
-						<image width="90px" src="/img/ZK-Logo.gif" />
+					<!-- use h1 instead of this -->
+					<n:a href="/">
+						<image width="90px" src="/img/ZK-Logo.gif" tooltiptext="ZK Fiddle - Share your ZK sample ONLINE" />
 					</n:a>
 				</div>
 				<hlayout style="margin-left:150px;">

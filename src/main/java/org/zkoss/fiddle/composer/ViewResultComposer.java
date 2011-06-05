@@ -59,8 +59,8 @@ public class ViewResultComposer extends GenericForwardComposer {
 		}
 		
 		return hostpath;
-
 	}
+	
 	public void doAfterCompose(final Component comp) throws Exception {
 		super.doAfterCompose(comp);
 

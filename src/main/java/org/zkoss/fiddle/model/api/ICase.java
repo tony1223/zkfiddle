@@ -27,4 +27,11 @@ public interface ICase {
 	public abstract void setFromId(Long from);
 
 	public abstract Long getFromId();
+	
+	public String getTitle();
+	
+	public void setTitle(String title) ;
+	
+	public String getURLFriendlyTitle() ;
+	
 }

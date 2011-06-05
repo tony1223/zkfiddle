@@ -6,7 +6,6 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
@@ -20,8 +19,10 @@ import org.zkoss.fiddle.dao.CaseDaoImpl;
 import org.zkoss.fiddle.dao.ResourceDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
+import org.zkoss.fiddle.manager.CaseRecordManager;
 import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
+import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.FiddleInstance;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.ViewRequest;
@@ -85,54 +86,33 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		// FIXME add logger for counting
-		// TODO ask user to have index.zul as a must have.
-
 		resources = new ArrayList<Resource>();
 
-		$case = null; // new Case();
-		String caseToken = (String) requestScope.get("token");
-		String version = (String) requestScope.get("ver");
-		
-		//TODO move this to filter to prevent content loaded before redirect
-		if (caseToken != null) {
-			ICaseDao caseDao = new CaseDaoImpl();
-
-			try {
-				$case = caseDao.findCaseByToken(caseToken, version == null ? null : Integer.parseInt(version));
-				if ($case == null) {
-					Executions.sendRedirect("/");
-				}
-				saveBtn.setLabel("Update");
-			} catch (IllegalArgumentException e) { // means caseId is not a
-													// valid string
-				
-				if (logger.isEnabledFor(Level.WARN)) {
-					logger.warn("doAfterCompose(Component) - caseId is not valid - Component comp=" + comp
-							+ ", String caseToken=" + caseToken + ", String version=" + version + ", ICaseDao caseDao="
-							+ caseDao);
-				}
-
-				$case = null;
-				Executions.sendRedirect("/");
-			}
+		$case =  (ICase) requestScope.get("__case"); // new Case();
+	
+		if($case != null){
+			saveBtn.setLabel("Update");
 		}
-
 		boolean newCase= ($case == null || $case.getId() == null);
 		if (newCase) { // new case!
 			resources.addAll(getDefaultResources());
 		} else {
+			CaseRecordManager manager = new CaseRecordManager();
+			manager.addRecord($case.getId(),CaseRecord.TYPE_VIEW);
+			if(logger.isDebugEnabled()){
+				logger.debug("counting:"+$case.getToken()+":"+$case.getVersion()+":view");
+			}
 			IResourceDao dao = new ResourceDaoImpl();
 			List<Resource> dbResources = dao.listByCase($case.getId());
 			for (IResource r : dbResources) {
-				// we clone it , since we will create a new resource instead
-				// of updating old one..
+				// we clone it , since we will create a new resource instead of updating old one..
 				Resource resource = r.clone();
 				resource.setId(null);
 				resource.setCaseId(null);
 				resource.setCreateDate(new Date());
 				resources.add(resource);
 			}
+			caseTitle.setValue($case.getTitle());
 		}
 
 		for (IResource resource : resources) {
@@ -141,9 +121,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			
 			
 			if(newCase){
-				//Notify content to do some processing,
-				//since we use desktop scope eventQueue,
-				//it will not be a performance issue.
+				//Notify content to do some processing,since we use desktop scope eventQueue,it will not be a performance issue.
 				sourceQueue.publish(new SourceChangedEvent(null,resource));
 			}
 		}
@@ -156,15 +134,20 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					sourceChange = true;
 				}else if (event instanceof ShowResultEvent){
 					ShowResultEvent result = (ShowResultEvent) event;
-										
+						
+					CaseRecordManager manager = new CaseRecordManager();
 					if(sourceChange){
+						if ($case != null && $case.getId() != null) {
+							manager.addRecord($case.getId(), CaseRecord.TYPE_RUN_TEMP);
+							if(logger.isDebugEnabled()){
+								logger.debug("counting:"+$case.getToken()+":"+$case.getVersion()+":run-temp");
+							}
+						}
 						Case tmpcase = new Case();
 						CRCCaseIDEncoder encoder = CRCCaseIDEncoder.getInstance();
 						String token = encoder.encode(new Date().getTime());
 						tmpcase.setToken(token);
 						tmpcase.setVersion(0);
-						
-						
 						
 						List<IResource> newlist= new ArrayList<IResource>();
 						for(IResource current :resources){
@@ -177,6 +160,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						result.setCase(tmpcase);
 					}else{
 						result.setCase($case);
+						manager.addRecord($case.getId(),CaseRecord.TYPE_RUN);
+						if(logger.isDebugEnabled()){
+							logger.debug($case.getToken()+":"+$case.getVersion()+":run");
+						}
 					}
 					
 					//TODO review if we really need to build this for such complicated, I am still thinking
@@ -282,6 +269,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resource.buildFinalConetnt(newCase);
 			resourceDao.saveOrUdate(resource);
 		}
+		
+		CaseRecordManager caseRecordManager = new CaseRecordManager();
+		caseRecordManager.initRecord(newCase);
 		return newCase;
 	}
 

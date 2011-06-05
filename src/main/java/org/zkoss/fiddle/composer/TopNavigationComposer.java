@@ -36,6 +36,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
+//		fblike.setHref((String)requestScope.get("hostName"));
+		
 		FiddleInstanceManager instanceManager = FiddleInstanceManager.getInstance();
 		Collection<FiddleInstance> acounts = instanceManager.listFiddleInstances().values();
 

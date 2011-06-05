@@ -1,5 +1,5 @@
 <?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
-<zk xmlns:w="client">
+<zk xmlns:w="client" xmlns:fb="facebook">
 	<style>
 		.tab-textbox{
 			margin-left:5px;
@@ -43,7 +43,9 @@
 			    <tabpanels  id="sourcetabpanels" />
 			</tabbox>
 			<div id="contentDesc">
-			
+				<!-- TODO fix url 
+				Like this sample ? <fb:like id="fblike" send="true" />	
+			-->
 			</div>
 		</vlayout>
 	</div>
