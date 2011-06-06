@@ -218,10 +218,6 @@ public class Resource implements IResource,Cloneable {
 		}
 
 	}
-
-	public static void main(String[] args) {
-		System.out.println("123456".replaceAll("(123)","\\$v1"));
-	}
 	
 	public void setCanDelete(boolean canDelete) {
 		this.canDelete = canDelete;
