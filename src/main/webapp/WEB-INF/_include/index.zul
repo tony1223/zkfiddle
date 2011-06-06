@@ -1,6 +1,6 @@
 <?page title="${_pgtitle} ZK Fiddle - Share your ZK sample ONLINE" contentType="text/html;charset=UTF-8"?>
 <?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
-<?meta name="description" content="${_pgdescription} Share your ZK sample ONLINE,survey and run ZK sameples right now!" ?>
+<?meta name="description" content="${_pgdescription} ,survey and run ZK (A Java Web Ajax Framework) sameples right now!" ?>
 
 <zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute" >
 	
@@ -34,13 +34,19 @@
 		<west title="ZK Fiddle ,Powered by TonyQ" size="250px" flex="true" splittable="true"
 			minsize="210" maxsize="500" collapsible="true">
 			<panel>
-				<toolbar>
-					<label value="Search:" />
-					<textbox id="searchBox" ctrlKeys="#down#up" focus="true"
-						sclass="demo-search-inp" />
-				</toolbar>
 				<panelchildren>
-					Still building , coming soon......
+					<tabbox mold="accordion">
+						<tabs>
+							<tab label="Base Samples" />
+							<tab label="Likest ZK Case" />
+							<tab label="About ZK Fiddle" />
+						</tabs>
+						<tabpanels>
+							<tabpanel>......still building,coming soon </tabpanel>
+							<tabpanel></tabpanel>
+							<tabpanel></tabpanel>	
+						</tabpanels>
+					</tabbox>
 				</panelchildren>
 			</panel>
 		</west>
