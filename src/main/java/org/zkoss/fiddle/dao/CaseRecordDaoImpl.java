@@ -41,7 +41,6 @@ public class CaseRecordDaoImpl implements ICaseRecordDao {
 	}
 
 	public void remove(Long id) {
-
 		getCurrentSession().createQuery("delete from CaseRecord where id = :id").setLong("id", id).executeUpdate();
 	}
 
@@ -61,10 +60,18 @@ public class CaseRecordDaoImpl implements ICaseRecordDao {
 		return update != 0;
 	}
 
-	public List<CaseRecord> listByType(Integer type,Long caseId,int pageIndex, int pageSize){
-		Query query = getCurrentSession().createQuery("from CaseRecord where type = :type and caseId = :caseId order by amount")
-			.setLong("type", type)
-			.setLong("caseId", caseId);
+	public List<CaseRecord> listByType(Integer type,boolean excludeEmpty,int pageIndex, int pageSize){
+		
+		String rule = "";
+		if (excludeEmpty) {
+			rule = " and amount <> 0 ";
+		}
+		
+		Query query = getCurrentSession().createQuery("from CaseRecord "+
+				" where type = :type "+
+				rule +
+				" order by amount")
+			.setLong("type", type);
 	
 		query.setFirstResult((pageIndex-1)*pageSize);
 		query.setMaxResults(pageSize);
@@ -72,10 +79,17 @@ public class CaseRecordDaoImpl implements ICaseRecordDao {
 		return query.list();
 	}
 
-	public Long countByType(Integer type, Long caseId) {
+	public Long countByType(Integer type, boolean excludeEmpty) {
+
+		String rule = "";
+		if (excludeEmpty) {
+			rule = " and amount <> 0 ";
+		}
+		
 		return (Long) getCurrentSession()
-				.createQuery("select count(id) from CaseRecord where type = :type and caseId = :caseId order by amount")
-				.setLong("type", type).setLong("caseId", caseId).uniqueResult();
+				.createQuery("select count(id) from CaseRecord "+
+						" where type = :type "+rule+" order by amount")
+				.setLong("type", type).uniqueResult();
 
 	}
 	

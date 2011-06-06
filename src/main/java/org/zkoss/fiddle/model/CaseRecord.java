@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -108,6 +109,24 @@ public class CaseRecord {
 		this.type = type;
 	}
 
+	@Transient
+	public String getURLFriendlyTitle() {
+		if (this.title == null || "".equals(this.title.trim()))
+			return "";
+
+		StringBuffer sb = new StringBuffer();
+		String[] tokens = this.title.split("[^a-zA-Z0-9]+");
+		for (String str : tokens) {
+			sb.append("-" + str);
+		}
+		return sb.toString();
+	}
+	
+	@Transient
+	public String getCaseUrl() {
+		return getToken() + "/" + getVersion() + getURLFriendlyTitle();
+	}
+	
 	public boolean equals(final Object other) {
 		if (!(other instanceof CaseRecord))
 			return false;
