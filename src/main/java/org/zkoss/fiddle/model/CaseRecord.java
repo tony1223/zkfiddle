@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
 
@@ -15,6 +17,7 @@ import org.hibernate.annotations.Index;
  */
 @Entity
 @Table(name="caserecord")
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 public class CaseRecord {
 	public static final Integer TYPE_VIEW = 0 ;
 	public static final Integer TYPE_LIKE = 1 ;

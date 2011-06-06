@@ -44,6 +44,12 @@
 			<id>ZK EE Evaluation</id>
 			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
 		</repository>
+ 		<repository>
+	        <id>terracotta-releases</id>
+	        <url>http://www.terracotta.org/download/reflector/releases</url>
+	        <releases><enabled>true</enabled></releases>
+	        <snapshots><enabled>false</enabled></snapshots>
+	    </repository>		
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -281,11 +287,19 @@
 	</dependency>
 	<!-- Hibernate end -->
 	
+	<!-- log4j -->
 	<dependency>
 	    <groupId>log4j</groupId>
 	    <artifactId>log4j</artifactId>
 	    <version>1.2.16</version>
 	</dependency>	
+	
+	<!-- cache -->
+	<dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache-core</artifactId>
+        <version>2.4.2</version>
+    </dependency>
 	
   </dependencies>
   <build>

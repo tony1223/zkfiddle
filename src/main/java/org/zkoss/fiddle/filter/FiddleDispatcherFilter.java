@@ -70,6 +70,7 @@ public class FiddleDispatcherFilter implements Filter {
 			ICaseDao caseDao = new CaseDaoImpl(s);
 
 			try {
+				$case = caseDao.get(1L);
 				$case = caseDao.findCaseByToken(caseToken, version == null ? 1 : Integer.parseInt(version));
 			} catch (IllegalArgumentException e) { // means caseId is not valid
 
@@ -79,7 +80,6 @@ public class FiddleDispatcherFilter implements Filter {
 			} finally {
 				s.close();
 			}
-
 		}
 		return $case;
 	}
@@ -193,7 +193,11 @@ public class FiddleDispatcherFilter implements Filter {
 				String host = getHostpath(request);
 				boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
 				String title = emptytitle ?	"" :	"[" + $case.getTitle() +"]";
-				request.setAttribute("_pgtitle", "Edit this sample "+ title +" --" );				
+				request.setAttribute("_pgtitle", "Edit this sample "+ title +" --" );
+				
+				if(!emptytitle){
+					request.setAttribute("_pgdescription", "A Demo case about ["+ $case.getTitle() +"] --" );
+				}
 				request.setAttribute("hostName", host);
 				request.setAttribute("caseUrl", host + $case.getCaseUrl());
 				request.setAttribute("__case", $case);

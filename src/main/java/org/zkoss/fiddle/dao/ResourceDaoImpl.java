@@ -2,6 +2,7 @@ package org.zkoss.fiddle.dao;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Resource;
@@ -87,6 +88,7 @@ public class ResourceDaoImpl implements IResourceDao {
 	}
 
 	public List<Resource> listByCase(Long caseId) {
-		return getCurrentSession().createQuery("from Resource where caseId = :caseId").setLong("caseId", caseId).list();
+		Query query = getCurrentSession().createQuery("from Resource where caseId = :caseId");
+		return query.setLong("caseId", caseId).setCacheable(true).list();
 	}
 }

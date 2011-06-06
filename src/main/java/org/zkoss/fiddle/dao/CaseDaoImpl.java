@@ -2,14 +2,21 @@ package org.zkoss.fiddle.dao;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.zkplus.hibernate.HibernateUtil;
 
 public class CaseDaoImpl implements ICaseDao {
+
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = Logger.getLogger(CaseDaoImpl.class);
 
 	private Session current = null;
 	
@@ -21,7 +28,8 @@ public class CaseDaoImpl implements ICaseDao {
 	}
 	
 	protected Session getCurrentSession() {
-		return current == null ? HibernateUtil.currentSession() : current;
+		Session s=( current == null ? HibernateUtil.currentSession() : current);
+		return s;
 	}
 
 	/*
@@ -80,13 +88,52 @@ public class CaseDaoImpl implements ICaseDao {
 
 		crit.add(Restrictions.eq("token", token));
 		crit.add(Restrictions.eq("version", version == null ? 1 : version));
-
+		crit.setCacheable(true);
+		crit.setCacheRegion("caseLookup");
+		
 		return (Case) crit.uniqueResult();
 	}
 
 	public Integer getLastVersionByToken(String token) {
 		return (Integer) getCurrentSession().createQuery("select max(version) from Case where token = :token ")
 				.setString("token", token).uniqueResult();
+	}
+	
+	public static void main(String[] args) {
+		
+		SessionFactory sf =  HibernateUtil.getSessionFactory();
+		Session session = sf.openSession();
+		CaseDaoImpl caseDao = new CaseDaoImpl(session);
+		Case c = caseDao.findCaseByToken("2dfu1t3",1);
+		System.out.println(c);
+		session.close();
+		
+		sf =  HibernateUtil.getSessionFactory();
+		session = sf.openSession();
+		caseDao = new CaseDaoImpl(session);
+		c = caseDao.findCaseByToken("2dfu1t3",1);
+		System.out.println(c);
+		session.close();
+				
+		
+		session = sf.openSession();
+		caseDao = new CaseDaoImpl(session);
+		c = caseDao.findCaseByToken("2dfu1t3",1);
+		System.out.println(c);
+		session.close();
+		
+		session = sf.openSession();
+		caseDao = new CaseDaoImpl(session);
+		c = caseDao.findCaseByToken("2dfu1t3",2);
+		System.out.println(c);
+		session.close();
+		
+		session = sf.openSession();
+		caseDao = new CaseDaoImpl(session);
+		c = caseDao.findCaseByToken("2dfu1t3",3);
+		System.out.println(c);
+		session.close();
+		
 	}
 
 }
