@@ -34,7 +34,7 @@ public class FiddleDispatcherFilter implements Filter {
 	private Pattern view = Pattern.compile("^/([^/.]{5,}?)/(\\d+)(/v([0-9\\.]+)/?)?.*$");
 
 	private ServletContext ctx;
-	
+
 	public static void main(String[] args) {
 		String path = "/3591l7m/2";
 
@@ -65,7 +65,6 @@ public class FiddleDispatcherFilter implements Filter {
 
 		ICase $case = null; // new Case();
 
-		// TODO move this to filter to prevent content loaded before redirect
 		if (caseToken != null) {
 			Session s = HibernateUtil.getSessionFactory().openSession();
 			ICaseDao caseDao = new CaseDaoImpl(s);
@@ -85,7 +84,8 @@ public class FiddleDispatcherFilter implements Filter {
 		return $case;
 	}
 
-	private boolean handleView(HttpServletRequest request,HttpServletResponse response,String path) throws IOException, ServletException{
+	private boolean handleView(HttpServletRequest request, HttpServletResponse response, String path)
+			throws IOException, ServletException {
 		request.setAttribute("hostName", getHostpath(request));
 		boolean directly = path.startsWith("/direct");
 		String newpath = directly ? path.substring(7) : path.substring(5);
@@ -104,7 +104,15 @@ public class FiddleDispatcherFilter implements Filter {
 			}
 
 			request.setAttribute("__case", $case);
-
+			
+			String host = getHostpath(request);
+			request.setAttribute("hostName", host);
+			request.setAttribute("caseUrl", host + $case.getCaseUrl());
+			
+			boolean emptytitle = ($case.getTitle() == null && "".equals(($case.getTitle().trim())));
+			String title = emptytitle ?	$case.getToken() :	$case.getTitle();
+			request.setAttribute("_pgtitle", "Edit this sample ["+ title +"] --" );
+			
 			ViewRequest vr = new ViewRequest();
 			vr.setToken(match.group(1));
 			vr.setTokenVersion(match.group(2));
@@ -120,7 +128,7 @@ public class FiddleDispatcherFilter implements Filter {
 				inst = im.getFiddleInstance(instName);
 				if (inst == null) {
 					newurl = ("/view/" + vr.getToken() + "/" + vr.getTokenVersion() + "/v" + vr.getZkversion());
-					 response.sendRedirect(newurl);
+					response.sendRedirect(newurl);
 					return true;
 				}
 				request.setAttribute("runview", vr);
@@ -140,18 +148,17 @@ public class FiddleDispatcherFilter implements Filter {
 			vr.setFiddleInstance(inst);
 
 			if (directly) {
-				response.sendRedirect(inst.getPath() + vr.getToken() + "/"
-						+ vr.getTokenVersion());
+				response.sendRedirect(inst.getPath() + vr.getToken() + "/" + vr.getTokenVersion());
 			} else
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			return true;
-			
+
 		} else {
 			response.sendRedirect("/");
 			return true;
 		}
 	}
-	
+
 	public void doFilter(ServletRequest request2, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest request = ((HttpServletRequest) request2);
@@ -167,8 +174,8 @@ public class FiddleDispatcherFilter implements Filter {
 		}
 
 		if (path.startsWith("/view/") || path.startsWith("/direct/")) {
-			if(handleView(request,(HttpServletResponse)response,path)){
-				return ;
+			if (handleView(request, (HttpServletResponse) response, path)) {
+				return;
 			}
 		} else if (path.startsWith("/sample/")) {
 			request.setAttribute("hostName", getHostpath(request));
@@ -183,7 +190,12 @@ public class FiddleDispatcherFilter implements Filter {
 					((HttpServletResponse) response).sendRedirect("/");
 					return;
 				}
-
+				String host = getHostpath(request);
+				boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
+				String title = emptytitle ?	"" :	"[" + $case.getTitle() +"]";
+				request.setAttribute("_pgtitle", "Edit this sample "+ title +" --" );				
+				request.setAttribute("hostName", host);
+				request.setAttribute("caseUrl", host + $case.getCaseUrl());
 				request.setAttribute("__case", $case);
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 				return;
@@ -196,7 +208,6 @@ public class FiddleDispatcherFilter implements Filter {
 		chain.doFilter(request2, response);
 
 	}
-
 
 	public void init(FilterConfig filterConfig) throws ServletException {
 		ctx = filterConfig.getServletContext();

@@ -41,10 +41,10 @@ public class Case implements ICase {
 	private Date createDate;
 
 	/**
-	 * A title for seo friendly and data collection 
+	 * A title for seo friendly and data collection
 	 */
 	private String title;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
@@ -102,15 +102,15 @@ public class Case implements ICase {
 		this.createDate = createDate;
 	}
 
-	@Column(length=50)
+	@Column(length = 50)
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
 	@Transient
 	public String getURLFriendlyTitle() {
 		if (this.title == null || "".equals(this.title.trim()))
@@ -122,6 +122,16 @@ public class Case implements ICase {
 			sb.append("-" + str);
 		}
 		return sb.toString();
+	}
+
+	@Transient
+	public String getCaseUrl() {
+		return getToken() + "/" + getVersion() + getURLFriendlyTitle();
+	}
+
+	@Transient
+	public String getCaseUrl(String ver) {
+		return getToken() + "/" + getVersion() + "/v" + ver + getURLFriendlyTitle();
 	}
 
 	public String toString() {

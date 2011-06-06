@@ -1,4 +1,5 @@
 <?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
+
 <zk xmlns:w="client" xmlns:fb="facebook">
 	<style>
 		.tab-textbox{
@@ -43,9 +44,10 @@
 			    <tabpanels  id="sourcetabpanels" />
 			</tabbox>
 			<div id="contentDesc">
-				<!-- TODO fix url 
-				Like this sample ? <fb:like id="fblike" send="true" />	
-			-->
+				<hlayout if="${caseUrl!=null}">
+					<label value="Like this sample:" /> 
+					<fb:like id="fblike" send="true" href="${caseUrl}" />
+				</hlayout>
 			</div>
 		</vlayout>
 	</div>

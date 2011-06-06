@@ -32,6 +32,7 @@ import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
 import org.zkoss.fiddle.util.FileUtil;
 import org.zkoss.fiddle.util.StringUtil;
+import org.zkoss.social.facebook.event.LikeEvent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -98,7 +99,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resources.addAll(getDefaultResources());
 		} else {
 			CaseRecordManager manager = new CaseRecordManager();
-			manager.addRecord($case.getId(),CaseRecord.TYPE_VIEW);
+			manager.increaseRecord($case.getId(),CaseRecord.TYPE_VIEW);
 			if(logger.isDebugEnabled()){
 				logger.debug("counting:"+$case.getToken()+":"+$case.getVersion()+":view");
 			}
@@ -138,7 +139,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					CaseRecordManager manager = new CaseRecordManager();
 					if(sourceChange){
 						if ($case != null && $case.getId() != null) {
-							manager.addRecord($case.getId(), CaseRecord.TYPE_RUN_TEMP);
+							manager.increaseRecord($case.getId(), CaseRecord.TYPE_RUN_TEMP);
 							if(logger.isDebugEnabled()){
 								logger.debug("counting:"+$case.getToken()+":"+$case.getVersion()+":run-temp");
 							}
@@ -160,7 +161,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						result.setCase(tmpcase);
 					}else{
 						result.setCase($case);
-						manager.addRecord($case.getId(),CaseRecord.TYPE_RUN);
+						manager.increaseRecord($case.getId(),CaseRecord.TYPE_RUN);
 						if(logger.isDebugEnabled()){
 							logger.debug($case.getToken()+":"+$case.getVersion()+":run");
 						}
@@ -204,6 +205,21 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			} else {
 				alert("Can't find sandbox from specific version ");
 			}
+		}
+	}
+	
+	public void onLike$fblike(LikeEvent evt){
+		CaseRecordManager crm = new CaseRecordManager();
+		if(evt.isLiked()){
+			if(logger.isDebugEnabled()){
+				logger.debug($case.getToken()+":"+$case.getVersion()+":like");
+			}
+			crm.increaseRecord($case.getId(),CaseRecord.TYPE_LIKE);
+		}else{
+			if(logger.isDebugEnabled()){
+				logger.debug($case.getToken()+":"+$case.getVersion()+":unlike");
+			}
+			crm.decreaseRecord($case.getId(),CaseRecord.TYPE_LIKE);
 		}
 	}
 	

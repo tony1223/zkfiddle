@@ -34,4 +34,8 @@ public interface ICase {
 	
 	public String getURLFriendlyTitle() ;
 	
+	public String getCaseUrl();
+	
+	public String getCaseUrl(String ver);
+	
 }

@@ -11,7 +11,7 @@ import org.zkoss.zk.ui.sys.SEORenderer;
 public class FiddleSEORenderer  implements SEORenderer {
 
 	public void render(Page page, Writer out) throws IOException {
-		// FIXME handle this
+		// TODO add seo support handle this
 		
 	}
 

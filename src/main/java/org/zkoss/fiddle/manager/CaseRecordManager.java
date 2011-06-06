@@ -43,8 +43,12 @@ public class CaseRecordManager {
 		return view;
 	}
 	
-	public void addRecord(Long casid,int type){
+	public void increaseRecord(Long casid,int type){
 		dao.increase(type, casid);
+	}
+	
+	public void decreaseRecord(Long casid,int type){
+		dao.decrease(type, casid);
 	}
 	
 }
