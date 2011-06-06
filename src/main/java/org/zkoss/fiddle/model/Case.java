@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Index;
@@ -138,6 +140,17 @@ public class Case implements ICase {
 		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("id", id).append("thread", thread)
 				.append("fromId", fromId).append("token", token).append("version", version)
 				.append("createDate", createDate).toString();
+	}
+
+	public boolean equals(final Object other) {
+		if (!(other instanceof Case))
+			return false;
+		Case castOther = (Case) other;
+		return new EqualsBuilder().append(id, castOther.id).isEquals();
+	}
+
+	public int hashCode() {
+		return new HashCodeBuilder().append(id).toHashCode();
 	}
 
 }

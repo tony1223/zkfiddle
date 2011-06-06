@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Index;
 
 
@@ -104,6 +106,17 @@ public class CaseRecord {
 	
 	public void setType(Integer type) {
 		this.type = type;
+	}
+
+	public boolean equals(final Object other) {
+		if (!(other instanceof CaseRecord))
+			return false;
+		CaseRecord castOther = (CaseRecord) other;
+		return new EqualsBuilder().append(id, castOther.id).isEquals();
+	}
+
+	public int hashCode() {
+		return new HashCodeBuilder().append(id).toHashCode();
 	}
 
 }
