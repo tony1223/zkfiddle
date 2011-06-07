@@ -48,7 +48,7 @@ public class FiddleDispatcherFilter implements Filter {
 	}
 
 	private String getHostpath(HttpServletRequest request) {
-		StringBuffer hostName = new StringBuffer("http://zkfiddle.org");
+		StringBuffer hostName = new StringBuffer("zkfiddle.org");
 		//FIXME 
 		/*
 		StringBuffer hostName = new StringBuffer(request.getServerName());
@@ -58,9 +58,7 @@ public class FiddleDispatcherFilter implements Filter {
 		
 		if ("".equals(request.getContextPath())) {
 			hostName.append("/" + request.getContextPath());
-		} else {
-			hostName.append("/");
-		}
+		} 
 		return "http://" + hostName.toString();
 
 	}
@@ -111,7 +109,7 @@ public class FiddleDispatcherFilter implements Filter {
 			
 			String host = getHostpath(request);
 			request.setAttribute("hostName", host);
-			request.setAttribute("caseUrl", host + $case.getCaseUrl());
+			request.setAttribute("caseUrl", host + "/sample/"+ $case.getCaseUrl());
 			
 			boolean emptytitle = ($case.getTitle() == null && "".equals(($case.getTitle().trim())));
 			String title = emptytitle ?	$case.getToken() :	$case.getTitle();
@@ -199,7 +197,7 @@ public class FiddleDispatcherFilter implements Filter {
 				String title = emptytitle ?	"" :	"[" + $case.getTitle() +"]";
 				request.setAttribute("_pgtitle", "Edit this sample "+ title +" --" );				
 				request.setAttribute("hostName", host);
-				request.setAttribute("caseUrl", host + $case.getCaseUrl());
+				request.setAttribute("caseUrl", host  + "/sample/" + $case.getCaseUrl());
 				request.setAttribute("__case", $case);
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 				return;

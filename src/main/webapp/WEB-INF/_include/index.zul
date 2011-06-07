@@ -1,6 +1,6 @@
 <?page title="${_pgtitle} ZK Fiddle - Share your ZK sample ONLINE" contentType="text/html;charset=UTF-8"?>
 <?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
-<?meta name="description" content="${_pgdescription} ,survey and run ZK (A Java Web Ajax Framework) sameples right now!" ?>
+<?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax Framework) sameples right now!" ?>
 
 <zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute" >
 	
@@ -31,23 +31,23 @@
 				</hlayout>
 			</hlayout>
 		</north>
-		<west title="ZK Fiddle ,Powered by TonyQ" size="250px" flex="true" splittable="true"
+		<west title="ZK Fiddle, Powered by TonyQ" size="250px" flex="true" splittable="true"
 			minsize="210" maxsize="500" apply="org.zkoss.fiddle.composer.LeftReferenceComposer" collapsible="true">
 			<panel>
 				<panelchildren>
 					<tabbox mold="accordion">
 						<tabs>
-							<tab id="likestab" label="Likest ZK Case" />
+							<tab id="likestab" label="Most Favorite ZK Cases" />
 							<tab id="abouttab" label="About ZK Fiddle" />
 						</tabs>
 						<tabpanels>
 							<tabpanel>
-								Top 50 Liked Sample
-								<listbox id="likes" emptyMessage="Currently no liked examples." >
+								Top 50 Favorite Sample
+								<listbox id="likes" emptyMessage="Currently no favorite samples." >
 									<listhead>
-										<listheader label="No" />
+										<listheader label="#" width="20px" />
 										<listheader label="Title" />
-										<listheader label="Likes" />
+										<listheader label="" width="20px" />
 									</listhead>
 								</listbox>
 							</tabpanel>
@@ -106,7 +106,7 @@
 				</panelchildren>
 			</panel>
 		</west>
-		<center>
+		<center autoscroll="true">
 			<include src="sourceedtior.zul" />
 		</center>
 	</borderlayout>

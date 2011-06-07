@@ -45,11 +45,6 @@ public class ViewResultComposer extends GenericForwardComposer {
 
 	private String getHostpath(){
 		if (hostpath == null) {
-			String host = (String) requestScope.get("hostName");
-			if(requestScope.get("hostName") != null){
-				hostpath = host;
-				return hostpath;
-			}
 			HttpServletRequest request = (HttpServletRequest) Executions.getCurrent().getNativeRequest();
 			StringBuffer hostName = new StringBuffer(request.getServerName());
 			if (request.getLocalPort() != 80) {
@@ -68,15 +63,14 @@ public class ViewResultComposer extends GenericForwardComposer {
 	
 	public void doAfterCompose(final Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
+		
+		//save the host name in member field. (it's coming from FiddleDispatcherFilter )
+		hostpath = (String) requestScope.get("hostName");
+		
 		queue.subscribe(new EventListener() {
-
 			public void onEvent(Event event) throws Exception {
 				if (event instanceof ShowResultEvent) {
 					ShowResultEvent evt = (ShowResultEvent) event;
-					viewEditor.setVisible(true);
-
-
 					FiddleInstance inst = evt.getInstance();
 
 					zkver.setValue(inst.getZKVersion());
@@ -107,8 +101,6 @@ public class ViewResultComposer extends GenericForwardComposer {
 	}
 	
 	public void onClose$viewEditor(ForwardEvent e) {
-		viewEditor.setVisible(false);
 		content.setSrc("");
-		e.getOrigin().stopPropagation();
 	}
 }

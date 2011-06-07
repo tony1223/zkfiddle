@@ -40,7 +40,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			public void render(Listitem item, Object data) throws Exception {
 				if( data instanceof CaseRecord){
 					CaseRecord cr = (CaseRecord) data;
-					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getToken();
+					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getTitle();
 					item.appendChild(new Listcell("" + (item.getIndex() +1) ));
 					item.appendChild(new Listcell("" + title));
 					item.appendChild(new Listcell("" + cr.getAmount()));

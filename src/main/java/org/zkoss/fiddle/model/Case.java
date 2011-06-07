@@ -104,7 +104,7 @@ public class Case implements ICase {
 		this.createDate = createDate;
 	}
 
-	@Column(length = 50)
+	@Column(length = 80)
 	public String getTitle() {
 		return title;
 	}
