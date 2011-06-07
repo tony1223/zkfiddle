@@ -28,6 +28,8 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 		
 		sourceQueue.publish(new SourceInsertEvent(null, null, fileNameVal, typeVal));
 		
+		type.setSelectedIndex(0);
+		fileName.setText("");
 	}
 
 }
