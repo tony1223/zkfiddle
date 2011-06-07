@@ -240,6 +240,13 @@
 		<version>${bsh.version}</version>
 		<scope>runtime</scope>
 	</dependency>
+	
+	<!-- custom components -->
+	<dependency>
+		<groupId>org.zkoss.fiddle</groupId>
+		<artifactId>zk-fiddletabs</artifactId>
+		<version>0.8.0</version>
+	</dependency>
 	<dependency>
 		<groupId>org.zkoss.fiddle</groupId>
 		<artifactId>texttab</artifactId>

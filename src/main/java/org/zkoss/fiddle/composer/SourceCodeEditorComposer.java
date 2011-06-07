@@ -19,6 +19,7 @@ import org.zkoss.fiddle.dao.CaseDaoImpl;
 import org.zkoss.fiddle.dao.ResourceDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
+import org.zkoss.fiddle.fiddletabs.Fiddletabs;
 import org.zkoss.fiddle.manager.CaseRecordManager;
 import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
@@ -44,8 +45,8 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Tabpanels;
-import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
 
 public class SourceCodeEditorComposer extends GenericForwardComposer {
 
@@ -56,7 +57,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public List<Resource> resources;
 
-	private Tabs sourcetabs;
+	private Fiddletabs sourcetabs;
 
 	private Tabpanels sourcetabpanels;
 
@@ -69,6 +70,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Button saveBtn;
 	
 	private Textbox caseTitle;
+	
+	private Window insertWin;
 	
 	/**
 	 * a state for if content is changed.
@@ -176,6 +179,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					Resource ir = getDefaultResource(insertEvent.getType(), insertEvent.getFileName());
 					resources.add(ir);
 					SourceTabRendererFactory.getRenderer(ir.getType()).appendSourceTab(sourcetabs, sourcetabpanels, ir);
+					insertWin.setVisible(false);
 				} else if (event instanceof SaveEvent) {
 					SaveEvent saveEvt = (SaveEvent) event;
 					Case saved = saveCase($case,resources, caseTitle.getValue(), saveEvt.isFork());
@@ -354,11 +358,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		return resources;
 	}
 
-	public void onClick$insert(Event e) {
-		int typeVal = type.getSelectedIndex();
-		String fileNameVal = fileName.getValue();
-
-		sourceQueue.publish(new SourceInsertEvent(null, null, fileNameVal, typeVal));
+	public void onAdd$sourcetabs(Event e){
+		try {
+			insertWin.doModal();
+		} catch (Exception e1) {
+			logger.error("onAdd$sourcetabs(Event) - e=" + e, e1);
+		}
 	}
-
+	
 }
