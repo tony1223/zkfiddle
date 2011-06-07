@@ -3,7 +3,7 @@ import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.util.*;
 import org.zkoss.zul.*;
 
-public class TestComposer extends GenericForwardComposer{
+public class ${class-name} extends GenericForwardComposer{
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);

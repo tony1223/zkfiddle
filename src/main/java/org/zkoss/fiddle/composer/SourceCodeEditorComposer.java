@@ -43,7 +43,6 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -60,10 +59,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Fiddletabs sourcetabs;
 
 	private Tabpanels sourcetabpanels;
-
-	private Combobox type;
-
-	private Textbox fileName;
 
 	private ICase $case = null;
 
@@ -317,9 +312,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n", "<body>\n    hello\n  </body>\n</html>")));
 		} else if (IResource.TYPE_JAVA == type) {
 			
-			return new Resource(IResource.TYPE_JAVA, name, 
-				FileUtil.readIfExist(req.getRealPath("/WEB-INF/_templates/TestComposer.java"))
-			);
+			String template = FileUtil.readIfExist(req.getRealPath("/WEB-INF/_templates/TestComposer.java"));
+			if (name != null) {
+				String clsName = name.replaceAll(".java", "");
+				template = template.replaceAll("\\$\\{class-name\\}", clsName);
+			}
+			return new Resource(IResource.TYPE_JAVA, name, template);
 		} else
 			return null;
 	}
