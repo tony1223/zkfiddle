@@ -48,10 +48,14 @@ public class FiddleDispatcherFilter implements Filter {
 	}
 
 	private String getHostpath(HttpServletRequest request) {
+		StringBuffer hostName = new StringBuffer("http://zkfiddle.org");
+		//FIXME 
+		/*
 		StringBuffer hostName = new StringBuffer(request.getServerName());
 		if (request.getLocalPort() != 80) {
 			hostName.append(":" + request.getLocalPort());
-		}
+		}*/
+		
 		if ("".equals(request.getContextPath())) {
 			hostName.append("/" + request.getContextPath());
 		} else {

@@ -1,3 +1,5 @@
 target
 src/main/webapp/WEB-INF/hsqldb
 logger.log*
+src/main/java/hibernate.cfg.xml
+src/main/java/Log4j.properties

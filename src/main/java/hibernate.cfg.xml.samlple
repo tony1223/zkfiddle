@@ -5,18 +5,16 @@
 
 <hibernate-configuration>
     <session-factory>
-        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
+    	
 		
-		<!-- === Here you need to modify with your DB config === -->
-																		<!-- Here! -->	
+		<!-- config for hsqldb -->
+        <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
         <property name="hibernate.connection.url">jdbc:hsqldb:file:src/main/webapp/WEB-INF/hsqldb/</property>
 		
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"></property>
-		
-		<!-- === === -->
-		
         <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
+		
 
         <!-- JDBC connection pool (use the built-in) -->
         <property name="connection.pool_size">1</property>

@@ -42,7 +42,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		Collection<FiddleInstance> acounts = instanceManager.listFiddleInstances().values();
 
 		if (acounts.size() == 0) {
-			instances.setModel(new ListModelList(new String[] { "No available Instance now" }));
+			instances.setModel(new ListModelList(new String[] { "No available Sandbox now" }));
 			viewBtn.setDisabled(true);
 		} else {
 			instances.setItemRenderer(new ComboitemRenderer() {

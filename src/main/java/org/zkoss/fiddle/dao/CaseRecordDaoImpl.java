@@ -46,7 +46,7 @@ public class CaseRecordDaoImpl implements ICaseRecordDao {
 
 	public boolean increase(Integer type, Long caseId) {
 		int update = getCurrentSession()
-				.createSQLQuery("update CaseRecord set amount = amount + 1 where type = :type and caseId = :caseId")
+				.createSQLQuery("update caserecord set amount = amount + 1 where type = :type and caseId = :caseId")
 				.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 		return update != 0;
@@ -54,7 +54,7 @@ public class CaseRecordDaoImpl implements ICaseRecordDao {
 	
 	public boolean decrease(Integer type, Long caseId) {
 		int update = getCurrentSession()
-				.createSQLQuery("update CaseRecord set amount = amount - 1 where type = :type and caseId = :caseId")
+				.createSQLQuery("update caserecord set amount = amount - 1 where type = :type and caseId = :caseId")
 				.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 		return update != 0;

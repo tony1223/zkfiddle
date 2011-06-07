@@ -45,6 +45,11 @@ public class ViewResultComposer extends GenericForwardComposer {
 
 	private String getHostpath(){
 		if (hostpath == null) {
+			String host = (String) requestScope.get("hostName");
+			if(requestScope.get("hostName") != null){
+				hostpath = host;
+				return hostpath;
+			}
 			HttpServletRequest request = (HttpServletRequest) Executions.getCurrent().getNativeRequest();
 			StringBuffer hostName = new StringBuffer(request.getServerName());
 			if (request.getLocalPort() != 80) {
