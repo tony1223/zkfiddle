@@ -32,7 +32,7 @@
 			<div id="contentDesc">
 				<hlayout if="${caseUrl!=null}">
 					<label value="Like this sample:" /> 
-					<fb:like id="fblike" send="true" href="${caseUrl}" />
+					<fb:like id="fblike" href="${caseUrl}" />
 				</hlayout>
 			</div>
 		</vlayout>
