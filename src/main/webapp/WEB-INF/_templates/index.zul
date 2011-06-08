@@ -1,5 +1,5 @@
 <zk>
-  <window border="normal" title="hello" apply="fiddle.$pkg$.TestComposer">
+  <window border="normal" title="hello" apply="${pkg}.TestComposer">
   	
   	<div>Welcome to ZK Fiddle , run it right now! </div>
   	

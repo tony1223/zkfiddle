@@ -21,10 +21,6 @@ import org.zkoss.zul.Textbox;
 
 public class JavaSourceTabRenderer extends SourceTabRenderer {
 
-	public static final String PACKAGE_TOKEN = "$pkg$";
-	public static final String PACKAGE_TOKEN_ESCAPE = "\\$pkg\\$";
-	public static final String PACKAGE_PREFIX = "fiddle.";
-	
 	private Pattern packageRule = Pattern.compile("^[a-zA-Z_\\$][\\w\\$]*(?:\\.[a-zA-Z_\\$][\\w\\$]*)*$");
 
 	protected Tabpanel renderTabpanel(final IResource resource) {
@@ -36,9 +32,9 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		label.setSclass("c-like-keyword");
 		hlayout.appendChild(label);
 		 
-		Label label2 = new Label(PACKAGE_PREFIX + PACKAGE_TOKEN);
-		label2.setTooltiptext("since we have to prevent package conflict for every version ,"
-				+ " so we use org.$$fiddle$$ as your class package by default.");
+		Label label2 = new Label(IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN);
+		label2.setTooltiptext("since we have to prevent package conflict for every version ," + " so we use "
+				+ IResource.PACKAGE_TOKEN + " as your class package by default.");
 		hlayout.appendChild(label2);
 		
 		//we use desktop scope , so it's ok to lookup every time.
@@ -53,7 +49,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 
 		txtPkg.setConstraint(new Constraint() {
 			public void validate(Component comp, Object value) throws WrongValueException {
-				if (!packageRule.matcher( PACKAGE_PREFIX + PACKAGE_TOKEN + (String) value).matches()) {
+				if (!packageRule.matcher( IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + (String) value).matches()) {
 					throw new WrongValueException("Not a valid package name");
 				}
 			}

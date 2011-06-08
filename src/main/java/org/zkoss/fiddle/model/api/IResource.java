@@ -15,6 +15,12 @@ public interface IResource{
 
 	public static int TYPE_CSS = 4;
 
+	public static final String PACKAGE_TOKEN = "pkg$";
+
+	public static final String PACKAGE_TOKEN_ESCAPE = "pkg\\$";
+
+	public static final String PACKAGE_PREFIX = "";
+
 	public Long getId();
 
 	public void setId(Long id);

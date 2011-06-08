@@ -290,6 +290,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		return newCase;
 	}
 
+	private String readThenReaplce(String filePath,String token,String replaced){
+		
+		ServletContext req = (ServletContext) Executions.getCurrent().getDesktop().getWebApp().getNativeContext();
+		String template = FileUtil.readIfExist(req.getRealPath(filePath));
+		if(token != null && template != null)
+			template = template.replaceAll(token, replaced);
+		return template;
+	}
 	/**
 	 * TODO move it to resource
 	 * 
@@ -302,7 +310,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		ServletContext req = (ServletContext) Executions.getCurrent().getDesktop().getWebApp().getNativeContext();
 		
 		if (IResource.TYPE_ZUL == type) {
-			return new Resource(IResource.TYPE_ZUL, name,FileUtil.readIfExist(req.getRealPath("/WEB-INF/_templates/index.zul")));
+			String template = readThenReaplce("/WEB-INF/_templates/index.zul","\\$\\{pkg\\}",IResource.PACKAGE_TOKEN_ESCAPE);
+			return new Resource(IResource.TYPE_ZUL, name,template);
 		} else if (IResource.TYPE_JS == type) {
 			return new Resource(IResource.TYPE_JS, name, "function hello(){alert('hello');}");
 		} else if (IResource.TYPE_CSS == type) {
@@ -311,12 +320,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			return (new Resource(IResource.TYPE_HTML, name, StringUtil.concatln(
 					"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n", "<body>\n    hello\n  </body>\n</html>")));
 		} else if (IResource.TYPE_JAVA == type) {
-			
-			String template = FileUtil.readIfExist(req.getRealPath("/WEB-INF/_templates/TestComposer.java"));
-			if (name != null) {
-				String clsName = name.replaceAll(".java", "");
-				template = template.replaceAll("\\$\\{class-name\\}", clsName);
-			}
+			String clsName = name;
+			if (clsName != null) 
+				clsName = name.replaceAll(".java", "");
+						
+			String template = readThenReaplce("/WEB-INF/_templates/TestComposer.java","\\$\\{class-name\\}",clsName);
 			return new Resource(IResource.TYPE_JAVA, name, template);
 		} else
 			return null;
