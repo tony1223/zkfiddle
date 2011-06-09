@@ -70,7 +70,7 @@ public class CaseRecordDaoImpl implements ICaseRecordDao {
 		Query query = getCurrentSession().createQuery("from CaseRecord "+
 				" where type = :type "+
 				rule +
-				" order by amount")
+				" order by amount desc")
 			.setLong("type", type);
 	
 		query.setFirstResult((pageIndex-1)*pageSize);
