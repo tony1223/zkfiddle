@@ -21,7 +21,7 @@
 			<div>
 				<label value="Title:" 
 					style="padding-left:20px;padding-right:10px;" />  
-				<textbox id="caseTitle" value="" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 20 chars)"/>
+				<textbox id="caseTitle" value="" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 60 chars)"/>
 				<label value="(Optional)"/>
 			</div>
 			<separator bar="true" spacing="5px" />		
