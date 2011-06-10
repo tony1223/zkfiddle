@@ -161,7 +161,9 @@ public class FiddleDataFilter implements Filter {
 		jsonres.put("ver", version);
 		jsonres.put("resources", json);
 
+		response.setCharacterEncoding("UTF-8");
 		response.getWriter().println(jsonres);
+		response.setContentType("text/json;charset=UTF-8"); 
 		s.close();
 		response.getWriter().close();
 
