@@ -11,6 +11,8 @@
             ZK Fiddle
         </value>
     </preference>
+	
+	<!-- -->
 	<client-config>
 		<debug-js>true</debug-js>
 	</client-config>	
@@ -43,7 +45,13 @@
             trendy
         </value>
     </library-property>
-    
+
+	<session-config>
+		<timeout-uri />
+	</session-config>
+	<session-config>
+		<timer-keep-alive>true</timer-keep-alive>
+	</session-config>
     <!-- ===Hibernate START=== -->
     
     <!-- Hibernate SessionFactory lifecycle -->
