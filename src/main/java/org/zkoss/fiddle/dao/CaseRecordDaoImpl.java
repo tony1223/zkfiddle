@@ -52,9 +52,13 @@ public class CaseRecordDaoImpl implements ICaseRecordDao {
 		return update != 0;
 	}
 	
+	
+	/**
+	 * Note that you can't make it negative, we will block all decreasing for amount <= 0.
+	 */
 	public boolean decrease(Integer type, Long caseId) {
 		int update = getCurrentSession()
-				.createSQLQuery("update caserecord set amount = amount - 1 where type = :type and caseId = :caseId")
+				.createSQLQuery("update caserecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
 				.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 		return update != 0;
