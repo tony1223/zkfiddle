@@ -10,7 +10,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -52,6 +51,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			}
 		});
 		
+		
 	}
 	
 	public void onSelect$likes(Event e){
@@ -59,8 +59,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		Executions.sendRedirect("/sample/" + cr.getCaseUrl());
 	}
 	
-	public void onClick$abouttab(Event e){
-		aboutContent.setVisible(true);
+	public void onClick$whyfiddle(Event e){
 		try {
 			aboutContent.doModal();
 		} catch (SuspendNotAllowedException e1) {
@@ -70,14 +69,5 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			if(logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$abouttab(Event)", e1);
 		}
-	}
-	
-	public void onClose$aboutContent(Event e){
-		if(e instanceof ForwardEvent){
-			e = ((ForwardEvent)e).getOrigin();
-		}
-		aboutContent.setVisible(false);
-		e.stopPropagation();
-		
 	}
 }
