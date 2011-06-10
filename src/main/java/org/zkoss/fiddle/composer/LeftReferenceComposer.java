@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zkoss.fiddle.dao.CaseDaoImpl;
 import org.zkoss.fiddle.dao.CaseRecordDaoImpl;
+import org.zkoss.fiddle.dao.api.ICaseDao;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -26,6 +29,9 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	private static final Logger logger = Logger.getLogger(LeftReferenceComposer.class);
 
 	private Listbox likes;
+
+	private Listbox recentlys;
+
 	private Window aboutContent;
 
 	public void doAfterCompose(Component comp) throws Exception {
@@ -34,39 +40,69 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		CaseRecordDaoImpl caseRecordDao = new CaseRecordDaoImpl();
 		List<CaseRecord> list = caseRecordDao.listByType(CaseRecord.TYPE_LIKE, true, 1, 50);
 		likes.setModel(new ListModelList(list));
-		
-		likes.setItemRenderer( new ListitemRenderer() {
+
+		likes.setItemRenderer(new ListitemRenderer() {
+
 			public void render(Listitem item, Object data) throws Exception {
-				if( data instanceof CaseRecord){
+				if (data instanceof CaseRecord) {
 					CaseRecord cr = (CaseRecord) data;
 					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getTitle();
-					item.appendChild(new Listcell("" + (item.getIndex() +1) ));
-					item.appendChild(new Listcell("" + title));
-					item.appendChild(new Listcell("" + cr.getAmount()));
+					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
+					item.appendChild(new Listcell(String.valueOf(title)));
+
+					Listcell list = new Listcell(String.valueOf(cr.getAmount()));
+					list.setSclass("amount");
+					item.appendChild(list);
 					item.setValue(cr);
-				}else{
-					throw new IllegalArgumentException("data should be CaseRecord!"+data);
+				} else {
+					throw new IllegalArgumentException("data should be CaseRecord!" + data);
 				}
-				
+
 			}
 		});
-		
-		
+
+		ICaseDao caseDao = new CaseDaoImpl();
+
+		List<Case> recentlyList = caseDao.getRecentlyCase(10);
+		recentlys.setModel(new ListModelList(recentlyList));
+
+		recentlys.setItemRenderer(new ListitemRenderer() {
+
+			public void render(Listitem item, Object data) throws Exception {
+				if (data instanceof Case) {
+					Case cr = (Case) data;
+					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getTitle();
+					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
+					item.appendChild(new Listcell(String.valueOf(title)));
+					item.appendChild(new Listcell(String.valueOf(cr.getVersion())));
+					item.setValue(cr);
+				} else {
+					throw new IllegalArgumentException("data should be Case!" + data);
+				}
+
+			}
+		});
+
 	}
-	
-	public void onSelect$likes(Event e){
+
+	public void onSelect$recentlys(Event e) {
+		Case cr = (Case) likes.getSelectedItem().getValue();
+		Executions.sendRedirect("/sample/" + cr.getCaseUrl());
+	}
+
+	public void onSelect$likes(Event e) {
 		CaseRecord cr = (CaseRecord) likes.getSelectedItem().getValue();
 		Executions.sendRedirect("/sample/" + cr.getCaseUrl());
 	}
-	
-	public void onClick$whyfiddle(Event e){
+
+	public void onClick$whyfiddle(Event e) {
 		try {
 			aboutContent.doModal();
 		} catch (SuspendNotAllowedException e1) {
-			if(logger.isEnabledFor(Level.ERROR))
+			if (logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$abouttab(Event)", e1);
 		} catch (InterruptedException e1) {
-			if(logger.isEnabledFor(Level.ERROR))
+			if (logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$abouttab(Event)", e1);
 		}
 	}

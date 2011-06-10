@@ -3,7 +3,11 @@
 <?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax Framework) sameples right now!" ?>
 
 <zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute" >
-	
+	<style>
+		.list-likes .amount{
+			text-align:center;
+		}
+	</style>
 	<borderlayout id="main">
 		<north apply="org.zkoss.fiddle.composer.TopNavigationComposer"
 			border="none" size="90px" sclass="demo-header" collapsible="true">
@@ -31,39 +35,47 @@
 				</hlayout>
 			</hlayout>
 		</north>
-		<west title="ZK Fiddle, Powered by TonyQ" size="250px" flex="true" splittable="true"
-			minsize="210" maxsize="500" apply="org.zkoss.fiddle.composer.LeftReferenceComposer" collapsible="true">
-			<panel>
-				<panelchildren>
-					<tabbox mold="accordion">
-						<tabs>
-							<tab id="likestab" label="Most Favorite ZK Cases" />
-							<tab id="abouttab" label="About ZK Fiddle" />
-						</tabs>
-						<tabpanels>
-							<tabpanel>
-								Top 50 Favorite Sample
-								<listbox id="likes" emptyMessage="Currently no favorite samples." >
-									<listhead>
-										<listheader label="#" width="20px" />
-										<listheader label="Title" />
-										<listheader label="" width="20px" />
-									</listhead>
-								</listbox>
-							</tabpanel>
-							<tabpanel>
-								<vlayout>
-									<button id="whyfiddle" label="why ZK Fiddle" />
-									<button label="Bug Report Or Feature Request" target="_blank" 
-										href="https://github.com/tony1223/zkfiddle/issues" />
-									
-									<label value="Contact me : tonylovejava[at]gmail.com" />
-								</vlayout> 
-							</tabpanel>	
-						</tabpanels>
-					</tabbox>
-					<window title="About ZK Fiddle " use="org.zkoss.fiddle.component.ClosableWindow" visible="false" closable="true" id="aboutContent" position="center">
-						<n:pre>
+		<west title="ZK Fiddle, Powered by TonyQ" size="400px" flex="true" splittable="true"
+			minsize="210" maxsize="600" apply="org.zkoss.fiddle.composer.LeftReferenceComposer" collapsible="true">
+			<div>
+				<tabbox mold="accordion">
+					<tabs>
+						<tab id="likestab" label="Top 10 Favorite Samples " />
+						<tab id="recentlytab" label="Recently 10 Samepls" />
+						<tab id="abouttab" label="About ZK Fiddle" />
+					</tabs>
+					<tabpanels>
+						<tabpanel>
+							<listbox id="likes" sclass="list-likes" emptyMessage="No favorite samples now." >
+								<listhead>
+									<listheader label="#" width="20px" />
+									<listheader label="Title" />
+									<listheader sclass="amount" label="Count" width="60px" />
+								</listhead>
+							</listbox>
+						</tabpanel>
+						<tabpanel>
+							<listbox id="recentlys" emptyMessage="No recently samples now." >
+								<listhead> 
+									<listheader label="#" width="20px" />
+									<listheader label="Title" />
+									<listheader label="Version" width="60px"  />
+								</listhead>
+							</listbox>
+						</tabpanel>
+						<tabpanel>
+							<vlayout>
+								<button id="whyfiddle" label="why ZK Fiddle" />
+								<button label="Bug Report Or Feature Request" target="_blank" 
+									href="https://github.com/tony1223/zkfiddle/issues" />
+								
+								<label value="Contact me : tonylovejava[at]gmail.com" />
+							</vlayout> 
+						</tabpanel>	
+					</tabpanels>
+				</tabbox>
+				<window title="About ZK Fiddle " use="org.zkoss.fiddle.component.ClosableWindow" visible="false" closable="true" id="aboutContent" position="center">
+					<n:pre>
 	Hi all,
 	I am TonyQ (Tony Wang) , one of the ZK Team,  it's my pleasure to introduce this website to you.
 	
@@ -108,10 +120,9 @@
 				
 	Special thanks to ZK Team, I love ZK team, ZK Rocks !
 	And also the JS Fiddle service ,that's one of my favorite ,too. ( http://jsfiddle.net/ ) )
-						</n:pre> 
-					</window>							
-				</panelchildren>
-			</panel>
+					</n:pre> 
+				</window>							
+			</div>
 		</west>
 		<center autoscroll="true">
 			<include src="sourceedtior.zul" />

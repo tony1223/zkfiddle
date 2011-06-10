@@ -3,6 +3,7 @@ package org.zkoss.fiddle.dao;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.zkoss.fiddle.dao.api.ICaseDao;
@@ -87,6 +88,12 @@ public class CaseDaoImpl implements ICaseDao {
 	public Integer getLastVersionByToken(String token) {
 		return (Integer) getCurrentSession().createQuery("select max(version) from Case where token = :token ")
 				.setString("token", token).uniqueResult();
+	}
+	
+	public List<Case> getRecentlyCase(Integer amount) {
+		Query query =  getCurrentSession().createQuery("from Case order by id desc");
+		query.setMaxResults(amount);
+		return query.list();
 	}
 
 }
