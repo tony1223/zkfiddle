@@ -113,7 +113,7 @@ public class FiddleDispatcherFilter implements Filter {
 			
 			boolean emptytitle = ($case.getTitle() == null && "".equals(($case.getTitle().trim())));
 			String title = emptytitle ?	$case.getToken() :	$case.getTitle();
-			request.setAttribute("_pgtitle", "Edit this sample ["+ title +"] --" );
+			request.setAttribute("_pgtitle", " - ["+ title +"]" );
 			
 			ViewRequest vr = new ViewRequest();
 			vr.setToken(match.group(1));

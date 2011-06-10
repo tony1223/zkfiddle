@@ -1,4 +1,4 @@
-<?page title="${_pgtitle} ZK Fiddle - Share your ZK sample ONLINE" contentType="text/html;charset=UTF-8"?>
+<?page title="ZK Fiddle${_pgtitle} - Share your ZK sample ONLINE" contentType="text/html;charset=UTF-8"?>
 <?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
 <?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax Framework) sameples right now!" ?>
 
