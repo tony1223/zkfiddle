@@ -307,8 +307,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	 */
 	private Resource getDefaultResource(int type, String name) {
 		
-		ServletContext req = (ServletContext) Executions.getCurrent().getDesktop().getWebApp().getNativeContext();
-		
 		if (IResource.TYPE_ZUL == type) {
 			String template = readThenReaplce("/WEB-INF/_templates/index.zul","\\$\\{pkg\\}",IResource.PACKAGE_TOKEN_ESCAPE);
 			return new Resource(IResource.TYPE_ZUL, name,template);
