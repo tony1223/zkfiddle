@@ -15,8 +15,6 @@ import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.event.SourceChangedEvent;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
 import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
-import org.zkoss.fiddle.dao.CaseDaoImpl;
-import org.zkoss.fiddle.dao.ResourceDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.fiddletabs.Fiddletabs;
@@ -24,7 +22,7 @@ import org.zkoss.fiddle.manager.CaseRecordManager;
 import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
-import org.zkoss.fiddle.model.FiddleInstance;
+import org.zkoss.fiddle.model.FiddleSandbox;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.ViewRequest;
 import org.zkoss.fiddle.model.VirtualCase;
@@ -42,6 +40,7 @@ import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
@@ -101,7 +100,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			if(logger.isDebugEnabled()){
 				logger.debug("counting:"+$case.getToken()+":"+$case.getVersion()+":view");
 			}
-			IResourceDao dao = new ResourceDaoImpl();
+			IResourceDao dao = (IResourceDao) SpringUtil.getBean("resourceDao");
 			List<Resource> dbResources = dao.listByCase($case.getId());
 			for (IResource r : dbResources) {
 				// we clone it , since we will create a new resource instead of updating old one..
@@ -195,7 +194,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		if (vr != null) {
 
-			FiddleInstance inst = vr.getFiddleInstance();
+			FiddleSandbox inst = vr.getFiddleInstance();
 
 			if (inst != null) { // inst can't be null
 				// use echo event to find a good timing
@@ -245,7 +244,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		Case newCase = new Case();
 		newCase.setCreateDate(new Date());
 
-		ICaseDao caseDao = new CaseDaoImpl();
+		ICaseDao caseDao =  (ICaseDao) SpringUtil.getBean("caseDao");
 		if (_case == null || fork) { // Create a brand new case
 			newCase.setVersion(1);
 			newCase.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
@@ -277,7 +276,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			caseDao.saveOrUdate(newCase);
 		}
 
-		IResourceDao resourceDao = new ResourceDaoImpl();
+		IResourceDao resourceDao = (IResourceDao) SpringUtil.getBean("resourceDao");
 		for (Resource resource : resources) {
 			resource.setId(null);
 			resource.setCaseId(newCase.getId());

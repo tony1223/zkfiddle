@@ -6,7 +6,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
 
-public class FiddleInstance {
+public class FiddleSandbox {
 
 	private String hash;
 
@@ -56,9 +56,9 @@ public class FiddleInstance {
 	}
 
 	public boolean equals(final Object other) {
-		if (!(other instanceof FiddleInstance))
+		if (!(other instanceof FiddleSandbox))
 			return false;
-		FiddleInstance castOther = (FiddleInstance) other;
+		FiddleSandbox castOther = (FiddleSandbox) other;
 		return new EqualsBuilder().append(name, castOther.name).isEquals();
 	}
 

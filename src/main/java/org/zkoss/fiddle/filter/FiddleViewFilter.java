@@ -15,25 +15,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.zkoss.fiddle.dao.CaseDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
-import org.zkoss.fiddle.manager.FiddleInstanceManager;
-import org.zkoss.fiddle.model.FiddleInstance;
+import org.zkoss.fiddle.manager.FiddleSandboxManager;
+import org.zkoss.fiddle.model.FiddleSandbox;
 import org.zkoss.fiddle.model.ViewRequest;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.web.servlet.Servlets;
-import org.zkoss.zkplus.hibernate.HibernateUtil;
 
-public class FiddleDispatcherFilter implements Filter {
+public class FiddleViewFilter implements Filter {
 
-	private static final Logger logger = Logger.getLogger(FiddleDispatcherFilter.class);
+	private static final Logger logger = Logger.getLogger(FiddleViewFilter.class);
 
 	private Pattern code = Pattern.compile("^/sample/([^/.]{5,}?)/(\\d+)/?.*$");
 
 	private Pattern view = Pattern.compile("^/([^/.]{5,}?)/(\\d+)(/v([0-9\\.]+)/?)?.*$");
 
 	private ServletContext ctx;
+	
+	private ICaseDao caseDao; 
+	
+	private FiddleSandboxManager sandboxManager; 
 
 	public static void main(String[] args) {
 		String path = "/3591l7m/2";
@@ -68,8 +69,6 @@ public class FiddleDispatcherFilter implements Filter {
 		ICase $case = null; // new Case();
 
 		if (caseToken != null) {
-			Session s = HibernateUtil.getSessionFactory().openSession();
-			ICaseDao caseDao = new CaseDaoImpl(s);
 
 			try {
 				$case = caseDao.findCaseByToken(caseToken, version == null ? 1 : Integer.parseInt(version));
@@ -79,7 +78,6 @@ public class FiddleDispatcherFilter implements Filter {
 					logger.warn("getCase(String, String) - caseId is not valid ", e);
 				}
 			} finally {
-				s.close();
 			}
 
 		}
@@ -120,14 +118,12 @@ public class FiddleDispatcherFilter implements Filter {
 			vr.setTokenVersion(match.group(2));
 			vr.setZkversion(match.group(4));
 
-			FiddleInstanceManager im = FiddleInstanceManager.getInstance();
-
 			String instName = (String) request.getAttribute("run");
 			String newurl = null;
-			FiddleInstance inst;
+			FiddleSandbox inst;
 
 			if (instName != null) {
-				inst = im.getFiddleInstance(instName);
+				inst = sandboxManager.getFiddleInstance(instName);
 				if (inst == null) {
 					newurl = ("/view/" + vr.getToken() + "/" + vr.getTokenVersion() + "/v" + vr.getZkversion());
 					response.sendRedirect(newurl);
@@ -135,7 +131,7 @@ public class FiddleDispatcherFilter implements Filter {
 				}
 				request.setAttribute("runview", vr);
 			} else if (vr.getZkversion() != null) {
-				inst = im.getFiddleInstanceByVersion(vr.getZkversion());
+				inst = sandboxManager.getFiddleInstanceByVersion(vr.getZkversion());
 
 				if (inst == null) {
 					newurl = ("/view/" + vr.getToken() + "/" + vr.getTokenVersion());
@@ -144,7 +140,7 @@ public class FiddleDispatcherFilter implements Filter {
 				}
 				request.setAttribute("runview", vr);
 			} else {
-				inst = im.getFiddleInstanceForLastestVersion();
+				inst = sandboxManager.getFiddleInstanceForLastestVersion();
 			}
 
 			vr.setFiddleInstance(inst);
@@ -216,5 +212,14 @@ public class FiddleDispatcherFilter implements Filter {
 	}
 
 	public void destroy() {
+	}
+
+	
+	public void setCaseDao(ICaseDao caseDao) {
+		this.caseDao = caseDao;
+	}
+	
+	public void setSandboxManager(FiddleSandboxManager sandboxManager) {
+		this.sandboxManager = sandboxManager;
 	}
 }

@@ -1,26 +1,18 @@
 package org.zkoss.fiddle.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Resource;
-import org.zkoss.zkplus.hibernate.HibernateUtil;
 
-public class ResourceDaoImpl implements IResourceDao {
-
-	Session current = null;
+public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 
 	public ResourceDaoImpl() {
 
-	}
-
-	public ResourceDaoImpl(Session s) {
-		current = s;
-	}
-
-	public Session getCurrentSession() {
-		return current == null ? HibernateUtil.currentSession() : current;
 	}
 
 	/*
@@ -29,8 +21,7 @@ public class ResourceDaoImpl implements IResourceDao {
 	 * @see org.zkoss.usergroup.dao.IResourceDao#list()
 	 */
 	public List<Resource> list() {
-
-		return getCurrentSession().createCriteria(Resource.class).list();
+		return getHibernateTemplate().find("from Resource");
 
 	}
 
@@ -42,7 +33,7 @@ public class ResourceDaoImpl implements IResourceDao {
 	 * model .Resource)
 	 */
 	public void saveOrUdate(Resource m) {
-		getCurrentSession().saveOrUpdate(m);
+		getHibernateTemplate().saveOrUpdate(m);
 	}
 
 	/*
@@ -51,7 +42,7 @@ public class ResourceDaoImpl implements IResourceDao {
 	 * @see org.zkoss.usergroup.dao.IResourceDao#get(java.lang.Long)
 	 */
 	public Resource get(Long id) {
-		return (Resource) getCurrentSession().get(Resource.class, id);
+		return (Resource) getHibernateTemplate().get(Resource.class, id);
 	}
 
 	/**
@@ -65,9 +56,9 @@ public class ResourceDaoImpl implements IResourceDao {
 	 */
 	public void remove(Resource m) {
 
-		throw new UnsupportedOperationException("All resource are readonly.");
+		throw new UnsupportedOperationException("Can't delete resources.");
 		/*
-		 * getCurrentSession().delete(m);
+		 * getHibernateTemplate().delete(m);
 		 */
 	}
 
@@ -78,15 +69,16 @@ public class ResourceDaoImpl implements IResourceDao {
 	 * @see org.zkoss.usergroup.dao.IResourceDao#remove(java.lang.Long)
 	 */
 	public void remove(Long id) {
-		throw new UnsupportedOperationException("All resource are readonly.");
-		/*
-		 * getCurrentSession().
-		 * createQuery("delete from Resource where id = :id"). setLong("id",
-		 * id). executeUpdate();
-		 */
+		throw new UnsupportedOperationException("Can't delete resources.");
 	}
 
-	public List<Resource> listByCase(Long caseId) {
-		return getCurrentSession().createQuery("from Resource where caseId = :caseId").setLong("caseId", caseId).list();
+	public List<Resource> listByCase(final Long caseId) {
+		return getHibernateTemplate().execute(new HibernateCallback<List<Resource>>() {
+
+			public List<Resource> doInHibernate(Session session) throws HibernateException, SQLException {
+				return session.createQuery("from Resource where caseId = :caseId").setLong("caseId", caseId).list();
+			}
+		});
+
 	}
 }

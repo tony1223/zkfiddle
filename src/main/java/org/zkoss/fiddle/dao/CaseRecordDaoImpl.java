@@ -1,105 +1,131 @@
 package org.zkoss.fiddle.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.CaseRecord;
-import org.zkoss.zkplus.hibernate.HibernateUtil;
 
-public class CaseRecordDaoImpl implements ICaseRecordDao {
-
-	private Session current = null;
+public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 	public CaseRecordDaoImpl() {
 
 	}
 
-	public CaseRecordDaoImpl(Session s) {
-		current = s;
-	}
-
-	protected Session getCurrentSession() {
-		return current == null ? HibernateUtil.currentSession() : current;
-	}
-
 	public List<CaseRecord> list() {
-		return getCurrentSession().createCriteria(CaseRecord.class).list();
+		return getHibernateTemplate().find("from CaseRecord");
 	}
 
 	public void saveOrUdate(CaseRecord m) {
-		getCurrentSession().saveOrUpdate(m);
+		getHibernateTemplate().saveOrUpdate(m);
 	}
 
 	public CaseRecord get(Long id) {
-		return (CaseRecord) getCurrentSession().get(CaseRecord.class, id);
+		return (CaseRecord) getHibernateTemplate().get(CaseRecord.class, id);
 	}
 
 	public void remove(CaseRecord m) {
-		getCurrentSession().delete(m);
+		getHibernateTemplate().delete(m);
 	}
 
-	public void remove(Long id) {
-		getCurrentSession().createQuery("delete from CaseRecord where id = :id").setLong("id", id).executeUpdate();
+	public void remove(final Long id) {
+		getHibernateTemplate().execute(new HibernateCallback<Void>() {
+
+			public Void doInHibernate(Session session) throws HibernateException, SQLException {
+				session.createQuery("delete from CaseRecord where id = :id").setLong("id", id).executeUpdate();
+				return null;
+			}
+		});
+		;
+
 	}
 
-	public boolean increase(Integer type, Long caseId) {
-		int update = getCurrentSession()
-				.createSQLQuery("update caserecord set amount = amount + 1 where type = :type and caseId = :caseId")
-				.setLong("type", type).setLong("caseId", caseId).executeUpdate();
+	public boolean increase(final Integer type, final Long caseId) {
+		return getHibernateTemplate().execute(new HibernateCallback<Boolean>() {
 
-		return update != 0;
+			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
+				int update = session
+						.createSQLQuery(
+								"update caserecord set amount = amount + 1 where type = :type and caseId = :caseId")
+						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
+
+				return update != 0;
+			}
+		});
+
 	}
-	
-	
+
 	/**
-	 * Note that you can't make it negative, we will block all decreasing for amount <= 0.
+	 * Note that you can't make it negative, we will block all decreasing for
+	 * amount <= 0.
 	 */
-	public boolean decrease(Integer type, Long caseId) {
-		int update = getCurrentSession()
-				.createSQLQuery("update caserecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
-				.setLong("type", type).setLong("caseId", caseId).executeUpdate();
+	public boolean decrease(final Integer type, final Long caseId) {
+		return getHibernateTemplate().execute(new HibernateCallback<Boolean>() {
 
-		return update != 0;
+			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
+
+				int update = session
+						.createSQLQuery(
+								"update caserecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
+						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
+
+				return update != 0;
+			}
+		});
 	}
 
-	public List<CaseRecord> listByType(Integer type,boolean excludeEmpty,int pageIndex, int pageSize){
-		
-		String rule = "";
-		if (excludeEmpty) {
-			rule = " and amount <> 0 ";
-		}
-		
-		Query query = getCurrentSession().createQuery("from CaseRecord "+
-				" where type = :type "+
-				rule +
-				" order by amount desc")
-			.setLong("type", type);
-	
-		query.setFirstResult((pageIndex-1)*pageSize);
-		query.setMaxResults(pageSize);
-		
-		return query.list();
+	public List<CaseRecord> listByType(final Integer type, final boolean excludeEmpty, final int pageIndex,
+			final int pageSize) {
+
+		return getHibernateTemplate().execute(new HibernateCallback<List<CaseRecord>>() {
+
+			public List<CaseRecord> doInHibernate(Session session) throws HibernateException, SQLException {
+				String rule = "";
+				if (excludeEmpty) {
+					rule = " and amount <> 0 ";
+				}
+
+				Query query = session.createQuery(
+						"from CaseRecord " + " where type = :type " + rule + " order by amount desc").setLong("type",
+						type);
+
+				query.setFirstResult((pageIndex - 1) * pageSize);
+				query.setMaxResults(pageSize);
+
+				return query.list();
+			}
+		});
 	}
 
-	public Long countByType(Integer type, boolean excludeEmpty) {
+	public Long countByType(final Integer type, final boolean excludeEmpty) {
+		return getHibernateTemplate().execute(new HibernateCallback<Long>() {
 
-		String rule = "";
-		if (excludeEmpty) {
-			rule = " and amount <> 0 ";
-		}
-		
-		return (Long) getCurrentSession()
-				.createQuery("select count(id) from CaseRecord "+
-						" where type = :type "+rule+" order by amount")
-				.setLong("type", type).uniqueResult();
+			public Long doInHibernate(Session session) throws HibernateException, SQLException {
+				String rule = "";
+				if (excludeEmpty) {
+					rule = " and amount <> 0 ";
+				}
+				return (Long) session
+						.createQuery(
+								"select count(id) from CaseRecord " + " where type = :type " + rule
+										+ " order by amount").setLong("type", type).uniqueResult();
+			}
+		});
 
 	}
-	
-	public CaseRecord get(Integer type,Long caseId ){
-		return (CaseRecord) getCurrentSession().createQuery("from CaseRecord where type = :type and caseId = :caseId")
-			.setLong("type", type)
-			.setLong("caseId", caseId).uniqueResult();
+
+	public CaseRecord get(final Integer type, final Long caseId) {
+		return getHibernateTemplate().execute(new HibernateCallback<CaseRecord>() {
+
+			public CaseRecord doInHibernate(Session session) throws HibernateException, SQLException {
+				return (CaseRecord) session.createQuery("from CaseRecord where type = :type and caseId = :caseId")
+						.setLong("type", type).setLong("caseId", caseId).uniqueResult();
+			}
+		});
+
 	}
 }

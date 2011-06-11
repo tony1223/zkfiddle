@@ -4,9 +4,8 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.zkoss.fiddle.dao.CaseDaoImpl;
-import org.zkoss.fiddle.dao.CaseRecordDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
+import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.zk.ui.Component;
@@ -14,6 +13,7 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -37,7 +37,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		CaseRecordDaoImpl caseRecordDao = new CaseRecordDaoImpl();
+		ICaseRecordDao caseRecordDao =  (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 		List<CaseRecord> list = caseRecordDao.listByType(CaseRecord.TYPE_LIKE, true, 1, 50);
 		likes.setModel(new ListModelList(list));
 
@@ -61,7 +61,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			}
 		});
 
-		ICaseDao caseDao = new CaseDaoImpl();
+		ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
 
 		List<Case> recentlyList = caseDao.getRecentlyCase(10);
 		recentlys.setModel(new ListModelList(recentlyList));

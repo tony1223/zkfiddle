@@ -7,8 +7,9 @@ import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.SaveEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.event.SourceChangedEvent;
-import org.zkoss.fiddle.manager.FiddleInstanceManager;
-import org.zkoss.fiddle.model.FiddleInstance;
+import org.zkoss.fiddle.manager.FiddleSandboxManager;
+import org.zkoss.fiddle.model.FiddleSandbox;
+import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -36,10 +37,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-//		fblike.setHref((String)requestScope.get("hostName"));
-		
-		FiddleInstanceManager instanceManager = FiddleInstanceManager.getInstance();
-		Collection<FiddleInstance> acounts = instanceManager.listFiddleInstances().values();
+		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil.getBean("sandboxManager");
+		Collection<FiddleSandbox> acounts = sandboxManager.listFiddleInstances().values();
 
 		if (acounts.size() == 0) {
 			instances.setModel(new ListModelList(new String[] { "No available Sandbox now" }));
@@ -47,12 +46,12 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		} else {
 			instances.setItemRenderer(new ComboitemRenderer() {
 				public void render(Comboitem item, Object data) throws Exception {
-					FiddleInstance inst = (FiddleInstance) data;
+					FiddleSandbox inst = (FiddleSandbox) data;
 					item.setLabel(inst.getName() + "["+inst.getZKVersion()+"]");
 					item.setValue(data);
 				}
 			});
-			instances.setModel(new ListModelList(instanceManager.listFiddleInstances().values()));
+			instances.setModel(new ListModelList(sandboxManager.listFiddleInstances().values()));
 		}
 		instances.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -71,11 +70,11 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	}
 	
 	public void onClick$viewBtn() {
-		FiddleInstance inst = null;
+		FiddleSandbox inst = null;
 		if (instances.getSelectedIndex() == -1)
-			inst = (FiddleInstance) instances.getItemAtIndex(0).getValue();
+			inst = (FiddleSandbox) instances.getItemAtIndex(0).getValue();
 		else
-			inst = (FiddleInstance) instances.getSelectedItem().getValue();
+			inst = (FiddleSandbox) instances.getSelectedItem().getValue();
 
 		//TODO review this
 		sourceQueue.publish(new ShowResultEvent(FiddleEvents.ON_SOURCE_SHOW_RESULT , null, inst));

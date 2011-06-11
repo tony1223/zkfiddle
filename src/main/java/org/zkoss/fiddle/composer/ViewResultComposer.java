@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.model.FiddleInstance;
+import org.zkoss.fiddle.model.FiddleSandbox;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -71,7 +71,7 @@ public class ViewResultComposer extends GenericForwardComposer {
 			public void onEvent(Event event) throws Exception {
 				if (event instanceof ShowResultEvent) {
 					ShowResultEvent evt = (ShowResultEvent) event;
-					FiddleInstance inst = evt.getInstance();
+					FiddleSandbox inst = evt.getInstance();
 
 					zkver.setValue(inst.getZKVersion());
 					viewEditor.setTitle("Running sandbox:" + inst.getName());

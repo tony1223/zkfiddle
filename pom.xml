@@ -24,6 +24,9 @@
 		<timelinez.version>2.3.1_50</timelinez.version>
 		<timeplotz.version>1.1_50</timeplotz.version>
 		<zuljsp.version>1.4.1</zuljsp.version>
+		<spring.version>3.0.5.RELEASE</spring.version>
+		<hibernate.version>3.6.4.Final</hibernate.version>
+		<hibernate.annotations.version>3.5.6-Final</hibernate.annotations.version>
 	</properties>  
   <version>0.9.0</version>
   <name>ZK Fiddle Data handler</name>
@@ -81,69 +84,35 @@
 		<version>${servlet.version}</version>
 		<scope>provided</scope>
 	</dependency>
+	
+	<!-- Spring start -->
 	<dependency>
-		<groupId>org.apache.poi</groupId>
-		<artifactId>poi</artifactId>
-		<version>${poi.version}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-			</exclusion>
-		</exclusions>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-context</artifactId>
+	    <version>${spring.version}</version>
 	</dependency>
 	<dependency>
-		<groupId>net.sourceforge.jexcelapi</groupId>
-		<artifactId>jxl</artifactId>
-		<version>${jxl.version}</version>
+		<groupId>org.zkoss.zk</groupId>
+		<artifactId>zkspring-core</artifactId>
+		<version>3.0</version>
 	</dependency>
 	<dependency>
-		<groupId>net.sf.jasperreports</groupId>
-		<artifactId>jasperreports</artifactId>
-		<version>${jasperreports.version}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>xml-apis</groupId>
-				<artifactId>xml-apis</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>eclipse</groupId>
-				<artifactId>jdtcore</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>bouncycastle</groupId>
-				<artifactId>bcmail-jdk14</artifactId>
-			</exclusion>
-			<exclusion>
-				<groupId>bouncycastle</groupId>
-				<artifactId>bcprov-jdk14</artifactId>
-			</exclusion>
-		</exclusions>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-orm</artifactId>
+	    <version>${spring.version}</version>
 	</dependency>
 	<dependency>
-	    <groupId>commons-codec</groupId>
-	    <artifactId>commons-codec</artifactId>
-	    <version>1.5</version>
-	</dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-web</artifactId>
+	    <version>${spring.version}</version>
+	</dependency>	
 	<dependency>
-		<groupId>jfree</groupId>
-		<artifactId>jfreechart</artifactId>
-		<version>${jfreechart.version}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>jfree</groupId>
-				<artifactId>jcommon</artifactId>
-			</exclusion>
-		</exclusions>
-	</dependency>
+	    <groupId>com.google.collections</groupId>
+	    <artifactId>google-collections</artifactId>
+	    <version>1.0</version>
+	</dependency>	
+	<!-- Spring end -->	
+	
 	<dependency>
 		<groupId>com.jhlabs</groupId>
 		<artifactId>filters</artifactId>
@@ -210,16 +179,6 @@
 		<version>${zk.version}</version>
 	</dependency>
 	<dependency>
-		<groupId>org.zkoss.zkforge</groupId>
-		<artifactId>ckez</artifactId>
-		<version>${ckez.version}</version>
-	</dependency>
-	<dependency>
-		<groupId>org.zkoss.zkforge</groupId>
-		<artifactId>timelinez</artifactId>
-		<version>${timelinez.version}</version>
-	</dependency>
-	<dependency>
 		<groupId>org.zkoss.zk</groupId>
 		<artifactId>zuljsp</artifactId>
 		<version>${zuljsp.version}</version>
@@ -279,17 +238,17 @@
 	<dependency>
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-core</artifactId>
-	    <version>3.6.4.Final</version>
+	    <version>${hibernate.version}</version>
 	</dependency>
 	<dependency>
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-annotations</artifactId>
-	    <version>3.5.6-Final</version>
+	    <version>${hibernate.annotations.version}</version>
 	</dependency>
     <dependency>
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-entitymanager</artifactId>
-	    <version>3.6.4.Final</version>
+	    <version>${hibernate.version}</version>
 	</dependency>
 	 <dependency>
 	    <groupId>commons-collections</groupId>

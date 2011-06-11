@@ -7,47 +7,44 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.zkoss.fiddle.model.FiddleInstance;
+import org.zkoss.fiddle.model.FiddleSandbox;
 
 /**
- * we store this data in system wild and not persisting.
+ * We store this data in system wild and not persisting,
+ * this should be used as a singleton
  * 
  * @author tony
  * 
  */
-public class FiddleInstanceManager {
+public class FiddleSandboxManager {
 
-	private Map<String, FiddleInstance> instancesByName = new HashMap<String, FiddleInstance>();
+	private Map<String, FiddleSandbox> instancesByName = new HashMap<String, FiddleSandbox>();
 
-	private Map<String, List<FiddleInstance>> instancesByVersion = new HashMap<String, List<FiddleInstance>>();
-
-	private static FiddleInstanceManager _instance;
+	private Map<String, List<FiddleSandbox>> instancesByVersion = new HashMap<String, List<FiddleSandbox>>();
 
 	private String latest = "5.0.7";
+
+	private long checkTime = 1000 * 60 * 5;
 	
-	private FiddleInstanceManager() {
-
-	}
-
 	/**
 	 * @throws IllegalArgumentException
 	 *             instance and instance path can't be null
 	 * @param instance
 	 */
 
-	public FiddleInstance getFiddleInstance(String name) {
+	public FiddleSandbox getFiddleInstance(String name) {
 		return checkDate(instancesByName.get(name));
 
 	}
 
-	public FiddleInstance getFiddleInstanceForLastestVersion() {
+	public FiddleSandbox getFiddleInstanceForLastestVersion() {
 		return getFiddleInstanceByVersion(latest);
 	}
 	
-	public FiddleInstance getFiddleInstanceByVersion(String version) {
+	public FiddleSandbox getFiddleInstanceByVersion(String version) {
 
-		for (FiddleInstance fi : getVersionList(version)) {
-			FiddleInstance inst = checkDate(fi);
+		for (FiddleSandbox fi : getVersionList(version)) {
+			FiddleSandbox inst = checkDate(fi);
 			if (inst != null)
 				return inst;
 		}
@@ -55,19 +52,18 @@ public class FiddleInstanceManager {
 
 	}
 
-	private long checkTime = 1000 * 60 * 5;
 
-	private List<FiddleInstance> getVersionList(String ver) {
+	private List<FiddleSandbox> getVersionList(String ver) {
 		if (instancesByVersion.containsKey(ver)) {
 			return instancesByVersion.get(ver);
 		} else {
-			List<FiddleInstance> list = new ArrayList<FiddleInstance>();
+			List<FiddleSandbox> list = new ArrayList<FiddleSandbox>();
 			instancesByVersion.put(ver, list);
 			return list;
 		}
 	}
 
-	private FiddleInstance checkDate(FiddleInstance os) {
+	private FiddleSandbox checkDate(FiddleSandbox os) {
 		if (os == null)
 			return os;
 
@@ -82,14 +78,14 @@ public class FiddleInstanceManager {
 
 	private void removeInstacne(String name){
 		
-		FiddleInstance ins = instancesByName.get(name);
+		FiddleSandbox ins = instancesByName.get(name);
 		instancesByName.remove(name);
 		
 		getVersionList(ins.getZKVersion()).remove(ins);
 		
 	}
 
-	public void addFiddleInstance(FiddleInstance instance) {
+	public void addFiddleInstance(FiddleSandbox instance) {
 		if (instance == null || instance.getPath() == null) {
 			throw new IllegalArgumentException("instance and instance path can't be null ");
 		}
@@ -118,15 +114,9 @@ public class FiddleInstanceManager {
 	/**
 	 * @return
 	 */
-	public Map<String, FiddleInstance> listFiddleInstances() {
+	public Map<String, FiddleSandbox> listFiddleInstances() {
 		return Collections.unmodifiableMap(instancesByName);
 	}
 
-	public static FiddleInstanceManager getInstance() {
-		if (_instance == null)
-			_instance = new FiddleInstanceManager();
-
-		return _instance;
-	}
 
 }

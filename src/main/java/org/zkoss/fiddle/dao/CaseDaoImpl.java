@@ -1,39 +1,32 @@
 package org.zkoss.fiddle.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
-import org.zkoss.zkplus.hibernate.HibernateUtil;
 
-public class CaseDaoImpl implements ICaseDao {
 
-	private Session current = null;
+public class CaseDaoImpl extends AbstractDao implements ICaseDao {
+
 	
 	public CaseDaoImpl() {
 
 	}
-	public CaseDaoImpl(Session s) {
-		current = s;
-	}
 	
-	protected Session getCurrentSession() {
-		return current == null ? HibernateUtil.currentSession() : current;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.zkoss.usergroup.dao.ICaseDao#list()
 	 */
 	public List<Case> list() {
-
-		return getCurrentSession().createCriteria(Case.class).list();
-
+		return getHibernateTemplate().find("from Case");
 	}
 
 	/*
@@ -44,7 +37,7 @@ public class CaseDaoImpl implements ICaseDao {
 	 * .Case)
 	 */
 	public void saveOrUdate(Case m) {
-		getCurrentSession().saveOrUpdate(m);
+		getHibernateTemplate().saveOrUpdate(m);
 	}
 
 	/*
@@ -53,7 +46,7 @@ public class CaseDaoImpl implements ICaseDao {
 	 * @see org.zkoss.usergroup.dao.ICaseDao#get(java.lang.Long)
 	 */
 	public Case get(Long id) {
-		return (Case) getCurrentSession().get(Case.class, id);
+		return (Case) getHibernateTemplate().get(Case.class, id);
 	}
 
 	/*
@@ -63,7 +56,7 @@ public class CaseDaoImpl implements ICaseDao {
 	 * Case)
 	 */
 	public void remove(Case m) {
-		getCurrentSession().delete(m);
+		throw new UnsupportedOperationException("Can't delete cases .");
 	}
 
 	/*
@@ -71,29 +64,41 @@ public class CaseDaoImpl implements ICaseDao {
 	 * 
 	 * @see org.zkoss.usergroup.dao.ICaseDao#remove(java.lang.Long)
 	 */
-	public void remove(Long id) {
-
-		getCurrentSession().createQuery("delete from Case where id = :id").setLong("id", id).executeUpdate();
+	public void remove(final Long id) {
+		throw new UnsupportedOperationException("Can't delete cases.");
 	}
 
-	public Case findCaseByToken(String token, Integer version) {
-		Criteria crit = getCurrentSession().createCriteria(Case.class);
+	public Case findCaseByToken(final String token,final Integer version) {
+		return getHibernateTemplate().execute(new HibernateCallback<Case>() {
+			public Case doInHibernate(Session session) throws HibernateException, SQLException {
+				Criteria crit = session.createCriteria(Case.class);
+				
+				crit.add(Restrictions.eq("token", token));
+				crit.add(Restrictions.eq("version", version == null ? 1 : version));
+		
+				return (Case) crit.uniqueResult();		
+			}
 
-		crit.add(Restrictions.eq("token", token));
-		crit.add(Restrictions.eq("version", version == null ? 1 : version));
-
-		return (Case) crit.uniqueResult();
+		});
 	}
 
-	public Integer getLastVersionByToken(String token) {
-		return (Integer) getCurrentSession().createQuery("select max(version) from Case where token = :token ")
+	public Integer getLastVersionByToken(final String token) {
+		return getHibernateTemplate().execute(new HibernateCallback<Integer>() {
+			public Integer doInHibernate(Session session) throws HibernateException, SQLException {
+				return (Integer)  session.createQuery("select max(version) from Case where token = :token ")
 				.setString("token", token).uniqueResult();
+			}
+		});
 	}
-	
-	public List<Case> getRecentlyCase(Integer amount) {
-		Query query =  getCurrentSession().createQuery("from Case order by id desc");
-		query.setMaxResults(amount);
-		return query.list();
+
+	public List<Case> getRecentlyCase(final Integer amount) {
+		return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
+			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("from Case order by id desc");
+				query.setMaxResults(amount);
+				return query.list();
+			}
+		});
 	}
 
 }

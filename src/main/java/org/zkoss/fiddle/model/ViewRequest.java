@@ -2,7 +2,7 @@ package org.zkoss.fiddle.model;
 
 public class ViewRequest {
 
-	private FiddleInstance inst;
+	private FiddleSandbox inst;
 
 	private String token;
 
@@ -10,11 +10,11 @@ public class ViewRequest {
 
 	private String zkversion;
 
-	public FiddleInstance getFiddleInstance() {
+	public FiddleSandbox getFiddleInstance() {
 		return inst;
 	}
 
-	public void setFiddleInstance(FiddleInstance inst) {
+	public void setFiddleInstance(FiddleSandbox inst) {
 		this.inst = inst;
 	}
 

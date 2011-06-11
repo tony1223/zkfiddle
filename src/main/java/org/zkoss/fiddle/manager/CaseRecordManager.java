@@ -1,17 +1,18 @@
 package org.zkoss.fiddle.manager;
 
-import org.zkoss.fiddle.dao.CaseRecordDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.zkplus.spring.SpringUtil;
 
 
 public class CaseRecordManager {
 
+	//FIXME using spring to handle this
 	private ICaseRecordDao dao ;
 	
 	public CaseRecordManager(){
-		dao = new CaseRecordDaoImpl(); 
+		dao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao"); 
 	}
 	
 	/**

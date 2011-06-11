@@ -1,6 +1,6 @@
 package org.zkoss.fiddle.composer.event;
 
-import org.zkoss.fiddle.model.FiddleInstance;
+import org.zkoss.fiddle.model.FiddleSandbox;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.zk.ui.event.Event;
 
@@ -8,20 +8,20 @@ public class ShowResultEvent extends Event {
 
 	private ICase $case;
 
-	private FiddleInstance instance;
+	private FiddleSandbox instance;
 
-	public ShowResultEvent(String evtName,ICase _case,FiddleInstance inst) {
+	public ShowResultEvent(String evtName,ICase _case,FiddleSandbox inst) {
 		super(evtName);
 		this.instance = inst;
 		this.$case= _case;
 	}
 
 
-	public FiddleInstance getInstance() {
+	public FiddleSandbox getInstance() {
 		return instance;
 	}
 
-	public void setInstance(FiddleInstance instance) {
+	public void setInstance(FiddleSandbox instance) {
 		this.instance = instance;
 	}
 	

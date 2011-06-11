@@ -14,9 +14,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
-import org.zkoss.fiddle.dao.CaseDaoImpl;
-import org.zkoss.fiddle.dao.ResourceDaoImpl;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.manager.VirtualCaseManager;
@@ -25,7 +22,6 @@ import org.zkoss.fiddle.model.VirtualCase;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
-import org.zkoss.zkplus.hibernate.HibernateUtil;
 
 public class FiddleDataFilter implements Filter {
 
@@ -33,7 +29,9 @@ public class FiddleDataFilter implements Filter {
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(FiddleDataFilter.class);
-
+	private ICaseDao caseDao; 
+	private IResourceDao resourceDao;
+	
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		if (logger.isDebugEnabled()) {
@@ -126,12 +124,10 @@ public class FiddleDataFilter implements Filter {
 		}
 
 		// we have to open a one because we are in filter :(
-		Session s = HibernateUtil.getSessionFactory().openSession();
 
 		Case c = null; // new Case();
 		String caseToken = (String) token;
 		if (caseToken != null) {
-			ICaseDao caseDao = new CaseDaoImpl(s);
 			try {
 				c = caseDao.findCaseByToken(caseToken, version);
 			} catch (IllegalArgumentException e) {
@@ -148,12 +144,10 @@ public class FiddleDataFilter implements Filter {
 			return false;
 		}
 
-		IResourceDao dao = new ResourceDaoImpl(s);
-		
 		/**
 		 *Here we assume it's IResource list 
 		 */
-		List dbResources = dao.listByCase(c.getId());
+		List dbResources = resourceDao.listByCase(c.getId());
 		JSONArray json = renderResources(dbResources);
 
 		JSONObject jsonres = new JSONObject();
@@ -164,7 +158,6 @@ public class FiddleDataFilter implements Filter {
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().println(jsonres);
 		response.setContentType("text/json;charset=UTF-8"); 
-		s.close();
 		response.getWriter().close();
 
 		if (logger.isDebugEnabled()) {
@@ -199,4 +192,15 @@ public class FiddleDataFilter implements Filter {
 
 	public void destroy() {
 	}
+
+	
+	public void setCaseDao(ICaseDao caseDao) {
+		this.caseDao = caseDao;
+	}
+
+	
+	public void setResourceDao(IResourceDao resourceDao) {
+		this.resourceDao = resourceDao;
+	}
+
 }
