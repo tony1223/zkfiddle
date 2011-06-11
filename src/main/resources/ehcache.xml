@@ -1,0 +1,62 @@
+<ehcache>
+	<diskStore path="java.io.tmpdir" />
+
+	
+	<defaultCache
+	    maxElementsInMemory="1000"
+	    eternal="false"
+	    timeToIdleSeconds="120"
+	    timeToLiveSeconds="120"
+	    overflowToDisk="true"
+	    />
+	<cache
+	    name="org.hibernate.cache.StandardQueryCache"
+	    maxElementsInMemory="1000"
+	    eternal="false"
+	    timeToIdleSeconds="120"
+	    timeToLiveSeconds="120"
+	    overflowToDisk="true"/>
+		
+	<cache
+	    name="org.hibernate.cache.UpdateTimestampsCache"
+	    maxElementsInMemory="5000"
+	    eternal="false"
+	    overflowToDisk="true"/>
+
+	<cache
+	    name="org.zkoss.fiddle.model.Case"
+	    maxElementsInMemory="1000"
+	    eternal="false"
+	    overflowToDisk="true"/>
+		
+	<cache
+	    name="org.zkoss.fiddle.model.Resource"
+	    maxElementsInMemory="1000"
+	    eternal="true"
+	    overflowToDisk="true"/>
+
+	<cache
+	    name="RecentlyCases"
+	    maxElementsInMemory="10"
+	    eternal="false"
+	    overflowToDisk="false"/>
+	
+	<cache
+	    name="top10liked"
+	    maxElementsInMemory="20"
+	    eternal="false"
+	    overflowToDisk="false"/>
+						
+	<cache
+	    name="CaseResources"
+	    maxElementsInMemory="1000"
+	    eternal="false"
+	    overflowToDisk="true"/>		
+	
+	<cache
+	    name="CaseByToken"
+	    maxElementsInMemory="1000"
+	    eternal="false"
+	    overflowToDisk="true" />	
+		
+</ehcache>

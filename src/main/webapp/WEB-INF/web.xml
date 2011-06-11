@@ -89,7 +89,14 @@
 		<url-pattern>*.dsp</url-pattern>
 	</servlet-mapping>
 
-	
+	<filter>   
+		<filter-name>hibernateFilter</filter-name>   
+		<filter-class> org.springframework.orm.hibernate3.support.OpenSessionInViewFilter </filter-class>   
+		<init-param>   
+			<param-name>singleSession</param-name>   
+			<param-value>true</param-value>   
+		</init-param>   
+	</filter>  
 		
 	<filter>
 	  <description>sandbox filter</description>
@@ -130,6 +137,27 @@
 	  </init-param>
 	 </filter>
 
+	<!-- open session in View start -->
+	<!-- we open session for those url need. -->
+	<filter-mapping>   
+		<filter-name>hibernateFilter</filter-name>   
+		<url-pattern>/sandbox/*</url-pattern>   
+	</filter-mapping>
+	<filter-mapping>   
+		<filter-name>hibernateFilter</filter-name>   
+		<url-pattern>/data/*</url-pattern>   
+	</filter-mapping>
+	<filter-mapping>   
+		<filter-name>hibernateFilter</filter-name>   
+		<url-pattern>/sample/*</url-pattern>   
+	</filter-mapping>
+	<filter-mapping>   
+		<filter-name>hibernateFilter</filter-name>   
+		<url-pattern>/</url-pattern>   
+	</filter-mapping>
+	
+	<!-- open session in View end -->
+	
     <filter-mapping>
         <filter-name>SandboxFilter</filter-name>
         <url-pattern>/sandbox/*</url-pattern>

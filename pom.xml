@@ -257,12 +257,29 @@
 	</dependency>
 	<!-- Hibernate end -->
 	
+	
+	<!-- cache start -->
+	<dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache-core</artifactId>
+        <version>2.4.2</version>
+    </dependency>
+    <!-- cache end -->
+    
+    <!--  logging start -->
 	<dependency>
 	    <groupId>log4j</groupId>
 	    <artifactId>log4j</artifactId>
 	    <version>1.2.16</version>
 	</dependency>	
-	
+
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>1.6.1</version>
+    </dependency>
+    
+    <!--  logging end -->
   </dependencies>
   <build>
     <finalName>datahandler</finalName>

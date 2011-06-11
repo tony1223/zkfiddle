@@ -30,7 +30,6 @@ import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
 import org.zkoss.fiddle.util.FileUtil;
-import org.zkoss.fiddle.util.StringUtil;
 import org.zkoss.social.facebook.event.LikeEvent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -314,8 +313,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		} else if (IResource.TYPE_CSS == type) {
 			return new Resource(IResource.TYPE_CSS, name, ".hello{ \n color:red; \n }");
 		} else if (IResource.TYPE_HTML == type) {
-			return (new Resource(IResource.TYPE_HTML, name, StringUtil.concatln(
-					"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n", "<body>\n    hello\n  </body>\n</html>")));
+			return (new Resource(IResource.TYPE_HTML, name,
+					"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n\n<body>\n    hello\n  </body>\n</html>"));
 		} else if (IResource.TYPE_JAVA == type) {
 			String clsName = name;
 			if (clsName != null) 

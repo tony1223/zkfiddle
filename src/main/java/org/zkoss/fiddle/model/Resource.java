@@ -1,5 +1,6 @@
 package org.zkoss.fiddle.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -18,7 +19,7 @@ import org.zkoss.fiddle.model.api.IResource;
 
 @Entity
 @Table(name = "resources")
-public class Resource implements IResource,Cloneable {
+public class Resource implements IResource, Cloneable, Serializable {
 
 	private Long id;
 
@@ -189,9 +190,9 @@ public class Resource implements IResource,Cloneable {
 	}
 
 	public void buildFinalConetnt(Case c) {
-		buildFinalConetnt(c.getToken(),c.getVersion());		
+		buildFinalConetnt(c.getToken(), c.getVersion());
 	}
-	
+
 	private void buildFinalConetnt(String token, int version) {
 
 		if (token == null) {
@@ -203,21 +204,22 @@ public class Resource implements IResource,Cloneable {
 
 		String finalcontent;
 
-		String replacedtoken = "j"+token + "\\$v" + version;
+		String replacedtoken = "j" + token + "\\$v" + version;
 
 		if (type == TYPE_JAVA) {
-			finalcontent = "package " + IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + pkg + ";\n\n" + this.content;
+			finalcontent = "package " + IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + pkg + ";\n\n"
+					+ this.content;
 			this.finalContent = finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
 		} else if (type == TYPE_ZUL) {
 			finalcontent = this.content;
 			this.finalContent = finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
-			
+
 		} else {
 			this.finalContent = this.content;
 		}
 
 	}
-	
+
 	public void setCanDelete(boolean canDelete) {
 		this.canDelete = canDelete;
 	}

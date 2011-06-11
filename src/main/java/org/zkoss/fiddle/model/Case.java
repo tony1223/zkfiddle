@@ -1,5 +1,6 @@
 package org.zkoss.fiddle.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -19,7 +20,7 @@ import org.zkoss.fiddle.model.api.ICase;
 
 @Entity
 @Table(name = "cases")
-public class Case implements ICase {
+public class Case implements ICase, Serializable {
 
 	private Long id;
 

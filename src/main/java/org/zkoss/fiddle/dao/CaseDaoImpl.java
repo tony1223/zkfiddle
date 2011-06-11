@@ -3,6 +3,10 @@ package org.zkoss.fiddle.dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -11,9 +15,15 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
+import org.zkoss.fiddle.util.CacheFactory;
 
 
 public class CaseDaoImpl extends AbstractDao implements ICaseDao {
+
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = Logger.getLogger(CaseDaoImpl.class);
 
 	
 	public CaseDaoImpl() {
@@ -38,6 +48,12 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	 */
 	public void saveOrUdate(Case m) {
 		getHibernateTemplate().saveOrUpdate(m);
+
+		if (logger.isInfoEnabled()) {
+			logger.info("saveOrUdate(Case) - Clear Recently caches");
+		}
+		Cache c = CacheFactory.getRecentlyCases();
+		c.removeAll();
 	}
 
 	/*
@@ -69,17 +85,28 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	}
 
 	public Case findCaseByToken(final String token,final Integer version) {
-		return getHibernateTemplate().execute(new HibernateCallback<Case>() {
+		Cache c = CacheFactory.getCaseByToken();
+		
+		String key = token+"::"+version;
+		if (c.isKeyInCache(key)) {
+			if (logger.isInfoEnabled()) {
+				logger.info("findCaseByToken(token,version) - Hit Case");
+			}
+			return (Case) c.get(key).getValue();
+		}
+		Case $case = getHibernateTemplate().execute(new HibernateCallback<Case>() {
 			public Case doInHibernate(Session session) throws HibernateException, SQLException {
 				Criteria crit = session.createCriteria(Case.class);
 				
 				crit.add(Restrictions.eq("token", token));
 				crit.add(Restrictions.eq("version", version == null ? 1 : version));
-		
 				return (Case) crit.uniqueResult();		
 			}
 
 		});
+		
+		c.put(new Element(key, $case));
+		return $case;		
 	}
 
 	public Integer getLastVersionByToken(final String token) {
@@ -91,14 +118,30 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 		});
 	}
 
+	/**
+	 * We cache this and update it when save a new case,
+	 * yes , it's a often updated field , but it's on the index page , so it's worth to cache it here. 
+	 */
 	public List<Case> getRecentlyCase(final Integer amount) {
-		return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
+		Cache c = CacheFactory.getRecentlyCases();
+		
+		String key = "recently:" + amount;
+		if (c.isKeyInCache(key)) {
+			if (logger.isInfoEnabled()) {
+				logger.info("getRecentlyCase(Integer) - Hit Cases");
+			}
+			return (List<Case>) c.get(key).getValue();
+		}
+		List<Case> ret= getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
 			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("from Case order by id desc");
 				query.setMaxResults(amount);
+				query.setCacheable(true);
 				return query.list();
 			}
 		});
+		c.put(new Element(key, ret));
+		return ret;		
 	}
 
 }

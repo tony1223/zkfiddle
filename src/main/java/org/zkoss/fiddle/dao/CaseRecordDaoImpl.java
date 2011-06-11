@@ -3,14 +3,21 @@ package org.zkoss.fiddle.dao;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.CaseRecord;
+import org.zkoss.fiddle.util.CacheFactory;
 
 public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
+
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = Logger.getLogger(CaseRecordDaoImpl.class);
 
 	public CaseRecordDaoImpl() {
 
@@ -45,6 +52,13 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	}
 
 	public boolean increase(final Integer type, final Long caseId) {
+		if(type == CaseRecord.TYPE_LIKE){
+			if (logger.isDebugEnabled()) {
+				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
+			}
+
+			CacheFactory.getTop10LikedRecord().removeAll();
+		}
 		return getHibernateTemplate().execute(new HibernateCallback<Boolean>() {
 
 			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
@@ -64,6 +78,12 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	 * amount <= 0.
 	 */
 	public boolean decrease(final Integer type, final Long caseId) {
+		if(type == CaseRecord.TYPE_LIKE){
+			if (logger.isDebugEnabled()) {
+				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
+			}
+			CacheFactory.getTop10LikedRecord().removeAll();
+		}
 		return getHibernateTemplate().execute(new HibernateCallback<Boolean>() {
 
 			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
@@ -95,7 +115,6 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 				query.setFirstResult((pageIndex - 1) * pageSize);
 				query.setMaxResults(pageSize);
-
 				return query.list();
 			}
 		});
@@ -103,16 +122,16 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 	public Long countByType(final Integer type, final boolean excludeEmpty) {
 		return getHibernateTemplate().execute(new HibernateCallback<Long>() {
-
 			public Long doInHibernate(Session session) throws HibernateException, SQLException {
 				String rule = "";
 				if (excludeEmpty) {
 					rule = " and amount <> 0 ";
 				}
-				return (Long) session
-						.createQuery(
-								"select count(id) from CaseRecord " + " where type = :type " + rule
-										+ " order by amount").setLong("type", type).uniqueResult();
+				
+				Query query = session.createQuery("select count(id) from CaseRecord " + 
+						" where type = :type " + rule+ " order by amount");
+				query.setLong("type", type);
+				return (Long) query.uniqueResult();
 			}
 		});
 
@@ -122,8 +141,9 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 		return getHibernateTemplate().execute(new HibernateCallback<CaseRecord>() {
 
 			public CaseRecord doInHibernate(Session session) throws HibernateException, SQLException {
-				return (CaseRecord) session.createQuery("from CaseRecord where type = :type and caseId = :caseId")
-						.setLong("type", type).setLong("caseId", caseId).uniqueResult();
+				Query query = session.createQuery("from CaseRecord where type = :type and caseId = :caseId");
+				query.setLong("type", type).setLong("caseId", caseId);
+				return (CaseRecord) query.uniqueResult();
 			}
 		});
 

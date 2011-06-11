@@ -35,7 +35,7 @@
 				</hlayout>
 			</hlayout>
 		</north>
-		<west title="ZK Fiddle, Powered by TonyQ" size="300" flex="true" splittable="true"
+		<west title="ZK Fiddle, Powered by TonyQ" size="300px" splittable="true"
 			minsize="210" maxsize="600" apply="org.zkoss.fiddle.composer.LeftReferenceComposer" collapsible="true">
 			<div>
 				<tabbox mold="accordion">

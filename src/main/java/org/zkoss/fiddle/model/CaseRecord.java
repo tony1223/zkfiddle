@@ -1,5 +1,7 @@
 package org.zkoss.fiddle.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +20,7 @@ import org.hibernate.annotations.Index;
  */
 @Entity
 @Table(name="caserecord")
-public class CaseRecord {
+public class CaseRecord implements Serializable{
 	public static final Integer TYPE_VIEW = 0 ;
 	public static final Integer TYPE_LIKE = 1 ;
 	public static final Integer TYPE_RUN_TEMP = 2 ;
