@@ -4,7 +4,7 @@
 
 <zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute" >
 	<style>
-		.list-likes .amount{
+		.list-likes .amount , .list-recentlys .version{
 			text-align:center;
 		}
 	</style>
@@ -55,18 +55,18 @@
 							</listbox>
 						</tabpanel>
 						<tabpanel>
-							<listbox id="recentlys" emptyMessage="No recently samples now." >
+							<listbox id="recentlys" sclass="list-recentlys" emptyMessage="No recently samples now." >
 								<listhead> 
 									<listheader label="#" width="20px" />
 									<listheader label="Title" />
-									<listheader label="Version" width="60px"  />
+									<listheader label="Version" width="60px" />
 								</listhead>
 							</listbox>
 						</tabpanel>
 						<tabpanel>
 							<vlayout>
 								<button id="whyfiddle" label="why ZK Fiddle" />
-								<button label="Bug Report Or Feature Request" target="_blank" 
+								<button label="Tracker" target="_blank" 
 									href="https://github.com/tony1223/zkfiddle/issues" />
 								
 								<label value="Contact me : tonylovejava[at]gmail.com" />

@@ -74,7 +74,10 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getTitle();
 					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
 					item.appendChild(new Listcell(String.valueOf(title)));
-					item.appendChild(new Listcell(String.valueOf(cr.getVersion())));
+					
+					Listcell list = new Listcell(String.valueOf(cr.getVersion()));
+					list.setSclass("version");
+					item.appendChild(list);
 					item.setValue(cr);
 				} else {
 					throw new IllegalArgumentException("data should be Case!" + data);
