@@ -5,3 +5,4 @@ src/main/java/hibernate.cfg.xml
 src/main/resources/hibernate.cfg.xml
 src/main/java/Log4j.properties
 src/main/resources/Log4j.properties
+src/main/webapp/WEB-INF/classes
