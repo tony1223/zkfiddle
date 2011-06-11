@@ -86,7 +86,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	}
 
 	public void onSelect$recentlys(Event e) {
-		Case cr = (Case) likes.getSelectedItem().getValue();
+		Case cr = (Case) recentlys.getSelectedItem().getValue();
 		Executions.sendRedirect("/sample/" + cr.getCaseUrl());
 	}
 
