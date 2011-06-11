@@ -1,6 +1,7 @@
 <?page title="ZK Fiddle${_pgtitle} - Share your ZK sample ONLINE" contentType="text/html;charset=UTF-8"?>
 <?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
 <?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax Framework) sameples right now!" ?>
+<?script type="text/javascript" src="/js/fiddle.js.dsp"?>
 
 <zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute" >
 	<style>

@@ -16,7 +16,6 @@
 		<servlet.version>2.4</servlet.version>
 		<poi.version>3.2-FINAL</poi.version>
 		<jxl.version>2.6</jxl.version>
-		<jasperreports.version>3.7.0</jasperreports.version>
 		<jfreechart.version>1.0.13</jfreechart.version>
 		<filters.version>2.0.235</filters.version>
 		<ckez.version>3.3.2_50</ckez.version>
@@ -26,7 +25,6 @@
 		<zuljsp.version>1.4.1</zuljsp.version>
 		<spring.version>3.0.5.RELEASE</spring.version>
 		<hibernate.version>3.6.4.Final</hibernate.version>
-		<hibernate.annotations.version>3.5.6-Final</hibernate.annotations.version>
 	</properties>  
   <version>0.9.0</version>
   <name>ZK Fiddle Data handler</name>
@@ -167,6 +165,16 @@
 		<groupId>org.zkoss.zk</groupId>
 		<artifactId>zkex</artifactId>
 		<version>${zk.version}</version>
+		<exclusions>
+			<exclusion>
+				<artifactId>jasperreports</artifactId>
+				<groupId>net.sf.jasperreports</groupId>
+			</exclusion>
+			<exclusion>
+				<artifactId>jfreechart</artifactId>
+				<groupId>jfree</groupId>
+			</exclusion>
+		</exclusions>
 	</dependency>
 	<dependency>
 		<groupId>org.zkoss.zk</groupId>
@@ -205,16 +213,19 @@
 		<groupId>org.zkoss.fiddle</groupId>
 		<artifactId>zk-fiddletabs</artifactId>
 		<version>0.8.0</version>
+		<optional>true</optional>
 	</dependency>
 	<dependency>
 		<groupId>org.zkoss.fiddle</groupId>
 		<artifactId>texttab</artifactId>
 		<version>0.8.0</version>
+		<optional>true</optional>
 	</dependency>		
 	<dependency>
 		<groupId>org.zkoss.external</groupId>
 		<artifactId>codeeditor</artifactId>
 		<version>0.8.0</version>
+		<optional>true</optional>
 	</dependency>
 	
 	<!-- hsqldb -->
@@ -239,11 +250,6 @@
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-core</artifactId>
 	    <version>${hibernate.version}</version>
-	</dependency>
-	<dependency>
-	    <groupId>org.hibernate</groupId>
-	    <artifactId>hibernate-annotations</artifactId>
-	    <version>${hibernate.annotations.version}</version>
 	</dependency>
     <dependency>
 	    <groupId>org.hibernate</groupId>
@@ -282,6 +288,6 @@
     <!--  logging end -->
   </dependencies>
   <build>
-    <finalName>datahandler</finalName>
+    <finalName>datahandler-${project.version}</finalName>
   </build>
 </project>
