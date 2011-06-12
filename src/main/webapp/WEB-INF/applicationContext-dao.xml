@@ -19,8 +19,22 @@
 	</bean>
 	
 	<bean id="resourceDao" class="org.zkoss.fiddle.dao.ResourceDaoImpl">
-	     <property name="sessionFactory" ref="sessionFactory" />
+		<property name="sessionFactory" ref="sessionFactory" />
 		<property name="transactionManager" ref="transactionManager"/>
 	</bean>
 
+
+	<!-- services -->
+	
+	<bean id="caseManager" class="org.zkoss.fiddle.manager.CaseManager">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="caseDao" ref="caseDao" />
+		<property name="resourceDao" ref="resourceDao" />
+		<!--
+			ICaseDao caseDao;
+	IResourceDao resourceDao;
+	CaseRecordManager caseRecordManager;
+		-->
+	</bean>
+	
 </beans>

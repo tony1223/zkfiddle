@@ -15,9 +15,9 @@ import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.event.SourceChangedEvent;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
 import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
-import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.fiddletabs.Fiddletabs;
+import org.zkoss.fiddle.manager.CaseManager;
 import org.zkoss.fiddle.manager.CaseRecordManager;
 import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
@@ -230,7 +230,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					insertWin.setVisible(false);
 				} else if (event instanceof SaveEvent) {
 					SaveEvent saveEvt = (SaveEvent) event;
-					Case saved = saveCase($case, resources, caseTitle.getValue(), saveEvt.isFork());
+					
+					CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
+					Case saved = caseManager.saveCase($case, resources, caseTitle.getValue(), saveEvt.isFork());
 					if (saved != null) {
 						Executions.getCurrent().sendRedirect(
 								"/sample/" + saved.getToken() + "/" + saved.getVersion() + saved.getURLFriendlyTitle());
@@ -290,58 +292,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 		if (k != -1)
 			resources.remove(k);
-	}
-
-	/*
-	 * TODO move this to a case manager.
-	 */
-	private Case saveCase(ICase _case, List<Resource> resources, String title, boolean fork) {
-		Case newCase = new Case();
-		newCase.setCreateDate(new Date());
-
-		ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
-		if (_case == null || fork) { // Create a brand new case
-			newCase.setVersion(1);
-			newCase.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
-
-			if (_case != null) { // fork
-				newCase.setFromId(_case.getId());
-			}
-
-		} else {
-			newCase.setToken(_case.getToken());
-			newCase.setThread(_case.getThread());
-			newCase.setVersion(caseDao.getLastVersionByToken(_case.getToken()) + 1);
-		}
-		newCase.setTitle(title);
-
-		/*
-		 * TODO: review this and use transcation to speed up and be sure it's
-		 * built as a unit.
-		 */
-
-		caseDao.saveOrUdate(newCase);
-
-		if (_case == null || fork) { // A brand new case
-			// TonyQ:
-			// we have to set the thread information after we get the id.
-			// TODO:check if we could use trigger or something
-			// to handle this in DB. currently we have to live with it.
-			newCase.setThread(newCase.getId());
-			caseDao.saveOrUdate(newCase);
-		}
-
-		IResourceDao resourceDao = (IResourceDao) SpringUtil.getBean("resourceDao");
-		for (Resource resource : resources) {
-			resource.setId(null);
-			resource.setCaseId(newCase.getId());
-			resource.buildFinalConetnt(newCase);
-			resourceDao.saveOrUdate(resource);
-		}
-
-		CaseRecordManager caseRecordManager = new CaseRecordManager();
-		caseRecordManager.initRecord(newCase);
-		return newCase;
 	}
 
 
