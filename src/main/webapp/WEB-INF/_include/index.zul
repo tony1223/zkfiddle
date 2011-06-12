@@ -13,14 +13,14 @@
 		<north apply="org.zkoss.fiddle.composer.TopNavigationComposer"
 			border="none" size="90px" sclass="demo-header" collapsible="true">
 			<hlayout style="background:#82B3D1;">
-				<div sclass="demo-logo pointer">
+				<div style="height:90px;">
 					<!-- use h1 instead of this -->
 					<n:a href="/">
-						<image width="90px" src="/img/ZK-Logo.gif" tooltiptext="ZK Fiddle - Share your ZK sample ONLINE" />
+						<image style="margin-top:16px;" width="90px" src="/img/ZK-Logo.png" tooltiptext="ZK Fiddle - Share your ZK sample ONLINE" />
 					</n:a>
 					
-					<n:iframe src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${hostName}&amp;send=false&amp;layout=standard&amp;width=300&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35" 
-						scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:35px;" allowTransparency="true"></n:iframe>
+					<n:iframe src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${hostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35" 
+						scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:35px;" allowTransparency="true"></n:iframe>
 										
 				</div>
 				<hlayout>
