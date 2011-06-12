@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.zkoss.fiddle.dao.api.ICaseDao;
+import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
@@ -17,12 +18,14 @@ public class CaseManager extends AbstractManager {
 	private ICaseDao caseDao;
 
 	private IResourceDao resourceDao;
+	
+	private ICaseRecordDao caseRecordDao;
 
 	public Case saveCase(final ICase _case, final List<Resource> resources, final String title, final boolean fork) {
 
 		return getTxTemplate().execute(new TransactionCallback<Case>() {
-
 			public Case doInTransaction(TransactionStatus status) {
+				
 				Case newCase = new Case();
 				newCase.setCreateDate(new Date());
 
@@ -44,11 +47,7 @@ public class CaseManager extends AbstractManager {
 				caseDao.saveOrUdate(newCase);
 
 				if (_case == null || fork) { // A brand new case
-					// TonyQ:
-					// we have to set the thread information after we get the
-					// id.
-					// TODO:check if we could use trigger or something
-					// to handle this in DB. currently we have to live with it.
+					// TonyQ: we have to set the thread information after we get the id.
 					newCase.setThread(newCase.getId());
 					caseDao.saveOrUdate(newCase);
 				}
@@ -59,8 +58,7 @@ public class CaseManager extends AbstractManager {
 					resource.buildFinalConetnt(newCase);
 					resourceDao.saveOrUdate(resource);
 				}
-				CaseRecordManager caseRecordManager = new CaseRecordManager();
-				caseRecordManager.initRecord(newCase);
+				caseRecordDao.createRecords(newCase);
 				return newCase;
 			}
 
@@ -74,6 +72,10 @@ public class CaseManager extends AbstractManager {
 
 	public void setResourceDao(IResourceDao resourceDao) {
 		this.resourceDao = resourceDao;
+	}
+	
+	public void setCaseRecordDao(ICaseRecordDao caseRecordDao) {
+		this.caseRecordDao = caseRecordDao;
 	}
 
 }

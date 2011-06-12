@@ -15,10 +15,10 @@ import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.event.SourceChangedEvent;
 import org.zkoss.fiddle.composer.event.SourceInsertEvent;
 import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
+import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.fiddletabs.Fiddletabs;
 import org.zkoss.fiddle.manager.CaseManager;
-import org.zkoss.fiddle.manager.CaseRecordManager;
 import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
@@ -149,8 +149,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resources.addAll(getDefaultResources());
 			initSEOHandler($case, resources);
 		} else {
-			CaseRecordManager manager = new CaseRecordManager();
-			manager.increaseRecord($case.getId(), CaseRecord.TYPE_VIEW);
+			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+			manager.increase(CaseRecord.TYPE_VIEW, $case.getId());
 			if (logger.isDebugEnabled()) {
 				logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":view");
 			}
@@ -181,18 +181,17 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 
 		sourceQueue.subscribe(new EventListener() {
-
 			public void onEvent(Event event) throws Exception {
-
+				
 				if (event instanceof SourceChangedEvent) {
 					sourceChange = true;
 				} else if (event instanceof ShowResultEvent) {
 					ShowResultEvent result = (ShowResultEvent) event;
 
-					CaseRecordManager manager = new CaseRecordManager();
 					if (sourceChange) {
 						if ($case != null && $case.getId() != null) {
-							manager.increaseRecord($case.getId(), CaseRecord.TYPE_RUN_TEMP);
+							ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+							manager.increase(CaseRecord.TYPE_RUN_TEMP, $case.getId());
 							if (logger.isDebugEnabled()) {
 								logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":run-temp");
 							}
@@ -214,7 +213,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						result.setCase(tmpcase);
 					} else {
 						result.setCase($case);
-						manager.increaseRecord($case.getId(), CaseRecord.TYPE_RUN);
+						ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+						manager.increase(CaseRecord.TYPE_RUN, $case.getId());
 						if (logger.isDebugEnabled()) {
 							logger.debug($case.getToken() + ":" + $case.getVersion() + ":run");
 						}
@@ -230,7 +230,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					insertWin.setVisible(false);
 				} else if (event instanceof SaveEvent) {
 					SaveEvent saveEvt = (SaveEvent) event;
-					
+
 					CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
 					Case saved = caseManager.saveCase($case, resources, caseTitle.getValue(), saveEvt.isFork());
 					if (saved != null) {
@@ -264,17 +264,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 
 	public void onLike$fblike(LikeEvent evt) {
-		CaseRecordManager crm = new CaseRecordManager();
+		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+
 		if (evt.isLiked()) {
 			if (logger.isDebugEnabled()) {
 				logger.debug($case.getToken() + ":" + $case.getVersion() + ":like");
 			}
-			crm.increaseRecord($case.getId(), CaseRecord.TYPE_LIKE);
+			manager.increase(CaseRecord.TYPE_LIKE, $case.getId());
 		} else {
 			if (logger.isDebugEnabled()) {
 				logger.debug($case.getToken() + ":" + $case.getVersion() + ":unlike");
 			}
-			crm.decreaseRecord($case.getId(), CaseRecord.TYPE_LIKE);
+			manager.decrease(CaseRecord.TYPE_LIKE, $case.getId());
 		}
 	}
 
@@ -293,7 +294,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		if (k != -1)
 			resources.remove(k);
 	}
-
 
 	private List<Resource> getDefaultResources() {
 		List resources = new ArrayList<IResource>();

@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.CaseRecord;
+import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CacheFactory;
 
 public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
@@ -52,7 +53,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	}
 
 	public boolean increase(final Integer type, final Long caseId) {
-		if(type == CaseRecord.TYPE_LIKE){
+		if (type == CaseRecord.TYPE_LIKE) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
 			}
@@ -60,6 +61,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			CacheFactory.getTop10LikedRecord().removeAll();
 		}
 		return getTxTemplate().execute(new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
+
 			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
 				int update = session
 						.createQuery(
@@ -67,7 +69,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 				return update != 0;
-			}			
+			}
 		});
 	}
 
@@ -76,21 +78,22 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	 * amount <= 0.
 	 */
 	public boolean decrease(final Integer type, final Long caseId) {
-		if(type == CaseRecord.TYPE_LIKE){
+		if (type == CaseRecord.TYPE_LIKE) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
 			}
 			CacheFactory.getTop10LikedRecord().removeAll();
 		}
 		return getTxTemplate().execute(new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
+
 			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
 				int update = session
-				.createQuery(
-						"update CaseRecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
-				.setLong("type", type).setLong("caseId", caseId).executeUpdate();
+						.createQuery(
+								"update CaseRecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
+						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 				return update != 0;
-			}			
+			}
 		});
 	}
 
@@ -118,14 +121,15 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 	public Long countByType(final Integer type, final boolean excludeEmpty) {
 		return getHibernateTemplate().execute(new HibernateCallback<Long>() {
+
 			public Long doInHibernate(Session session) throws HibernateException, SQLException {
 				String rule = "";
 				if (excludeEmpty) {
 					rule = " and amount <> 0 ";
 				}
-				
-				Query query = session.createQuery("select count(id) from CaseRecord " + 
-						" where type = :type " + rule+ " order by amount");
+
+				Query query = session.createQuery("select count(id) from CaseRecord " + " where type = :type " + rule
+						+ " order by amount");
 				query.setLong("type", type);
 				return (Long) query.uniqueResult();
 			}
@@ -143,5 +147,41 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			}
 		});
 
+	}
+
+	/**
+	 * create 3 type of record for a case
+	 * 
+	 * @param cas
+	 * @param type
+	 */
+	public void createRecords(final ICase cas) {
+
+		getTxTemplate().execute(new HibernateTransacationCallback<Void>(getHibernateTemplate()) {
+
+			public Void doInHibernate(Session session) throws HibernateException, SQLException {
+				CaseRecord view = createCaseRecord(cas, CaseRecord.TYPE_VIEW, 1L);
+				CaseRecord like = createCaseRecord(cas, CaseRecord.TYPE_LIKE, 0L);
+				CaseRecord run = createCaseRecord(cas, CaseRecord.TYPE_RUN, 0L);
+				CaseRecord runtmp = createCaseRecord(cas, CaseRecord.TYPE_RUN_TEMP, 0L);
+				session.save(view);
+				session.save(like);
+				session.save(run);
+				session.save(runtmp);
+				return null;
+			}
+		});
+
+	}
+
+	private CaseRecord createCaseRecord(ICase cas, int type, long amount) {
+		CaseRecord view = new CaseRecord();
+		view.setType(type);
+		view.setCaseId(cas.getId());
+		view.setAmount(amount);
+		view.setTitle(cas.getTitle());
+		view.setVersion(cas.getVersion());
+		view.setToken(cas.getToken());
+		return view;
 	}
 }

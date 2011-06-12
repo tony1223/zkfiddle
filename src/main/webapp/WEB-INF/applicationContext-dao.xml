@@ -30,11 +30,6 @@
 		<property name="transactionManager" ref="transactionManager"/>
 		<property name="caseDao" ref="caseDao" />
 		<property name="resourceDao" ref="resourceDao" />
-		<!--
-			ICaseDao caseDao;
-	IResourceDao resourceDao;
-	CaseRecordManager caseRecordManager;
-		-->
+		<property name="caseRecordDao" ref="caseRecordDao" />
 	</bean>
-	
 </beans>
