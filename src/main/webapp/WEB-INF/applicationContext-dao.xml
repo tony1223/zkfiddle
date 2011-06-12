@@ -8,20 +8,16 @@
 		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
 		http://www.zkoss.org/2008/zkspring/core http://www.zkoss.org/2008/zkspring/core/zkspring-core.xsd">
 
-	<bean id="caseDao" class="org.zkoss.fiddle.dao.CaseDaoImpl">
-	    <property name="sessionFactory" ref="sessionFactory" />
+	<bean id="baseDao" class="org.zkoss.fiddle.dao.AbstractDao" >
+    	<property name="sessionFactory" ref="sessionFactory" />
 		<property name="transactionManager" ref="transactionManager"/>
 	</bean>
+
+	<bean id="caseDao" class="org.zkoss.fiddle.dao.CaseDaoImpl" parent="baseDao" />
 	
-	<bean id="caseRecordDao" class="org.zkoss.fiddle.dao.CaseRecordDaoImpl">
-	    <property name="sessionFactory" ref="sessionFactory" />
-		<property name="transactionManager" ref="transactionManager"/>
-	</bean>
+	<bean id="caseRecordDao" class="org.zkoss.fiddle.dao.CaseRecordDaoImpl" parent="baseDao" />
 	
-	<bean id="resourceDao" class="org.zkoss.fiddle.dao.ResourceDaoImpl">
-		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="transactionManager" ref="transactionManager"/>
-	</bean>
+	<bean id="resourceDao" class="org.zkoss.fiddle.dao.ResourceDaoImpl"  parent="baseDao" />
 
 
 	<!-- services -->
