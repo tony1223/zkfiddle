@@ -66,6 +66,7 @@
 						</tabpanel>
 						<tabpanel>
 							<vlayout>
+								<button id="news" label="news" />
 								<button id="whyfiddle" label="why ZK Fiddle" />
 								<button label="Tracker" target="_blank" 
 									href="https://github.com/tony1223/zkfiddle/issues" />
@@ -75,6 +76,17 @@
 						</tabpanel>	
 					</tabpanels>
 				</tabbox>
+				<window title="ZK Fiddle News" use="org.zkoss.fiddle.component.ClosableWindow" visible="false" width="800px" height="800px" closable="true" id="newsContent" position="center">
+<n:pre>
+				
+	We are still in a beta version and may not be very stable , will get it ready before July.
+	
+	Website maintain log
+	2011/6/12  Version 0.9.1  fixed db not saving case after server restart issue.
+	2011/6/11  Version 0.9.0  update project skeleton and add more features.  
+	2011/6/05  Version 0.8.0  prototyping and experimental version
+</n:pre> 
+	 			</window>				
 				<window title="About ZK Fiddle " use="org.zkoss.fiddle.component.ClosableWindow" visible="false" closable="true" id="aboutContent" position="center">
 					<n:pre>
 	Hi all,

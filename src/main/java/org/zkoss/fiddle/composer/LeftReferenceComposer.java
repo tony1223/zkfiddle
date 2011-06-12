@@ -37,6 +37,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	private Listbox recentlys;
 
 	private Window aboutContent;
+	private Window newsContent;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -116,15 +117,26 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		Executions.sendRedirect("/sample/" + cr.getCaseUrl());
 	}
 
+	public void onClick$news(Event e) {
+		try {
+			newsContent.doModal();
+		} catch (SuspendNotAllowedException e1) {
+			if (logger.isEnabledFor(Level.ERROR))
+				logger.error("onClick$newsContent(Event)", e1);
+		} catch (InterruptedException e1) {
+			if (logger.isEnabledFor(Level.ERROR))
+				logger.error("onClick$newsContent(Event)", e1);
+		}
+	}
 	public void onClick$whyfiddle(Event e) {
 		try {
 			aboutContent.doModal();
 		} catch (SuspendNotAllowedException e1) {
 			if (logger.isEnabledFor(Level.ERROR))
-				logger.error("onClick$abouttab(Event)", e1);
+				logger.error("onClick$whyfiddle(Event)", e1);
 		} catch (InterruptedException e1) {
 			if (logger.isEnabledFor(Level.ERROR))
-				logger.error("onClick$abouttab(Event)", e1);
+				logger.error("onClick$whyfiddle(Event)", e1);
 		}
 	}
 }
