@@ -220,9 +220,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						}
 					}
 
-					// TODO review if we really need to build this for such
-					// complicated, I am still thinking
-					// forward to another queue
 					EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish(result);
 
 				} else if (event instanceof SourceInsertEvent) {

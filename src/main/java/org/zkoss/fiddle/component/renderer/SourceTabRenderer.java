@@ -45,8 +45,6 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 	}
 
 	protected Tab renderTab(final IResource resource) {
-		// TODO using swifttab to replace this if possible
-		/* creating tab */
 		final Texttab texttab = new Texttab(resource.getTypeName());
 		texttab.setAttribute("model", resource);
 

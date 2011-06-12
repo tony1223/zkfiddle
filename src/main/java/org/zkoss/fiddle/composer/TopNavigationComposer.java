@@ -79,7 +79,6 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		else
 			inst = (FiddleSandbox) instances.getSelectedItem().getValue();
 
-		//TODO review this
 		sourceQueue.publish(new ShowResultEvent(FiddleEvents.ON_SOURCE_SHOW_RESULT , null, inst));
 	}
 
