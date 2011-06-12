@@ -33,10 +33,16 @@
         </value>
     </library-property>
 
+<!--
 	 <listener>
 	  <description>[Optional] Mointor the statistic</description>
 	  <listener-class>org.zkoss.zk.ui.util.Statistic</listener-class>
-	 </listener>	
+	 </listener>
+-->
+	 <listener>
+	  <description>Fiddle SEO Renderer</description>
+	  <listener-class>org.zkoss.fiddle.seo.FiddleSEORenderer</listener-class>
+	 </listener>
     <library-property>
         <name>
             org.zkoss.zul.Button.mold
