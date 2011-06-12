@@ -208,7 +208,7 @@
 		<scope>runtime</scope>
 	</dependency>
 	
-	<!-- custom components -->
+	<!-- custom components
 	<dependency>
 		<groupId>org.zkoss.fiddle</groupId>
 		<artifactId>zk-fiddletabs</artifactId>
@@ -227,7 +227,7 @@
 		<version>0.8.0</version>
 		<optional>true</optional>
 	</dependency>
-	
+	 -->
 	<!-- hsqldb -->
 	<!--
 	-->
