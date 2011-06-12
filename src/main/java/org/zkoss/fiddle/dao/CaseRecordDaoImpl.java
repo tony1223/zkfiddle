@@ -63,8 +63,8 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
 				int update = session
-						.createSQLQuery(
-								"update caserecord set amount = amount + 1 where type = :type and caseId = :caseId")
+						.createQuery(
+								"update CaseRecord set amount = amount + 1 where type = :type and caseId = :caseId")
 						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 				return update != 0;
@@ -89,8 +89,8 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
 
 				int update = session
-						.createSQLQuery(
-								"update caserecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
+						.createQuery(
+								"update CaseRecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
 						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 				return update != 0;

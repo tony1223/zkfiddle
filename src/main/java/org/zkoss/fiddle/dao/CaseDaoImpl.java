@@ -136,7 +136,6 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("from Case order by id desc");
 				query.setMaxResults(amount);
-				query.setCacheable(true);
 				return query.list();
 			}
 		});
