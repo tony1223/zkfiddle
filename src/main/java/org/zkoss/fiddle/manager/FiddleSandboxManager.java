@@ -22,7 +22,7 @@ public class FiddleSandboxManager {
 
 	private Map<String, List<FiddleSandbox>> instancesByVersion = new HashMap<String, List<FiddleSandbox>>();
 
-	private String latest = "5.0.7";
+	private String latest = "5.0.7.1";
 
 	private long checkTime = 1000 * 60 * 5;
 	

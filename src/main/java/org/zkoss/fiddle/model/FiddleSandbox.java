@@ -2,11 +2,12 @@ package org.zkoss.fiddle.model;
 
 import java.util.Date;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.zkoss.fiddle.util.CRCCaseIDEncoder;
 
-public class FiddleSandbox {
+public class FiddleSandbox implements Comparable {
 
 	private String hash;
 
@@ -64,5 +65,25 @@ public class FiddleSandbox {
 
 	public int hashCode() {
 		return new HashCodeBuilder().append(name).toHashCode();
+	}
+
+	public int compareTo(final Object other) {
+		if (other != null && other instanceof FiddleSandbox) {
+			FiddleSandbox castOther = (FiddleSandbox) other;
+
+			if (version != null && castOther.version != null) {
+				if ("freshly".equals(version) && (!"freshly".equals(castOther.version))) {
+					return 1;
+				} else if ((!"freshly".equals(version)) && "freshly".equals(castOther.version)) {
+					return -1;
+				}
+			}
+
+			return new CompareToBuilder().append(castOther.version,version).
+				append(castOther.lastUpdate,lastUpdate).toComparison();
+		} else {
+			throw new IllegalArgumentException("FiddleSandbox can't compare to " + other == null ? "null" : other
+					.getClass().getName());
+		}
 	}
 }

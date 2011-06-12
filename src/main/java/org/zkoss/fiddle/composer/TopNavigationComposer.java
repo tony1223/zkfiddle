@@ -1,6 +1,7 @@
 package org.zkoss.fiddle.composer;
 
 import java.util.Collection;
+import java.util.TreeSet;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
@@ -51,7 +52,9 @@ public class TopNavigationComposer extends GenericForwardComposer {
 					item.setValue(data);
 				}
 			});
-			instances.setModel(new ListModelList(sandboxManager.listFiddleInstances().values()));
+			
+			TreeSet tree = new TreeSet(sandboxManager.listFiddleInstances().values());
+			instances.setModel(new ListModelList(tree));
 		}
 		instances.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
 			public void onEvent(Event event) throws Exception {
