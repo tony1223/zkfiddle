@@ -28,7 +28,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	}
 
 	public void saveOrUdate(CaseRecord m) {
-		getHibernateTemplate().saveOrUpdate(m);
+		super.saveOrUdateObject(m);
 	}
 
 	public CaseRecord get(Long id) {
@@ -40,14 +40,14 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	}
 
 	public void remove(final Long id) {
-		getHibernateTemplate().execute(new HibernateCallback<Void>() {
+
+		getTxTemplate().execute(new HibernateTransacationCallback<Void>(getHibernateTemplate()) {
 
 			public Void doInHibernate(Session session) throws HibernateException, SQLException {
 				session.createQuery("delete from CaseRecord where id = :id").setLong("id", id).executeUpdate();
 				return null;
 			}
 		});
-		;
 
 	}
 
@@ -59,8 +59,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 			CacheFactory.getTop10LikedRecord().removeAll();
 		}
-		return getHibernateTemplate().execute(new HibernateCallback<Boolean>() {
-
+		return getTxTemplate().execute(new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
 			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
 				int update = session
 						.createQuery(
@@ -68,9 +67,8 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 				return update != 0;
-			}
+			}			
 		});
-
 	}
 
 	/**
@@ -84,17 +82,15 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			}
 			CacheFactory.getTop10LikedRecord().removeAll();
 		}
-		return getHibernateTemplate().execute(new HibernateCallback<Boolean>() {
-
+		return getTxTemplate().execute(new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
 			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
-
 				int update = session
-						.createQuery(
-								"update CaseRecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
-						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
+				.createQuery(
+						"update CaseRecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
+				.setLong("type", type).setLong("caseId", caseId).executeUpdate();
 
 				return update != 0;
-			}
+			}			
 		});
 	}
 

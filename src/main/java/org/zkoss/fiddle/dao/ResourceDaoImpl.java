@@ -44,7 +44,7 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 	 * model .Resource)
 	 */
 	public void saveOrUdate(Resource m) {
-		getHibernateTemplate().saveOrUpdate(m);
+		super.saveOrUdateObject(m);
 	}
 
 	/*

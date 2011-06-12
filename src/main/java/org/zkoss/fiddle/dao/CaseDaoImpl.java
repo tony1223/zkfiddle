@@ -47,7 +47,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	 * .Case)
 	 */
 	public void saveOrUdate(Case m) {
-		getHibernateTemplate().saveOrUpdate(m);
+		super.saveOrUdateObject(m);
 
 		if (logger.isInfoEnabled()) {
 			logger.info("saveOrUdate(Case) - Clear Recently caches");
