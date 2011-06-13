@@ -39,10 +39,11 @@ public abstract class SEOTokenHandlerAdpter<T> implements SEOTokenHandler<T> {
 		appendTagStart(out,tag,null);
 	}
 	
+	
 	public void appendTagStart(Writer out,String tag,String cls) throws IOException {
-		out.append("<" + tag + " class=\""+cls+"\">" );
-		
+		out.append("<" + tag + (cls == null ? ">":" class=\""+cls+"\">") );
 	}
+	
 	public void appendTagEnd(Writer out,String tag) throws IOException {
 		out.append("</" + tag + ">" );
 	}
