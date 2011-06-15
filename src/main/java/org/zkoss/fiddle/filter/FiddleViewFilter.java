@@ -190,8 +190,8 @@ public class FiddleViewFilter implements Filter {
 				}
 				String host = getHostpath(request);
 				boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
-				String title = emptytitle ?	"" :	"[" + $case.getTitle() +"]";
-				request.setAttribute("_pgtitle", " "+ title +" --" );				
+				String title = emptytitle ?	"" :	" [" + $case.getTitle() +"] --";
+				request.setAttribute("_pgtitle", title );				
 				request.setAttribute("hostName", host);
 				request.setAttribute("caseUrl", host  + "/sample/" + $case.getCaseUrl());
 				request.setAttribute("__case", $case);
