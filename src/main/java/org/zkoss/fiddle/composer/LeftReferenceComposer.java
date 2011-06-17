@@ -18,6 +18,7 @@ import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
+import org.zkoss.zul.Include;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -36,28 +37,27 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	private Listbox recentlys;
 
-	private Window aboutContent;
-	private Window newsContent;
+	private Window popupContent;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		ICaseRecordDao caseRecordDao =  (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-		
+		ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+
 		Cache cache = CacheFactory.getTop10LikedRecord();
-		
+
 		List<CaseRecord> list = null;
-		String key = CaseRecord.TYPE_LIKE+":"+ true+":"+ 1+":"+ 50;
-		if(cache.isKeyInCache(key)){
+		String key = CaseRecord.TYPE_LIKE + ":" + true + ":" + 1 + ":" + 50;
+		if (cache.isKeyInCache(key)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("doAfterCompose(Component) - Hit cache top 10 like");
 			}
 			list = (List<CaseRecord>) cache.get(key).getValue();
-		}else{
-			list = caseRecordDao.listByType(CaseRecord.TYPE_LIKE, true, 1, 50);	
-			cache.put(new Element(key,list));
+		} else {
+			list = caseRecordDao.listByType(CaseRecord.TYPE_LIKE, true, 1, 50);
+			cache.put(new Element(key, list));
 		}
-		
+
 		likes.setModel(new ListModelList(list));
 
 		likes.setItemRenderer(new ListitemRenderer() {
@@ -93,7 +93,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getTitle();
 					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
 					item.appendChild(new Listcell(String.valueOf(title)));
-					
+
 					Listcell list = new Listcell(String.valueOf(cr.getVersion()));
 					list.setSclass("version");
 					item.appendChild(list);
@@ -119,22 +119,22 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	public void onClick$news(Event e) {
 		try {
-			newsContent.doModal();
+			
+			popupContent.setTitle("Maintenance Log");
+			popupContent.doOverlapped();
+			((Include)popupContent.getFellow("popupInclude")).setSrc("/html/maintain.html");
 		} catch (SuspendNotAllowedException e1) {
-			if (logger.isEnabledFor(Level.ERROR))
-				logger.error("onClick$newsContent(Event)", e1);
-		} catch (InterruptedException e1) {
 			if (logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$newsContent(Event)", e1);
 		}
 	}
+
 	public void onClick$whyfiddle(Event e) {
 		try {
-			aboutContent.doModal();
+			popupContent.setTitle("About");
+			popupContent.doOverlapped();
+			((Include)popupContent.getFellow("popupInclude")).setSrc("/html/about.html");
 		} catch (SuspendNotAllowedException e1) {
-			if (logger.isEnabledFor(Level.ERROR))
-				logger.error("onClick$whyfiddle(Event)", e1);
-		} catch (InterruptedException e1) {
 			if (logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$whyfiddle(Event)", e1);
 		}

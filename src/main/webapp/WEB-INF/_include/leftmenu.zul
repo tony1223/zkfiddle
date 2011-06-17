@@ -3,7 +3,7 @@
 <?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax Framework) sameples right now!" ?>
 <?script type="text/javascript" src="/js/fiddle.js.dsp"?>
 
-<zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute" >
+<zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute">
 	<div apply="org.zkoss.fiddle.composer.LeftReferenceComposer" height="100%">
 		<tabbox sclass="leftlist" mold="accordion" vflex="1">
 			<tabs>
@@ -41,12 +41,9 @@
 				<button label="Contact Me (TonyQ)" href="mailto:tonylovejava@gmail.com" dir="reverse" image="/img/email.png" width="99%" />
 			</vlayout>
 		</groupbox>
-		<window sclass="popupContent" title="ZK Fiddle News" use="org.zkoss.fiddle.component.ClosableWindow" visible="false" width="800px" height="800px" closable="true" id="newsContent" position="center">
-			<include src="/html/maintain.html" />
-		</window>				
-		<window sclass="popupContent" title="About ZK Fiddle " use="org.zkoss.fiddle.component.ClosableWindow" visible="false" closable="true" id="aboutContent" position="center" >
-			<include src="/html/about.html" />
-		</window>							
+		<window sclass="popupContent" border="normal"  width="800px" height="800px" minimizable="true" minimized="true" id="popupContent" position="center">
+			<include id="popupInclude" src="/html/maintain.html" />
+		</window>											
 	</div>
 
 </zk>

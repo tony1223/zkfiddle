@@ -1,19 +1,19 @@
 /* Reset */
 body {
 	padding: 0;
+	background: #F8F8F8;	
 }
 /* Global */
-.zkfiddle {
-	background: white;
-}
-
-.zkfiddle h1 {
+h1 {
 	margin: 0;
 }
 /* Header */
+.zkfiddle-header {
+	height: 70px;
+}
 .zkfiddle-header .header-inner {
 	height: 60px;
-	box-shadow: 0 0 6px 3px #BBBBBB;
+	box-shadow: 0 0 2px 1px #C1C1C1;
 }
 /** Menu **/
 .zkfiddle-header .menu {
@@ -66,16 +66,29 @@ body {
 	vertical-align: middle;
 	line-height: 18px;
 }
-/* Center */
-.zkfiddle .z-center {
+/* Right */
+.zkfiddle-outer {
+	margin: 5px;
+}
+.zkfiddle-center {
+	background: #F8F8F8;
+}
+.zkfiddle-center .z-center {
+	padding-right: 5px;
+	margin-left: 5px;
+}
+.sourceCodeEditor {
 	padding: 5px;
+	border: 1px solid #C5C5C5;
 }
 /** Source Tabs **/
 .z-separator-hor-bar {
 	border-top: 1px solid #cccccc; 
 	background: 0 none;
 }
-
+.sourcetabs .z-tabs-cnt {
+	padding-left: 3px;
+}
 .sourcetabs .tab-textbox {
 	margin-left: 5px;
 	width: 200px;
@@ -89,6 +102,13 @@ body {
 }
 .source-vlayout .z-tabpanel {
 	padding: 0;
+}
+.sourcetabs .z-tab-hl,
+.sourcetabs .z-tab-hr {
+	background-image: url("/img/comp/tab-corner.png");
+}
+.sourcetabs .z-tab-hm {
+	background-image: url("/img/comp/tab-hm.png");
 }
 /***CodeMirror***/
 span.c-like-keyword {
@@ -106,10 +126,10 @@ pre.CodeMirror-cursor {
 
 /* Left */
 /** West **/
-.zkfiddle .z-west-splt {
+.zkfiddle-center .z-west-splt {
 	background: 0 none;
 } 
-.zkfiddle .z-west-header {
+.zkfiddle-center .z-west-header {
 	padding: 4px 3px 4px 5px;
 	font-size: 12px;
 	background-color: #F5F5F5;

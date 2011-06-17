@@ -1,27 +1,27 @@
 <?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
 
 <zk xmlns:n="native" xmlns:w="client" xmlns:fb="facebook">
-	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" height="100%">
-		<vlayout sclass="source-vlayout" height="100%">
+	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" sclass="sourceCodeEditor" vflex="1">
+		<vlayout sclass="source-vlayout">
 			<div>
 				<label value="Fiddle Name : " sclass="name" />
-				<textbox id="caseTitle" value="" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 60 chars)" />
+				<textbox id="caseTitle" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 60 chars)" />
 			</div>
 			<separator bar="true" spacing="5px" />
 			<tabbox height="100%" hflex="1">
-				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs" />
+				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs"/>
 				<tabpanels id="sourcetabpanels" />
 			</tabbox>
 			<div id="contentDesc"></div>
 		</vlayout>
 
-		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" visible="false" use="org.zkoss.fiddle.component.ClosableWindow" closable="true"
-			title=" Insert new file" width="380px" height="105px" border="normal" position="center, center">
+		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
+			title=" Insert New File" width="380px" height="105px" border="normal" position="center, center">
 			<!-- TODO use selectbox instead. -->
 			<zscript><![CDATA[
-	String[] data = new String[] { "zul", "java", "javascript", "html", "css" };
-	ListModel typeset = new ListModelList(data);
-]]></zscript>
+				String[] data = new String[] { "zul", "java", "javascript", "html", "css" };
+				ListModel typeset = new ListModelList(data);
+			]]></zscript>
 			<n:table>
 				<n:tr>
 					<n:td class="insertTd" width="80px">

@@ -4,42 +4,42 @@
 <?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
 <?script type="text/javascript" src="/js/fiddle.js.dsp"?>
 <zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook">
-	<borderlayout id="main" sclass="zkfiddle">
-		<north apply="org.zkoss.fiddle.composer.TopNavigationComposer" border="none" size="80px" sclass="zkfiddle-header" collapsible="true">
-			<div sclass="header-inner">
-				<hlayout sclass="menu">
-					<div sclass="logo-outer">
-						<n:h1 class="logo">
-							<n:a href="/" title="ZK Fiddle - Share your ZK sample ONLINE"></n:a>
-						</n:h1>
-					</div>
-					<n:h1 class="title">
-						ZK Fiddle - Open Source ZK Example Platform 
+	<div apply="org.zkoss.fiddle.composer.TopNavigationComposer" sclass="zkfiddle-header">
+		<div sclass="header-inner">
+			<hlayout sclass="menu">
+				<div sclass="logo-outer">
+					<n:h1 class="logo">
+						<n:a href="/" title="ZK Fiddle - Share your ZK sample ONLINE"></n:a>
 					</n:h1>
-					<div id="views" style="margin-left:100px;width:500px;">
-					
-						<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png"/>
-						<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png"/>
-						<combobox id="instances" readonly="true" width="180px" />
-						<button width="100px" id="viewBtn" style="color:red;" label="Run" dir="reverse" image="/img/resultset_next.png"/>
-						
-					</div>
-					<div sclass="social">
+				</div>
+				<n:h1 class="title">ZK Fiddle - Open Source ZK Example Platform</n:h1>
+				<div id="views" style="margin-left:100px;width:500px;">
+
+					<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png" />
+					<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png" />
+					<combobox id="instances" readonly="true" width="180px" />
+					<button width="100px" id="viewBtn" style="color:red;" label="Run" dir="reverse" image="/img/resultset_next.png" />
+
+				</div>
+				<div sclass="social">
 					<n:iframe
-								src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${hostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35"
-								scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:35px;" allowTransparency="true">
+						src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${hostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35"
+						scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:35px;" allowTransparency="true">
 					</n:iframe>
 				</div>
-				</hlayout>
-			</div>
-		</north>
-		<west title="ZK Fiddle Info" size="300px" splittable="true" minsize="210" maxsize="600" collapsible="true">
-			<include src="leftmenu.zul" />
-		</west>
-		<center autoscroll="true">
-			<include src="sourceedtior.zul" />
-		</center>
-	</borderlayout>
+			</hlayout>
+		</div>
+	</div>
+	<div sclass="zkfiddle-outer" vflex="1" hflex="1">
+		<borderlayout id="main" sclass="zkfiddle-center">
+			<west title="ZK Fiddle Info" size="300px" collapsible="true" >
+				<include src="leftmenu.zul" />
+			</west>
+			<center autoscroll="true" border="none">
+				<include src="sourceedtior.zul" />
+			</center>
+		</borderlayout>
+	</div>
 	<include src="viewresult.zul" />
 
 	<script type="text/javascript">
