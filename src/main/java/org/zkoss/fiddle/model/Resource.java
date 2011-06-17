@@ -171,6 +171,11 @@ public class Resource implements IResource, Cloneable, Serializable {
 		}
 	}
 
+	@Transient
+	public String getFullPackage(){
+		return IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + this.getPkg();
+	}
+	
 	public Resource clone() {
 		Resource resource = new Resource();
 		resource.setCaseId(this.caseId);

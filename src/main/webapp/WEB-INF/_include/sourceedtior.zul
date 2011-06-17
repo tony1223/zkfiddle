@@ -12,7 +12,9 @@
 				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs"/>
 				<tabpanels id="sourcetabpanels" />
 			</tabbox>
-			<div id="contentDesc"></div>
+			<div id="contentDesc">
+				<a id="download" visible="false" label="Download this sample" />
+			</div>
 		</vlayout>
 
 		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"

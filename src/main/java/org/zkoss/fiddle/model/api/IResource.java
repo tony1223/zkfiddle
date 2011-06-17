@@ -61,4 +61,6 @@ public interface IResource{
 	
 	public void buildFinalConetnt(Case c) ;
 	
+	public String getFullPackage();
+	
 }

@@ -149,6 +149,10 @@
 	</filter-mapping>
 	<filter-mapping>   
 		<filter-name>hibernateFilter</filter-name>   
+		<url-pattern>/download/*</url-pattern>   
+	</filter-mapping>	
+	<filter-mapping>   
+		<filter-name>hibernateFilter</filter-name>   
 		<url-pattern>/sample/*</url-pattern>   
 	</filter-mapping>
 	<filter-mapping>   
@@ -165,7 +169,11 @@
     <filter-mapping>
         <filter-name>DataFilter</filter-name>
         <url-pattern>/data/*</url-pattern>
-    </filter-mapping>		
+    </filter-mapping>
+	<filter-mapping>
+        <filter-name>DataFilter</filter-name>
+        <url-pattern>/download/*</url-pattern>
+    </filter-mapping>	
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/*</url-pattern>

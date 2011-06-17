@@ -1,7 +1,7 @@
 <zk>
   <window border="normal" title="hello" apply="${pkg}.TestComposer">
   	
-  	<div>Welcome to ZK Fiddle , run it right now! </div>
+  	<div>Welcome to ZK Fiddle , run it right now!</div>
   	
 	<button id="btn" label="Click Me To Evalute Event Binding With Composer" />
   </window>

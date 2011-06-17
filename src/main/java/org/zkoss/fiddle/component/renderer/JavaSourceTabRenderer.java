@@ -39,7 +39,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 
 		
 		{
-			final Label label2 = new Label(IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN );
+			final Label label2 = new Label(resource.getFullPackage());
 			label2.setTooltiptext("since we have to prevent package conflict for every version ," + " so we use "
 					+ IResource.PACKAGE_TOKEN + " as your class package by default.");
 			hlayout.appendChild(label2);
@@ -67,7 +67,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 			txtPkg.setVisible(false);
 			hlayout.appendChild(txtPkg);
 			
-			final A a = new A(IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN);
+			final A a = new A(resource.getFullPackage());
 			a.addEventListener(Events.ON_CLICK,new EventListener() {
 				public void onEvent(Event event) throws Exception {
 					
@@ -98,9 +98,9 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 							if(".".equals(value)){
 								value = "";
 							}
-							resource.setPkg(((InputEvent) event).getValue());
+							resource.setPkg(value);
 							sourceQueue.publish(new SourceChangedEvent(null,resource));
-							a.setLabel(IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + value);
+							a.setLabel(resource.getFullPackage());
 						}
 					}
 				}

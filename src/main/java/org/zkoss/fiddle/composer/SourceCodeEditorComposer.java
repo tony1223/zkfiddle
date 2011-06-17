@@ -43,6 +43,7 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -65,6 +66,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Textbox caseTitle;
 
 	private Window insertWin;
+	
+	private A download;
 
 	/**
 	 * a state for if content is changed.
@@ -160,6 +163,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 
 			caseTitle.setValue($case.getTitle());
+			
+			download.setHref("/download/"+$case.getToken() + "/" + $case.getVersion());
+			download.setVisible(true);
+			
 			initSEOHandler($case, dbResources);
 		}
 
