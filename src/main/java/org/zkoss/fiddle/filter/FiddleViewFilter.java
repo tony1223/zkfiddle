@@ -110,8 +110,8 @@ public class FiddleViewFilter implements Filter {
 			request.setAttribute("caseUrl", host + "/sample/"+ $case.getCaseUrl());
 			
 			boolean emptytitle = ($case.getTitle() == null && "".equals(($case.getTitle().trim())));
-			String title = emptytitle ?	$case.getToken() :	$case.getTitle();
-			request.setAttribute("_pgtitle", " - ["+ title +"]" );
+			String title = emptytitle ?	"Unnamed" :	$case.getTitle();
+			request.setAttribute("_pgtitle", " - " + title );
 			
 			ViewRequest vr = new ViewRequest();
 			vr.setToken(match.group(1));

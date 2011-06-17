@@ -122,7 +122,8 @@ public class Case implements ICase, Serializable {
 		StringBuffer sb = new StringBuffer();
 		String[] tokens = this.title.split("[^a-zA-Z0-9]+");
 		for (String str : tokens) {
-			sb.append("-" + str);
+			if(!"".equals(str))
+				sb.append("-" + str);
 		}
 		return sb.toString();
 	}
