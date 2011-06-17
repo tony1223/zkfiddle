@@ -70,7 +70,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		sourcepanel.appendChild(hlayout);
 		sourcepanel.appendChild(prepareCodeEditor(resource));
 
-		return sourcepanel;
+		return sourcepanel;		
 	}
 
 }

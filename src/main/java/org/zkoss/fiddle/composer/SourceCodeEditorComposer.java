@@ -142,6 +142,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		if ($case != null) {
 			saveBtn.setLabel("Update");
+			saveBtn.setImage("/img/arrow_refresh.png");
 		}
 
 		boolean newCase = ($case == null || $case.getId() == null);
@@ -308,7 +309,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public void onAdd$sourcetabs(Event e) {
 		try {
-			insertWin.doModal();
+			insertWin.doOverlapped();		
 		} catch (Exception e1) {
 			logger.error("onAdd$sourcetabs(Event) - e=" + e, e1);
 		}

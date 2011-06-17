@@ -1,72 +1,52 @@
 <?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
 
-<zk xmlns:w="client" xmlns:fb="facebook">
-	<style>
-		.sourcetabs .tab-textbox{
-			margin-left:5px;
-			width:200px;
-		}
-		.sourcetabs .z-tabs-add-edge .z-tab-text{
-		    font-size: 18px;
-		    height: 25px;
-		}
-		.sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr,.sourcetabs .z-tab-hm{
-			height: 29px;
-		}
-		
-	</style>
-	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" 
-		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" height="100%">
-		<vlayout sclass="source-vlayout" height="100%">
+<zk xmlns:n="native" xmlns:w="client" xmlns:fb="facebook">
+	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" sclass="sourceCodeEditor" vflex="1">
+		<vlayout sclass="source-vlayout">
 			<div>
-				<label value="Title:" 
-					style="padding-left:20px;padding-right:10px;" />  
-				<textbox id="caseTitle" value="" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 60 chars)"/>
-				<label value="(Optional)"/>
+				<label value="Fiddle Name : " sclass="name" />
+				<textbox id="caseTitle" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 60 chars)" />
 			</div>
-			<separator bar="true" spacing="5px" />		
-			<tabbox height="100%" hflex="1" >
-				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs"  />
-			    <tabpanels  id="sourcetabpanels" />
+			<separator bar="true" spacing="5px" />
+			<tabbox height="100%" hflex="1">
+				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs"/>
+				<tabpanels id="sourcetabpanels" />
 			</tabbox>
-			<div id="contentDesc">
-				<hlayout if="${caseUrl!=null}">
-					<label value="Like this sample:" /> 
-					<fb:like id="fblike" href="${caseUrl}" />
-				</hlayout>
-			</div>
+			<div id="contentDesc"></div>
 		</vlayout>
-		
-		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" visible="false" use="org.zkoss.fiddle.component.ClosableWindow" 
-			closable="true" title=" Insert new file" width="450px" height="140px">
-				<!-- TODO use selectbox instead. -->
-				
-			<div>
-				<label value="Insert new file" 
-					style="padding-left:20px;padding-right:10px;" />  				
-					<zscript><![CDATA[
-					    String[] data = new String[]{
-					    		"zul",
-					    		"java",
-					    		"javascript",
-					    		"html",
-					    		"css"
-					    };
-					    ListModel typeset = new ListModelList(data);
-					]]></zscript>
-					 <combobox id="type" readonly="true" model="${typeset}" width="200px" 
-					 	w:onChange="var type = this.getValue(); jq('$extension').html('.' + (type=='javascript' ?'js':type))" >
-					 	<attribute name="onCreate">
-					 		self.setSelectedIndex(0);
-					 	</attribute>
-					 </combobox>
-			 </div>
-			 <div>
-				 <label value="fileName:" style="padding-left:20px;padding-right:10px;"  />
-				 <textbox id="fileName" />
-				 <label id="extension" value=".zul" />
-			 </div> 
-			 <button id="insert" label="insert" style="margin-left:250px;" />
-		</window>		
+
+		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
+			title=" Insert New File" width="380px" height="105px" border="normal" position="center, center">
+			<!-- TODO use selectbox instead. -->
+			<zscript><![CDATA[
+				String[] data = new String[] { "zul", "java", "javascript", "html", "css" };
+				ListModel typeset = new ListModelList(data);
+			]]></zscript>
+			<n:table>
+				<n:tr>
+					<n:td class="insertTd" width="80px">
+						<label value="File Type" />
+					</n:td>
+					<n:td>
+						<combobox id="type" readonly="true" model="${typeset}" width="200px"
+							w:onChange="var type = this.getValue(); jq('$extension').html('.' + (type=='javascript' ?'js':type))" onCreate="self.setSelectedIndex(0)">
+						</combobox>
+					</n:td>
+					<n:td rowspan="2" >
+						<button id="insert" style="margin-left:5px" label="Insert" height="50px"/>
+					</n:td>
+				</n:tr>
+				<n:tr>
+					<n:td class="insertTd">
+						<label value="File Name" />
+					</n:td>
+					<n:td>
+						<textbox id="fileName" maxlength="60" width="160px" />
+						<label id="extension" value=".zul" />
+					</n:td>
+				</n:tr>
+			</n:table>
+			
+		</window>
 	</div>
 </zk>
