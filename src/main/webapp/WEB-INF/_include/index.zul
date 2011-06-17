@@ -1,43 +1,39 @@
-<?page title="ZK Fiddle${_pgtitle} - Share your ZK sample ONLINE" contentType="text/html;charset=UTF-8"?>
+<?page title="ZK Fiddle - ${_pgtitle}" contentType="text/html;charset=UTF-8"?>
 <?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
 <?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax Framework) sameples right now!" ?>
+<?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
 <?script type="text/javascript" src="/js/fiddle.js.dsp"?>
-
-<zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook" xmlns:ca="client/attribute" >
-	<style>
-		.list-likes .amount , .list-recentlys .version{
-			text-align:center;
-		}
-	</style>
-	<borderlayout id="main">
-		<north apply="org.zkoss.fiddle.composer.TopNavigationComposer"
-			border="none" size="90px" sclass="demo-header" collapsible="true">
-			<hlayout style="background:#82B3D1;">
-				<div style="height:90px;">
-					<!-- use h1 instead of this -->
-					<n:a href="/">
-						<image style="margin-top:16px;" width="90px" src="/img/ZK-Logo.png" tooltiptext="ZK Fiddle - Share your ZK sample ONLINE" />
-					</n:a>
+<zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook">
+	<borderlayout id="main" sclass="zkfiddle">
+		<north apply="org.zkoss.fiddle.composer.TopNavigationComposer" border="none" size="80px" sclass="zkfiddle-header" collapsible="true">
+			<div sclass="header-inner">
+				<hlayout sclass="menu">
+					<div sclass="logo-outer">
+						<n:h1 class="logo">
+							<n:a href="/" title="ZK Fiddle - Share your ZK sample ONLINE"></n:a>
+						</n:h1>
+					</div>
+					<n:h1 class="title">
+						ZK Fiddle - Open Source ZK Example Platform 
+					</n:h1>
+					<div id="views" style="margin-left:100px;width:500px;">
 					
-					<n:iframe src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${hostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35" 
-						scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:35px;" allowTransparency="true"></n:iframe>
-										
-				</div>
-				<hlayout>
-					<button width="100px" id="saveBtn" height="60px"
-						label="Save" />
-					<button width="100px" id="forkBtn" height="60px"
-						label="Fork" />
-					<hlayout id="views" style="margin-left:100px;">
+						<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png"/>
+						<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png"/>
 						<combobox id="instances" readonly="true" width="180px" />
-						<button width="100px" id="viewBtn" style="color:red;"
-							height="30px" label="Run" />
-					</hlayout>
+						<button width="100px" id="viewBtn" style="color:red;" label="Run" dir="reverse" image="/img/resultset_next.png"/>
+						
+					</div>
+					<div sclass="social">
+					<n:iframe
+								src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${hostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35"
+								scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:35px;" allowTransparency="true">
+					</n:iframe>
+				</div>
 				</hlayout>
-			</hlayout>
+			</div>
 		</north>
-		<west title="ZK Fiddle, Powered by TonyQ" size="300px" splittable="true"
-			minsize="210" maxsize="600" collapsible="true">
+		<west title="ZK Fiddle Info" size="300px" splittable="true" minsize="210" maxsize="600" collapsible="true">
 			<include src="leftmenu.zul" />
 		</west>
 		<center autoscroll="true">
@@ -48,15 +44,10 @@
 
 	<script type="text/javascript">
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-23849188-1']);
-  _gaq.push(['_trackPageview']);
+		var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-23849188-1']); _gaq.push(['_trackPageview']);
 
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+		(function() { var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; ga.src = ('https:' == document.location.protocol ? 'https://ssl' :
+		'http://www') + '.google-analytics.com/ga.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); })();
 
-</script>
+	</script>
 </zk>
