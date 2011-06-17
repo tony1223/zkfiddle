@@ -72,6 +72,8 @@ public class FiddleDataFilter implements Filter {
 		try {
 			
 			boolean result = false;
+			response.setCharacterEncoding("UTF-8");
+			response.setContentType("application/json;charset=UTF-8"); 			
 			if (version != 0){
 				result = renderCase(token, version, response);
 			}else{
@@ -111,6 +113,7 @@ public class FiddleDataFilter implements Filter {
 		jsonres.put("resources", json);
 
 		response.getWriter().println(jsonres);
+		response.getWriter().close();
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("renderVisualCase(String, Integer, ServletResponse) - end");
@@ -155,9 +158,7 @@ public class FiddleDataFilter implements Filter {
 		jsonres.put("ver", version);
 		jsonres.put("resources", json);
 
-		response.setCharacterEncoding("UTF-8");
 		response.getWriter().println(jsonres);
-		response.setContentType("text/json;charset=UTF-8"); 
 		response.getWriter().close();
 
 		if (logger.isDebugEnabled()) {
