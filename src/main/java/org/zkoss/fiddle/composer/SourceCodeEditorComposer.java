@@ -43,7 +43,6 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
-import org.zkoss.zul.Button;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
@@ -62,8 +61,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Tabpanels sourcetabpanels;
 
 	private ICase $case = null;
-
-	private Button saveBtn;
 
 	private Textbox caseTitle;
 
@@ -139,11 +136,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		resources = new ArrayList<Resource>();
 
 		$case = (ICase) requestScope.get("__case"); // new Case();
-
-		if ($case != null) {
-			saveBtn.setLabel("Update");
-			saveBtn.setImage("/img/arrow_refresh.png");
-		}
 
 		boolean newCase = ($case == null || $case.getId() == null);
 		if (newCase) { // new case!

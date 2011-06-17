@@ -34,10 +34,19 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	private Combobox instances = null;
 
 	private Button viewBtn = null;
+	
+	private Button saveBtn;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
+
+		if (requestScope.get("__case") != null) { //existing case
+			saveBtn.setLabel("Update");
+			saveBtn.setImage("/img/arrow_refresh.png");
+		}
+
+		
 		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil.getBean("sandboxManager");
 		Collection<FiddleSandbox> acounts = sandboxManager.listFiddleInstances().values();
 
