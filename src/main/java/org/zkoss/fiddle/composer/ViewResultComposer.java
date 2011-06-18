@@ -89,18 +89,14 @@ public class ViewResultComposer extends GenericForwardComposer {
 					msg.setValue(""); //force it doing the update job 
 					msg.setValue("loading...");
 					content.setSrc(inst.getPath() + evt.getCase().getToken() + "/" + evt.getCase().getVersion());
-					// content.setSrc("http://localhost:8080/");
-					// content.setSrc(inst.getPath()+"dbn96j/7");
 
 					viewEditor.doModal();
-					// Clients.evalJavaScript("window.open('"
-					// +inst.getPath()+"dbn96j/7"+ "')");
 				}
 			}
 		});
 	}
 	
-	public void onClose$viewEditor(ForwardEvent e) {
+	public void onMinimize$viewEditor(ForwardEvent e) {
 		content.setSrc("");
 	}
 }
