@@ -8,7 +8,7 @@ import org.springframework.transaction.support.TransactionCallback;
 
 public abstract class HibernateTransacationCallback<T> implements HibernateCallback<T> ,TransactionCallback<T>{
 
-	HibernateTemplate template ;
+	private HibernateTemplate template ;
 	public HibernateTransacationCallback(HibernateTemplate tmp){
 		this.template = tmp;
 	}
