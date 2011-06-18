@@ -5,7 +5,6 @@ Maintain log :
 <br />
 
 <ul>
-	<li>2011/6/18 Upgrade to 1.0.0</li>
 	<li>2011/6/17 Version 1.0.0 Update UI</li>
 	<li>2011/6/12 Version 0.9.1 fixed db not saving case after server restart issue.</li>
 	<li>2011/6/11 Version 0.9.0 update project skeleton and add more features.</li>

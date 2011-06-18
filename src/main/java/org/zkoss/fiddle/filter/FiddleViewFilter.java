@@ -36,17 +36,17 @@ public class FiddleViewFilter implements Filter {
 	
 	private FiddleSandboxManager sandboxManager; 
 
-	public static void main(String[] args) {
-		String path = "/3591l7m/2";
-
-		Pattern pattern = Pattern.compile("^/([^/.]{5,}?)/(\\d*)/?.*$");
-		Matcher match = pattern.matcher(path);
-		if (match.find()) {
-			System.out.println(match.group(1));
-			System.out.println(match.group(2));
-		}
-
-	}
+//	public static void main(String[] args) {
+//		String path = "/3591l7m/2";
+//
+//		Pattern pattern = Pattern.compile("^/([^/.]{5,}?)/(\\d*)/?.*$");
+//		Matcher match = pattern.matcher(path);
+//		if (match.find()) {
+//			System.out.println(match.group(1));
+//			System.out.println(match.group(2));
+//		}
+//
+//	}
 
 	private String getHostpath(HttpServletRequest request) {
 		StringBuffer hostName = new StringBuffer("zkfiddle.org");
@@ -109,9 +109,7 @@ public class FiddleViewFilter implements Filter {
 			request.setAttribute("hostName", host);
 			request.setAttribute("caseUrl", host + "/sample/"+ $case.getCaseUrl());
 			
-			boolean emptytitle = ($case.getTitle() == null && "".equals(($case.getTitle().trim())));
-			String title = emptytitle ?	"Unnamed" :	$case.getTitle();
-			request.setAttribute("_pgtitle", " - " + title );
+			setPageTitle(request,$case);
 			
 			ViewRequest vr = new ViewRequest();
 			vr.setToken(match.group(1));
@@ -156,6 +154,12 @@ public class FiddleViewFilter implements Filter {
 			return true;
 		}
 	}
+	
+	public void setPageTitle(HttpServletRequest request, ICase $case) {
+		boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
+		String title = emptytitle ? "Unnamed" : $case.getTitle();
+		request.setAttribute("_pgtitle", " - " + title);
+	}
 
 	public void doFilter(ServletRequest request2, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
@@ -189,9 +193,7 @@ public class FiddleViewFilter implements Filter {
 					return;
 				}
 				String host = getHostpath(request);
-				boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
-				String title = emptytitle ?	"" :	" [" + $case.getTitle() +"] --";
-				request.setAttribute("_pgtitle", title );				
+				setPageTitle(request, $case);		
 				request.setAttribute("hostName", host);
 				request.setAttribute("caseUrl", host  + "/sample/" + $case.getCaseUrl());
 				request.setAttribute("__case", $case);

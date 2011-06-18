@@ -1,7 +1,10 @@
 package org.zkoss.fiddle.util;
 
+import javax.servlet.ServletContext;
+
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.IResource;
+import org.zkoss.zk.ui.Executions;
 
 
 public class ResourceFactory {
@@ -49,11 +52,9 @@ public class ResourceFactory {
 	
 	private static String readThenReaplce(String filePath, String token, String replaced) {
 
-//		ServletContext req = (ServletContext) Executions.getCurrent().getDesktop().getWebApp().getNativeContext();
+		ServletContext req = (ServletContext) Executions.getCurrent().getDesktop().getWebApp().getNativeContext();
 		
-		//FIXME fixme later
-//		String template = FileUtil.readIfExist(req.getRealPath(filePath));
-		String template = FileUtil.readIfExist("src/main/webapp"+filePath);
+		String template = FileUtil.readIfExist(req.getRealPath(filePath));
 		if (token != null && template != null)
 			template = template.replaceAll(token, replaced);
 		return template;
