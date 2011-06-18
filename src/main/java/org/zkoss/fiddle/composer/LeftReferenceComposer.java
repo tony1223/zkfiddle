@@ -2,16 +2,14 @@ package org.zkoss.fiddle.composer;
 
 import java.util.List;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
-import org.zkoss.fiddle.util.CacheFactory;
+import org.zkoss.fiddle.util.CacheHandler;
+import org.zkoss.fiddle.util.FiddleCache;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
@@ -42,22 +40,16 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-
-		//TODO Review Cache  later
-		Cache cache = CacheFactory.getTop10LikedRecord();
-
-		List<CaseRecord> list = null;
-		String key = CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
-		if (cache.isKeyInCache(key)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("doAfterCompose(Component) - Hit cache top 10 like");
+		List<CaseRecord> list = (new CacheHandler<List<CaseRecord>>(){
+			protected List<CaseRecord> execute() {
+				ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+				return caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
 			}
-			list = (List<CaseRecord>) cache.get(key).getValue();
-		} else {
-			list = caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
-			cache.put(new Element(key, list));
-		}
+			protected String getKey() {
+				return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
+			}
+		}).get(FiddleCache.top10liked);
+		
 
 		likes.setModel(new ListModelList(list));
 

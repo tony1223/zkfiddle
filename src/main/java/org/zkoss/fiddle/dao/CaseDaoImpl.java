@@ -3,9 +3,6 @@ package org.zkoss.fiddle.dao;
 import java.sql.SQLException;
 import java.util.List;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -15,7 +12,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
-import org.zkoss.fiddle.util.CacheFactory;
+import org.zkoss.fiddle.util.CacheHandler;
+import org.zkoss.fiddle.util.FiddleCache;
 
 
 public class CaseDaoImpl extends AbstractDao implements ICaseDao {
@@ -52,8 +50,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 		if (logger.isInfoEnabled()) {
 			logger.info("saveOrUdate(Case) - Clear Recently caches");
 		}
-		Cache c = CacheFactory.getRecentlyCases();
-		c.removeAll();
+		FiddleCache.RecentlyCases.removeAll();
 	}
 
 	/*
@@ -85,35 +82,32 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	}
 
 	public Case findCaseByToken(final String token,final Integer version) {
-		Cache c = CacheFactory.getCaseByToken();
-		
-		String key = token+"::"+version;
-		if (c.isKeyInCache(key)) {
-			if (logger.isInfoEnabled()) {
-				logger.info("findCaseByToken(token,version) - Hit Case");
-			}
-			return (Case) c.get(key).getValue();
-		}
-		Case $case = getHibernateTemplate().execute(new HibernateCallback<Case>() {
-			public Case doInHibernate(Session session) throws HibernateException, SQLException {
-				Criteria crit = session.createCriteria(Case.class);
-				
-				crit.add(Restrictions.eq("token", token));
-				crit.add(Restrictions.eq("version", version == null ? 1 : version));
-				return (Case) crit.uniqueResult();		
-			}
+		return (new CacheHandler<Case>() {
+			protected Case execute() {
+				return getHibernateTemplate().execute(new HibernateCallback<Case>() {
+					public Case doInHibernate(Session session) throws HibernateException, SQLException {
+						Criteria crit = session.createCriteria(Case.class);
+						
+						crit.add(Restrictions.eq("token", token));
+						crit.add(Restrictions.eq("version", version == null ? 1 : version));
+						return (Case) crit.uniqueResult();		
+					}
 
-		});
-		
-		c.put(new Element(key, $case));
-		return $case;		
+				});
+			}
+			protected String getKey() {
+				return token+"::"+version;
+			}
+		}).get(FiddleCache.CaseByToken);
+
 	}
 
 	public Integer getLastVersionByToken(final String token) {
 		return getHibernateTemplate().execute(new HibernateCallback<Integer>() {
+
 			public Integer doInHibernate(Session session) throws HibernateException, SQLException {
-				return (Integer)  session.createQuery("select max(version) from Case where token = :token ")
-				.setString("token", token).uniqueResult();
+				return (Integer) session.createQuery("select max(version) from Case where token = :token ")
+						.setString("token", token).uniqueResult();
 			}
 		});
 	}
@@ -123,24 +117,25 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	 * yes , it's a often updated field , but it's on the index page , so it's worth to cache it here. 
 	 */
 	public List<Case> getRecentlyCase(final Integer amount) {
-		Cache c = CacheFactory.getRecentlyCases();
 		
-		String key = "recently:" + amount;
-		if (c.isKeyInCache(key)) {
-			if (logger.isInfoEnabled()) {
-				logger.info("getRecentlyCase(Integer) - Hit Cases");
+		return (new CacheHandler<List<Case>>() {
+
+			protected List<Case> execute() {
+				return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
+
+					public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
+						Query query = session.createQuery("from Case order by id desc");
+						query.setMaxResults(amount);
+						return query.list();
+					}
+				});
 			}
-			return (List<Case>) c.get(key).getValue();
-		}
-		List<Case> ret= getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
-			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
-				Query query = session.createQuery("from Case order by id desc");
-				query.setMaxResults(amount);
-				return query.list();
+
+			protected String getKey() {
+				return "recently:" + amount;
 			}
-		});
-		c.put(new Element(key, ret));
-		return ret;		
+		}).get(FiddleCache.RecentlyCases);
+
 	}
 
 }

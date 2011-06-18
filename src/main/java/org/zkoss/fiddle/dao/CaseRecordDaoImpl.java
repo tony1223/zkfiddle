@@ -11,7 +11,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.api.ICase;
-import org.zkoss.fiddle.util.CacheFactory;
+import org.zkoss.fiddle.util.FiddleCache;
 
 public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
@@ -108,8 +108,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			if (logger.isDebugEnabled()) {
 				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
 			}
-
-			CacheFactory.getTop10LikedRecord().removeAll();
+			FiddleCache.top10liked.removeAll();
 		}
 		boolean returnboolean = getTxTemplate().execute(
 				new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
@@ -154,7 +153,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			if (logger.isDebugEnabled()) {
 				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
 			}
-			CacheFactory.getTop10LikedRecord().removeAll();
+			FiddleCache.top10liked.removeAll();
 		}
 		boolean returnboolean = getTxTemplate().execute(
 				new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {

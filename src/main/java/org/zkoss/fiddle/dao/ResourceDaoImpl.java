@@ -3,24 +3,16 @@ package org.zkoss.fiddle.dao;
 import java.sql.SQLException;
 import java.util.List;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Resource;
-import org.zkoss.fiddle.util.CacheFactory;
+import org.zkoss.fiddle.util.CacheHandler;
+import org.zkoss.fiddle.util.FiddleCache;
 
 public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
-
-	/**
-	 * Logger for this class
-	 */
-	private static final Logger logger = Logger.getLogger(ResourceDaoImpl.class);
 
 	public ResourceDaoImpl() {
 
@@ -86,23 +78,24 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 	public List<Resource> listByCase(final Long caseId) {
 		// Implements cache by our self , note the resource should be readonly ,
 		// so it's ok to make a external cache .
-		Cache c = CacheFactory.getCaseResources();
-		String key = "listby:" + caseId;
-		if (c.isKeyInCache(key)) {
-			if (logger.isInfoEnabled()) {
-				logger.info("listByCase(Long) - Hit Resources");
-			}
-			return (List<Resource>) c.get(key).getValue();
-		}
-		List<Resource> ret = getHibernateTemplate().execute(new HibernateCallback<List<Resource>>() {
 
-			public List<Resource> doInHibernate(Session session) throws HibernateException, SQLException {
-				Query query = session.createQuery("from Resource where caseId = :caseId");
-				query.setLong("caseId", caseId);
-				return query.list();
+		return (new CacheHandler<List<Resource>>() {
+
+			protected List<Resource> execute() {
+				return getHibernateTemplate().execute(new HibernateCallback<List<Resource>>() {
+
+					public List<Resource> doInHibernate(Session session) throws HibernateException, SQLException {
+						Query query = session.createQuery("from Resource where caseId = :caseId");
+						query.setLong("caseId", caseId);
+						return query.list();
+					}
+				});
 			}
-		});
-		c.put(new Element(key, ret));
-		return ret;
+
+			protected String getKey() {
+				return "listby:" + caseId;
+			}
+		}).get(FiddleCache.CaseResources);
+
 	}
 }
