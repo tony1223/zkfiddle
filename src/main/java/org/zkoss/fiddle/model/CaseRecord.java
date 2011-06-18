@@ -23,7 +23,7 @@ import org.hibernate.annotations.Index;
 public class CaseRecord implements Serializable{
 
 	public enum Type {
-		View(0), Like(1), RunTemp(2), Run(3);
+		View(0), Like(1), RunTemp(2), Run(3), Download(4);
 		private Integer type;
 		Type(int type) {
 			this.type = type;
@@ -33,7 +33,7 @@ public class CaseRecord implements Serializable{
 		}
 		
 		public static boolean contains(int i){
-			return ( i >= 0 && i < 3 );
+			return ( i >= 0 && i < 4 );
 		}
 	}
 	

@@ -17,11 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.zkoss.fiddle.dao.api.ICaseDao;
+import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.files.ResourceFile;
 import org.zkoss.fiddle.files.ResourcePackager;
 import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
+import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.VirtualCase;
 import org.zkoss.fiddle.model.api.IResource;
@@ -38,6 +40,8 @@ public class FiddleDataFilter implements Filter {
 	private ICaseDao caseDao;
 
 	private IResourceDao resourceDao;
+	
+	private ICaseRecordDao caseRecordDao;
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
@@ -190,8 +194,8 @@ public class FiddleDataFilter implements Filter {
 			}
 			return null;
 		}
-
 		
+		caseRecordDao.increase(CaseRecord.Type.Download, c);
 		ByteArrayOutputStream ret = new ByteArrayOutputStream();
 		/**
 		 * Here we assume it's IResource list
@@ -284,6 +288,11 @@ public class FiddleDataFilter implements Filter {
 
 	public void setResourceDao(IResourceDao resourceDao) {
 		this.resourceDao = resourceDao;
+	}
+
+	
+	public void setCaseRecordDao(ICaseRecordDao caseRecordDao) {
+		this.caseRecordDao = caseRecordDao;
 	}
 
 }

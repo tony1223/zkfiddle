@@ -20,27 +20,18 @@
 
 
     <bean id="sandboxFilter" class="org.zkoss.fiddle.filter.FiddleSandboxFilter">
-	    <property name="sandboxManager">
-	        <ref bean="sandboxManager"/>
-	    </property>    	
+	    <property name="sandboxManager" ref="sandboxManager" />
     </bean>
 	
 	<bean id="dataFilter" class="org.zkoss.fiddle.filter.FiddleDataFilter">
-	    <property name="caseDao">
-	        <ref bean="caseDao"/>
-	    </property>
-		<property name="resourceDao">
-	        <ref bean="resourceDao"/>
-	    </property>    
+	    <property name="caseDao" ref="caseDao" />
+		<property name="resourceDao" ref="resourceDao" />
+		<property name="caseRecordDao" ref="caseRecordDao" />
     </bean>
 	
 	<bean id="viewFilter" class="org.zkoss.fiddle.filter.FiddleViewFilter">
-		<property name="caseDao">
-	        <ref bean="caseDao"/>
-	    </property> 		
-		<property name="sandboxManager">
-	        <ref bean="sandboxManager"/>
-	    </property>    
+		<property name="caseDao" ref="caseDao" />
+		<property name="sandboxManager"  ref="sandboxManager" />
     </bean>
 	
 </beans>
