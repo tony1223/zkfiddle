@@ -19,7 +19,7 @@
 		<spring.version>3.0.5.RELEASE</spring.version>
 		<hibernate.version>3.6.4.Final</hibernate.version>
 	</properties>  
-  <version>0.9.0</version>
+  <version>1.0.0</version>
   <name>ZK Fiddle Data handler</name>
   <url>Http://www.zkoss.org</url>
 	<licenses>
