@@ -44,17 +44,18 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 		ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 
+		//TODO Review Cache  later
 		Cache cache = CacheFactory.getTop10LikedRecord();
 
 		List<CaseRecord> list = null;
-		String key = CaseRecord.TYPE_LIKE + ":" + true + ":" + 1 + ":" + 50;
+		String key = CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
 		if (cache.isKeyInCache(key)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("doAfterCompose(Component) - Hit cache top 10 like");
 			}
 			list = (List<CaseRecord>) cache.get(key).getValue();
 		} else {
-			list = caseRecordDao.listByType(CaseRecord.TYPE_LIKE, true, 1, 50);
+			list = caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
 			cache.put(new Element(key, list));
 		}
 

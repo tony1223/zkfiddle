@@ -7,14 +7,13 @@ import org.zkoss.fiddle.model.api.ICase;
 
 public interface ICaseRecordDao extends IDao<CaseRecord> {
 	
-	public boolean increase(Integer type, Long caseId);
+	public boolean increase(CaseRecord.Type type, ICase _case);
 	
-	public boolean decrease(Integer type, Long caseId);
+	public boolean decrease(CaseRecord.Type type, Long caseId);
 	
-	public Long countByType(final Integer type, final boolean excludeEmpty);
+	public Long countByType(CaseRecord.Type type, boolean excludeEmpty);
 	
-	public List<CaseRecord> listByType(final Integer type, final boolean excludeEmpty, final int pageIndex,
-			final int pageSize) ;
+	public List<CaseRecord> listByType(CaseRecord.Type type, boolean excludeEmpty, int pageIndex,
+			int pageSize) ;
 	
-	public void createRecords(final ICase cas) ;
 }

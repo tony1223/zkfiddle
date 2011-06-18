@@ -25,84 +25,176 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	}
 
 	public List<CaseRecord> list() {
-		return getHibernateTemplate().find("from CaseRecord");
+		if (logger.isDebugEnabled()) {
+			logger.debug("list() - start");
+		}
+
+		List<CaseRecord> returnList = getHibernateTemplate().find("from CaseRecord");
+		if (logger.isDebugEnabled()) {
+			logger.debug("list() - end");
+		}
+		return returnList;
 	}
 
 	public void saveOrUdate(CaseRecord m) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("saveOrUdate(CaseRecord) - start");
+		}
+
 		super.saveOrUdateObject(m);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("saveOrUdate(CaseRecord) - end");
+		}
 	}
 
 	public CaseRecord get(Long id) {
-		return (CaseRecord) getHibernateTemplate().get(CaseRecord.class, id);
+		if (logger.isDebugEnabled()) {
+			logger.debug("get(Long) - start");
+		}
+
+		CaseRecord returnCaseRecord = (CaseRecord) getHibernateTemplate().get(CaseRecord.class, id);
+		if (logger.isDebugEnabled()) {
+			logger.debug("get(Long) - end");
+		}
+		return returnCaseRecord;
 	}
 
 	public void remove(CaseRecord m) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("remove(CaseRecord) - start");
+		}
+
 		getHibernateTemplate().delete(m);
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("remove(CaseRecord) - end");
+		}
 	}
 
 	public void remove(final Long id) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("remove(Long) - start");
+		}
 
 		getTxTemplate().execute(new HibernateTransacationCallback<Void>(getHibernateTemplate()) {
 
 			public Void doInHibernate(Session session) throws HibernateException, SQLException {
+				if (logger.isDebugEnabled()) {
+					logger.debug("doInHibernate(Session) - start");
+				}
+
 				session.createQuery("delete from CaseRecord where id = :id").setLong("id", id).executeUpdate();
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("doInHibernate(Session) - end");
+				}
 				return null;
 			}
 		});
 
+		if (logger.isDebugEnabled()) {
+			logger.debug("remove(Long) - end");
+		}
 	}
 
-	public boolean increase(final Integer type, final Long caseId) {
-		if (type == CaseRecord.TYPE_LIKE) {
+	public boolean increase(final CaseRecord.Type type, final ICase _case) {
+		if (logger.isInfoEnabled()) {
+			logger.info("increase(CaseRecord.Type, ICase) - start :" + type+":"+_case.getCaseUrl());
+		}
+
+
+		if (type == CaseRecord.Type.Like) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
 			}
 
 			CacheFactory.getTop10LikedRecord().removeAll();
 		}
-		return getTxTemplate().execute(new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
+		boolean returnboolean = getTxTemplate().execute(
+				new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
 
-			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
-				int update = session
-						.createQuery(
-								"update CaseRecord set amount = amount + 1 where type = :type and caseId = :caseId")
-						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
+					public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
+						if (logger.isDebugEnabled()) {
+							logger.debug("doInHibernate(Session) - start");
+						}
 
-				return update != 0;
-			}
-		});
+						int update = session
+								.createQuery(
+										"update CaseRecord set amount = amount + 1 where type = :type and caseId = :caseId")
+								.setLong("type", type.value()).setLong("caseId", _case.getId()).executeUpdate();
+
+						if (update == 0) {
+							CaseRecord view = createCaseRecord(_case, type.value(), 1L);
+							session.save(view);
+						}
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("doInHibernate(Session) - end");
+						}
+						return true;
+					}
+				});
+		if (logger.isDebugEnabled()) {
+			logger.debug("increase(CaseRecord.Type, ICase) - end");
+		}
+		return returnboolean;
 	}
 
 	/**
 	 * Note that you can't make it negative, we will block all decreasing for
 	 * amount <= 0.
 	 */
-	public boolean decrease(final Integer type, final Long caseId) {
-		if (type == CaseRecord.TYPE_LIKE) {
+	public boolean decrease(final CaseRecord.Type type, final Long caseId) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("decrease(CaseRecord.Type, Long) - start");
+		}
+
+		if (type == CaseRecord.Type.Like) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
 			}
 			CacheFactory.getTop10LikedRecord().removeAll();
 		}
-		return getTxTemplate().execute(new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
+		boolean returnboolean = getTxTemplate().execute(
+				new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
 
-			public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
-				int update = session
-						.createQuery(
-								"update CaseRecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
-						.setLong("type", type).setLong("caseId", caseId).executeUpdate();
+					public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
+						if (logger.isDebugEnabled()) {
+							logger.debug("doInHibernate(Session) - start");
+						}
 
-				return update != 0;
-			}
-		});
+						int update = session
+								.createQuery(
+										"update CaseRecord set amount = amount - 1 where type = :type and caseId = :caseId and amount > 0")
+								.setLong("type", type.value()).setLong("caseId", caseId).executeUpdate();
+
+						Boolean returnBoolean = update != 0;
+						if (logger.isDebugEnabled()) {
+							logger.debug("doInHibernate(Session) - end");
+						}
+						return returnBoolean;
+					}
+				});
+		if (logger.isDebugEnabled()) {
+			logger.debug("decrease(CaseRecord.Type, Long) - end");
+		}
+		return returnboolean;
 	}
 
-	public List<CaseRecord> listByType(final Integer type, final boolean excludeEmpty, final int pageIndex,
+	public List<CaseRecord> listByType(final CaseRecord.Type type, final boolean excludeEmpty, final int pageIndex,
 			final int pageSize) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("listByType(CaseRecord.Type, boolean, int, int) - start");
+		}
 
-		return getHibernateTemplate().execute(new HibernateCallback<List<CaseRecord>>() {
+		List<CaseRecord> returnList = getHibernateTemplate().execute(new HibernateCallback<List<CaseRecord>>() {
 
 			public List<CaseRecord> doInHibernate(Session session) throws HibernateException, SQLException {
+				if (logger.isDebugEnabled()) {
+					logger.debug("doInHibernate(Session) - start");
+				}
+
 				String rule = "";
 				if (excludeEmpty) {
 					rule = " and amount <> 0 ";
@@ -110,19 +202,35 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 				Query query = session.createQuery(
 						"from CaseRecord " + " where type = :type " + rule + " order by amount desc").setLong("type",
-						type);
+						type.value());
 
 				query.setFirstResult((pageIndex - 1) * pageSize);
 				query.setMaxResults(pageSize);
-				return query.list();
+				List<CaseRecord> returnList2 = query.list();
+				if (logger.isDebugEnabled()) {
+					logger.debug("doInHibernate(Session) - end");
+				}
+				return returnList2;
 			}
 		});
+		if (logger.isDebugEnabled()) {
+			logger.debug("listByType(CaseRecord.Type, boolean, int, int) - end");
+		}
+		return returnList;
 	}
 
-	public Long countByType(final Integer type, final boolean excludeEmpty) {
-		return getHibernateTemplate().execute(new HibernateCallback<Long>() {
+	public Long countByType(final CaseRecord.Type type, final boolean excludeEmpty) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("countByType(CaseRecord.Type, boolean) - start");
+		}
+
+		Long returnLong = getHibernateTemplate().execute(new HibernateCallback<Long>() {
 
 			public Long doInHibernate(Session session) throws HibernateException, SQLException {
+				if (logger.isDebugEnabled()) {
+					logger.debug("doInHibernate(Session) - start");
+				}
+
 				String rule = "";
 				if (excludeEmpty) {
 					rule = " and amount <> 0 ";
@@ -130,51 +238,54 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 				Query query = session.createQuery("select count(id) from CaseRecord " + " where type = :type " + rule
 						+ " order by amount");
-				query.setLong("type", type);
-				return (Long) query.uniqueResult();
+				query.setLong("type", type.value());
+				Long returnLong2 = (Long) query.uniqueResult();
+				if (logger.isDebugEnabled()) {
+					logger.debug("doInHibernate(Session) - end");
+				}
+				return returnLong2;
 			}
 		});
+		if (logger.isDebugEnabled()) {
+			logger.debug("countByType(CaseRecord.Type, boolean) - end");
+		}
+		return returnLong;
 
 	}
 
 	public CaseRecord get(final Integer type, final Long caseId) {
-		return getHibernateTemplate().execute(new HibernateCallback<CaseRecord>() {
+		if (logger.isDebugEnabled()) {
+			logger.debug("get(Integer, Long) - start");
+		}
+
+		CaseRecord returnCaseRecord = getHibernateTemplate().execute(new HibernateCallback<CaseRecord>() {
 
 			public CaseRecord doInHibernate(Session session) throws HibernateException, SQLException {
+				if (logger.isDebugEnabled()) {
+					logger.debug("doInHibernate(Session) - start");
+				}
+
 				Query query = session.createQuery("from CaseRecord where type = :type and caseId = :caseId");
 				query.setLong("type", type).setLong("caseId", caseId);
-				return (CaseRecord) query.uniqueResult();
+				CaseRecord returnCaseRecord2 = (CaseRecord) query.uniqueResult();
+				if (logger.isDebugEnabled()) {
+					logger.debug("doInHibernate(Session) - end");
+				}
+				return returnCaseRecord2;
 			}
 		});
-
-	}
-
-	/**
-	 * create 3 type of record for a case
-	 * 
-	 * @param cas
-	 * @param type
-	 */
-	public void createRecords(final ICase cas) {
-
-		getTxTemplate().execute(new HibernateTransacationCallback<Void>(getHibernateTemplate()) {
-
-			public Void doInHibernate(Session session) throws HibernateException, SQLException {
-				CaseRecord view = createCaseRecord(cas, CaseRecord.TYPE_VIEW, 1L);
-				CaseRecord like = createCaseRecord(cas, CaseRecord.TYPE_LIKE, 0L);
-				CaseRecord run = createCaseRecord(cas, CaseRecord.TYPE_RUN, 0L);
-				CaseRecord runtmp = createCaseRecord(cas, CaseRecord.TYPE_RUN_TEMP, 0L);
-				session.save(view);
-				session.save(like);
-				session.save(run);
-				session.save(runtmp);
-				return null;
-			}
-		});
+		if (logger.isDebugEnabled()) {
+			logger.debug("get(Integer, Long) - end");
+		}
+		return returnCaseRecord;
 
 	}
 
 	private CaseRecord createCaseRecord(ICase cas, int type, long amount) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("createCaseRecord(ICase, int, long) - start");
+		}
+
 		CaseRecord view = new CaseRecord();
 		view.setType(type);
 		view.setCaseId(cas.getId());
@@ -182,6 +293,10 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 		view.setTitle(cas.getTitle());
 		view.setVersion(cas.getVersion());
 		view.setToken(cas.getToken());
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("createCaseRecord(ICase, int, long) - end");
+		}
 		return view;
 	}
 }

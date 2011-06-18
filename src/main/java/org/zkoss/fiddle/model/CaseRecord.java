@@ -21,10 +21,21 @@ import org.hibernate.annotations.Index;
 @Entity
 @Table(name="caserecord")
 public class CaseRecord implements Serializable{
-	public static final Integer TYPE_VIEW = 0 ;
-	public static final Integer TYPE_LIKE = 1 ;
-	public static final Integer TYPE_RUN_TEMP = 2 ;
-	public static final Integer TYPE_RUN = 3 ;
+
+	public enum Type {
+		View(0), Like(1), RunTemp(2), Run(3);
+		private Integer type;
+		Type(int type) {
+			this.type = type;
+		}
+		public Integer value() {
+			return type;
+		}
+		
+		public static boolean contains(int i){
+			return ( i >= 0 && i < 3 );
+		}
+	}
 	
 	private Long id;
 	

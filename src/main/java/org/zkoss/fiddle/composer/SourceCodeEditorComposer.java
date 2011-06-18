@@ -146,7 +146,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			initSEOHandler($case, resources);
 		} else {
 			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-			manager.increase(CaseRecord.TYPE_VIEW, $case.getId());
+			manager.increase(CaseRecord.Type.View, $case);
 			if (logger.isDebugEnabled()) {
 				logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":view");
 			}
@@ -191,7 +191,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					if (sourceChange) {
 						if ($case != null && $case.getId() != null) {
 							ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-							manager.increase(CaseRecord.TYPE_RUN_TEMP, $case.getId());
+							manager.increase(CaseRecord.Type.RunTemp, $case);
 							if (logger.isDebugEnabled()) {
 								logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":run-temp");
 							}
@@ -214,7 +214,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					} else {
 						result.setCase($case);
 						ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-						manager.increase(CaseRecord.TYPE_RUN, $case.getId());
+						manager.increase(CaseRecord.Type.Run, $case);
 						if (logger.isDebugEnabled()) {
 							logger.debug($case.getToken() + ":" + $case.getVersion() + ":run");
 						}
@@ -270,12 +270,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			if (logger.isDebugEnabled()) {
 				logger.debug($case.getToken() + ":" + $case.getVersion() + ":like");
 			}
-			manager.increase(CaseRecord.TYPE_LIKE, $case.getId());
+			manager.increase(CaseRecord.Type.Like, $case);
 		} else {
 			if (logger.isDebugEnabled()) {
 				logger.debug($case.getToken() + ":" + $case.getVersion() + ":unlike");
 			}
-			manager.decrease(CaseRecord.TYPE_LIKE, $case.getId());
+			manager.decrease(CaseRecord.Type.Like, $case.getId());
 		}
 	}
 

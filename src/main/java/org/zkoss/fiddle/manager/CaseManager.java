@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.zkoss.fiddle.dao.api.ICaseDao;
-import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
@@ -19,8 +18,6 @@ public class CaseManager extends AbstractManager {
 
 	private IResourceDao resourceDao;
 	
-	private ICaseRecordDao caseRecordDao;
-
 	public Case saveCase(final ICase _case, final List<Resource> resources, final String title, final boolean fork) {
 
 		return getTxTemplate().execute(new TransactionCallback<Case>() {
@@ -58,7 +55,6 @@ public class CaseManager extends AbstractManager {
 					resource.buildFinalConetnt(newCase);
 					resourceDao.saveOrUdate(resource);
 				}
-				caseRecordDao.createRecords(newCase);
 				return newCase;
 			}
 
@@ -74,8 +70,4 @@ public class CaseManager extends AbstractManager {
 		this.resourceDao = resourceDao;
 	}
 	
-	public void setCaseRecordDao(ICaseRecordDao caseRecordDao) {
-		this.caseRecordDao = caseRecordDao;
-	}
-
 }

@@ -26,6 +26,5 @@
 		<property name="transactionManager" ref="transactionManager"/>
 		<property name="caseDao" ref="caseDao" />
 		<property name="resourceDao" ref="resourceDao" />
-		<property name="caseRecordDao" ref="caseRecordDao" />
 	</bean>
 </beans>
