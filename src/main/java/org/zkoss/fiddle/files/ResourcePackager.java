@@ -9,16 +9,21 @@ import java.util.zip.ZipOutputStream;
 
 public class ResourcePackager {
 
-	private List<ResourceFile> list;
+	private List<IResourceFile> list;
 
 	public ResourcePackager() {
-		list = new ArrayList<ResourceFile>();
+		list = new ArrayList<IResourceFile>();
 	}
 
 	public static ResourcePackager list() {
 		return new ResourcePackager();
 	}
 
+	public ResourcePackager add(List<IResourceFile> rf) {
+		list.addAll(rf);
+		return this;
+	}
+	
 	public ResourcePackager add(ResourceFile rf) {
 		list.add(rf);
 		return this;
@@ -31,9 +36,9 @@ public class ResourcePackager {
 	}
 
 	private void applyResourceFiles(ZipOutputStream out) throws IOException {
-		for (ResourceFile rf : list) {
+		for (IResourceFile rf : list) {
 			out.putNextEntry(new ZipEntry(rf.getPath()));
-			out.write(rf.getContent().getBytes());
+			out.write(rf.getContentBytes());
 		}
 	}
 

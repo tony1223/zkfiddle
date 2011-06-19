@@ -1,6 +1,7 @@
 package org.zkoss.fiddle.filter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -9,6 +10,7 @@ import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -21,6 +23,7 @@ import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.files.ResourceFile;
 import org.zkoss.fiddle.files.ResourcePackager;
+import org.zkoss.fiddle.files.ZipFileUtil;
 import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
@@ -37,6 +40,8 @@ public class FiddleDataFilter implements Filter {
 	 */
 	private static final Logger logger = Logger.getLogger(FiddleDataFilter.class);
 
+	private ServletContext servletContext;
+	
 	private ICaseDao caseDao;
 
 	private IResourceDao resourceDao;
@@ -48,9 +53,10 @@ public class FiddleDataFilter implements Filter {
 		if (logger.isDebugEnabled()) {
 			logger.debug("doFilter(ServletRequest, ServletResponse, FilterChain) - start");
 		}
+			
 
 		HttpServletRequest httprequest = ((HttpServletRequest) request);
-
+		
 		String uri = httprequest.getRequestURI();
 		String context = httprequest.getContextPath();
 
@@ -89,9 +95,11 @@ public class FiddleDataFilter implements Filter {
 		if (token == null)
 			return;
 
-		if(download)
+		if(download){
+			//TODO review
+			servletContext = ((HttpServletRequest)request).getSession().getServletContext();
 			outputZIP( (HttpServletResponse) response, token, version);
-		else
+		}else
 			outputJSON(response, token, version);
 
 		if (logger.isDebugEnabled()) {
@@ -203,6 +211,9 @@ public class FiddleDataFilter implements Filter {
 		List<Resource> dbResources = resourceDao.listByCase(c.getId());
 		
 		ResourcePackager list = ResourcePackager.list();
+		String filePath = servletContext.getRealPath("/WEB-INF/_download/ZKfiddleSample.zip");
+		
+		list.add(ZipFileUtil.getFiles(new File(filePath)));
 		for(IResource ir:dbResources){
 			list.add(new ResourceFile(ir));
 		}
@@ -277,6 +288,7 @@ public class FiddleDataFilter implements Filter {
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {
+		servletContext =filterConfig.getServletContext();
 	}
 
 	public void destroy() {

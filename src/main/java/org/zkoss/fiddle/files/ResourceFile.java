@@ -29,15 +29,18 @@ public class ResourceFile implements IResourceFile {
 	
 	public String getPath() {
 		if (resource.getType() != IResource.TYPE_JAVA) {
-			return resource.getName();
+			return "WebContent/" + resource.getName();
 		} else {
 			return "src/" + convertPackageToFolder(resource.getFullPackage()) + "/" + resource.getName();
 		}
-
 	}
 
 	public String getContent() {
 		return resource.getContent();
+	}
+	
+	public byte[] getContentBytes() {
+		return resource.getContent().getBytes();
 	}
 
 }
