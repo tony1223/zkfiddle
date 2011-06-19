@@ -89,14 +89,13 @@ public class ViewResultComposer extends GenericForwardComposer {
 					msg.setValue(""); //force it doing the update job 
 					msg.setValue("loading...");
 					content.setSrc(inst.getPath() + evt.getCase().getToken() + "/" + evt.getCase().getVersion());
-
 					viewEditor.doModal();
 				}
 			}
 		});
 	}
 	
-	public void onMinimize$viewEditor(ForwardEvent e) {
+	public void onClose$viewEditor(ForwardEvent e) {
 		content.setSrc("");
 	}
 }
