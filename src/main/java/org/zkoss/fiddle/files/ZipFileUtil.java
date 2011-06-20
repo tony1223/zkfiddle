@@ -23,7 +23,6 @@ public class ZipFileUtil {
 
 		while (entries.hasMoreElements()) {
 			ZipEntry ze = (ZipEntry) entries.nextElement();
-			byte[] cont = null;
 
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			InputStream is = zf.getInputStream(ze);
@@ -34,8 +33,7 @@ public class ZipFileUtil {
 			}
 			is.close();
 			bos.close();
-			cont = bos.toByteArray();
-			ret.add(new ByteFile(ze.getName(), cont));
+			ret.add(new ByteFile(ze.getName(), bos.toByteArray()));
 		}
 
 		return ret;

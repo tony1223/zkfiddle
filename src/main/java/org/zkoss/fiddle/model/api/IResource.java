@@ -57,9 +57,11 @@ public interface IResource{
 
 	public void setFinalContent(String rawContent);
 
+	public String buildFinalConetnt(String replacedPackage);
+	
 	public String getFinalContent();
 	
-	public void buildFinalConetnt(Case c) ;
+	public void setFinalConetnt(Case c) ;
 	
 	public String getFullPackage();
 	

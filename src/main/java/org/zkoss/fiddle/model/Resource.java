@@ -194,11 +194,36 @@ public class Resource implements IResource, Cloneable, Serializable {
 		return canDelete;
 	}
 
-	public void buildFinalConetnt(Case c) {
-		buildFinalConetnt(c.getToken(), c.getVersion());
+	public void setFinalConetnt(Case c) {
+		this.finalContent = buildFinalConetnt(c.getToken(), c.getVersion());
 	}
 
-	private void buildFinalConetnt(String token, int version) {
+	public String buildFinalConetnt(String replacedPackage) {
+
+		if (replacedPackage == null) {
+			throw new IllegalArgumentException("token is null ");
+		}
+		if (content == null) {
+			throw new IllegalStateException("content is null ");
+		}
+
+		String finalcontent;
+
+		if (type == TYPE_JAVA) {
+			finalcontent = "package " + IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + pkg + ";\n\n"
+					+ this.content;
+			return finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedPackage);
+		} else if (type == TYPE_ZUL) {
+			finalcontent = this.content;
+			return finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedPackage);
+
+		} else {
+			return this.content;
+		}
+
+	}
+	
+	public String buildFinalConetnt(String token, int version) {
 
 		if (token == null) {
 			throw new IllegalArgumentException("token is null ");
@@ -214,13 +239,13 @@ public class Resource implements IResource, Cloneable, Serializable {
 		if (type == TYPE_JAVA) {
 			finalcontent = "package " + IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + pkg + ";\n\n"
 					+ this.content;
-			this.finalContent = finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
+			return finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
 		} else if (type == TYPE_ZUL) {
 			finalcontent = this.content;
-			this.finalContent = finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
+			return finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
 
 		} else {
-			this.finalContent = this.content;
+			return this.content;
 		}
 
 	}

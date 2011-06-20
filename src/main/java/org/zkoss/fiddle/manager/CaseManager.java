@@ -52,7 +52,7 @@ public class CaseManager extends AbstractManager {
 				for (Resource resource : resources) {
 					resource.setId(null);
 					resource.setCaseId(newCase.getId());
-					resource.buildFinalConetnt(newCase);
+					resource.setFinalConetnt(newCase);
 					resourceDao.saveOrUdate(resource);
 				}
 				return newCase;

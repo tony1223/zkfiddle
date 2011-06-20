@@ -7,40 +7,48 @@ import org.zkoss.fiddle.model.api.IResource;
 
 public class ResourceFile implements IResourceFile {
 
+	private static final String DOWNLOAD_JAVA_PACKAGE = "fiddle";
+
 	private IResource resource;
 
 	private static String replacedSeparator = String.valueOf(File.separatorChar);
 	{
-		if("\\".equals(replacedSeparator)){
+		if ("\\".equals(replacedSeparator)) {
 			replacedSeparator = "\\\\";
 		}
 	}
-	
+
 	public ResourceFile(IResource ir) {
 		if (ir == null)
 			throw new IllegalArgumentException("resource can't be null");
 		resource = ir;
 	}
 
-	private String convertPackageToFolder(String inp){
-		if(inp == null) return "";
-		return inp.replaceAll(Pattern.quote("."),replacedSeparator);
+	private String convertPackageToFolder(String inp) {
+		if (inp == null)
+			return "";
+		return inp.replaceAll(Pattern.quote("."), replacedSeparator);
 	}
-	
+
 	public String getPath() {
 		if (resource.getType() != IResource.TYPE_JAVA) {
 			return "WebContent/" + resource.getName();
 		} else {
-			return "src/" + convertPackageToFolder(resource.getFullPackage()) + "/" + resource.getName();
+			return "src/" + convertPackageToFolder(DOWNLOAD_JAVA_PACKAGE + resource.getPkg()) + "/"
+					+ resource.getName();
 		}
 	}
 
 	public String getContent() {
-		return resource.getContent();
+		return  resource.buildFinalConetnt(DOWNLOAD_JAVA_PACKAGE);
 	}
-	
+
 	public byte[] getContentBytes() {
-		return resource.getContent().getBytes();
+		return resource.buildFinalConetnt(DOWNLOAD_JAVA_PACKAGE).getBytes();
+	}
+
+	public void setContentBytes(byte[] cont) {
+		throw new UnsupportedOperationException("unsupported");
 	}
 
 }

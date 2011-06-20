@@ -20,4 +20,8 @@ public class ByteFile implements IResourceFile {
 		return content;
 	}
 
+	public void setContentBytes(byte[] cont) {
+		content = cont;
+	}
+
 }

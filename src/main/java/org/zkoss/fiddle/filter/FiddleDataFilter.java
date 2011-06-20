@@ -21,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
+import org.zkoss.fiddle.files.IResourceFile;
 import org.zkoss.fiddle.files.ResourceFile;
 import org.zkoss.fiddle.files.ResourcePackager;
 import org.zkoss.fiddle.files.ZipFileUtil;
@@ -29,6 +30,7 @@ import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.VirtualCase;
+import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -211,15 +213,34 @@ public class FiddleDataFilter implements Filter {
 		List<Resource> dbResources = resourceDao.listByCase(c.getId());
 		
 		ResourcePackager list = ResourcePackager.list();
-		String filePath = servletContext.getRealPath("/WEB-INF/_download/ZKfiddleSample.zip");
+		list.add(getWebappTemplates(c));
 		
-		list.add(ZipFileUtil.getFiles(new File(filePath)));
 		for(IResource ir:dbResources){
 			list.add(new ResourceFile(ir));
 		}
+		
 		list.export(ret);
 		return ret;
 	}
+	
+	private List<IResourceFile> getWebappTemplates(ICase c) throws IOException{
+		String filePath = servletContext.getRealPath("/WEB-INF/_download/ZKfiddleSample.zip");
+		
+		List<IResourceFile> list = ZipFileUtil.getFiles(new File(filePath));
+		
+		for(IResourceFile ir:list){
+			if(ir.getPath().endsWith(".project")){
+				
+				String str = new String(ir.getContentBytes());
+				String ns = str.replaceAll("<name>ZKfiddleSample</name>",
+						"<name>Fiddle_"+c.getToken()+"_"+ c.getVersion() +"</name>");
+				ir.setContentBytes(ns.getBytes());
+			}
+		}
+		
+		return  list;
+	}
+	
 	private boolean renderCase(String token, Integer version, ServletResponse response) throws IOException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("renderCase(String, Integer, ServletResponse) - start");

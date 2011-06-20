@@ -205,7 +205,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						List<IResource> newlist = new ArrayList<IResource>();
 						for (IResource current : resources) {
 							IResource cloneResource = current.clone();
-							cloneResource.buildFinalConetnt(tmpcase);
+							cloneResource.setFinalConetnt(tmpcase);
 							newlist.add(cloneResource);
 						}
 						VirtualCase virtualCase = new VirtualCase(tmpcase, newlist);
