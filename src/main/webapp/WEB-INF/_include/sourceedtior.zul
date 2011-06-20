@@ -12,6 +12,19 @@
 				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs"/>
 				<tabpanels id="sourcetabpanels" />
 			</tabbox>
+			<script>
+				jq(".tab-textbox",".sourceCodeEditor").live("focus",function(e){
+					if(this.value == "index.zul"){ //by default we don't show editable for index.zul ;)
+						return false;
+					}
+					if(!zk.Widget.$(this).parent.isSelected()){
+						jq.focusOut();
+					 	return false;
+					}
+				});
+				
+			</script>
+			
 			<div id="contentDesc">
 				<a id="download" visible="false" label="Download this sample" />
 			</div>
@@ -48,7 +61,6 @@
 					</n:td>
 				</n:tr>
 			</n:table>
-			
 		</window>
 	</div>
 </zk>
