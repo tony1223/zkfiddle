@@ -116,12 +116,12 @@ public class FiddleViewFilter implements Filter {
 			vr.setTokenVersion(match.group(2));
 			vr.setZkversion(match.group(4));
 
-			String instName = (String) request.getAttribute("run");
+			String instHash = (String) request.getAttribute("run");
 			String newurl = null;
 			FiddleSandbox inst;
 
-			if (instName != null) {
-				inst = sandboxManager.getFiddleInstance(instName);
+			if (instHash != null) {
+				inst = sandboxManager.getFiddleInstance(instHash);
 				if (inst == null) {
 					newurl = ("/view/" + vr.getToken() + "/" + vr.getTokenVersion() + "/v" + vr.getZkversion());
 					response.sendRedirect(newurl);

@@ -18,7 +18,7 @@ import org.zkoss.fiddle.model.FiddleSandbox;
  */
 public class FiddleSandboxManager {
 
-	private Map<String, FiddleSandbox> instancesByName = new HashMap<String, FiddleSandbox>();
+	private Map<String, FiddleSandbox> instancesByHash = new HashMap<String, FiddleSandbox>();
 
 	private Map<String, List<FiddleSandbox>> instancesByVersion = new HashMap<String, List<FiddleSandbox>>();
 
@@ -32,8 +32,8 @@ public class FiddleSandboxManager {
 	 * @param instance
 	 */
 
-	public FiddleSandbox getFiddleInstance(String name) {
-		return checkDate(instancesByName.get(name));
+	public FiddleSandbox getFiddleInstance(String hash) {
+		return checkDate(instancesByHash.get(hash));
 
 	}
 
@@ -70,16 +70,16 @@ public class FiddleSandboxManager {
 		Date d = new Date();
 		long diff = os.getLastUpdate().getTime() - d.getTime();
 		if (diff > checkTime) {
-			removeInstacne(os.getName());
+			removeInstacne(os.getHash());
 			return null;
 		}
 		return os;
 	}
 
-	private void removeInstacne(String name){
+	private void removeInstacne(String hash){
 		
-		FiddleSandbox ins = instancesByName.get(name);
-		instancesByName.remove(name);
+		FiddleSandbox ins = instancesByHash.get(hash);
+		instancesByHash.remove(hash);
 		
 		getVersionList(ins.getZKVersion()).remove(ins);
 		
@@ -90,22 +90,18 @@ public class FiddleSandboxManager {
 			throw new IllegalArgumentException("instance and instance path can't be null ");
 		}
 
-		if (!instance.getName().matches("[0-9a-zA-Z_$]+")) {
-			throw new IllegalArgumentException("instance name should match ([0-9a-zA-Z_$]+) ");
-		}
-
-		instancesByName.put(instance.getName(), instance);
+		instancesByHash.put(instance.getHash(), instance);
 
 		getVersionList(instance.getZKVersion()).add(instance);
 
 		Date d = new Date();
 		long checkTime = 1000 * 60 * 5;
 
-		for (String name : instancesByName.keySet()) {
+		for (String hash : instancesByHash.keySet()) {
 
-			long diff = instancesByName.get(name).getLastUpdate().getTime() - d.getTime();
+			long diff = instancesByHash.get(hash).getLastUpdate().getTime() - d.getTime();
 			if (diff > checkTime) {
-				removeInstacne(name);
+				removeInstacne(hash);
 			}
 		}
 
@@ -115,7 +111,7 @@ public class FiddleSandboxManager {
 	 * @return
 	 */
 	public Map<String, FiddleSandbox> listFiddleInstances() {
-		return Collections.unmodifiableMap(instancesByName);
+		return Collections.unmodifiableMap(instancesByHash);
 	}
 
 

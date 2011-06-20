@@ -79,8 +79,8 @@ public class ViewResultComposer extends GenericForwardComposer {
 					
 					if(evt.getCase().getVersion() != 0){
 						String tokenpath = evt.getCase().getCaseUrl( inst.getZKVersion());
-						directly.setText( getHostpath() + "view/" + tokenpath	+ "?run=" + inst.getName());
-						directlyLink.setHref( getHostpath() + "direct/" + tokenpath	+ "?run=" + inst.getName());
+						directly.setText( getHostpath() + "view/" + tokenpath	+ "?run=" + inst.getHash());
+						directlyLink.setHref( getHostpath() + "direct/" + tokenpath	+ "?run=" + inst.getHash());
 						directLinkContainer.setVisible(true);
 					}else{
 						directLinkContainer.setVisible(false);

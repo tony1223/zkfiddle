@@ -60,24 +60,24 @@ public class FiddleSandbox implements Comparable {
 		if (!(other instanceof FiddleSandbox))
 			return false;
 		FiddleSandbox castOther = (FiddleSandbox) other;
-		return new EqualsBuilder().append(name, castOther.name).isEquals();
+		return new EqualsBuilder().append(hash, castOther.hash).isEquals();
 	}
 
 	public int hashCode() {
-		return new HashCodeBuilder().append(name).toHashCode();
+		return new HashCodeBuilder().append(hash).toHashCode();
 	}
 
 	public int compareTo(final Object other) {
 		if (other != null && other instanceof FiddleSandbox) {
 			FiddleSandbox castOther = (FiddleSandbox) other;
 
-			if (version != null && castOther.version != null) {
-				if ("freshly".equals(version) && (!"freshly".equals(castOther.version))) {
-					return 1;
-				} else if ((!"freshly".equals(version)) && "freshly".equals(castOther.version)) {
-					return -1;
-				}
-			}
+//			if (version != null && castOther.version != null) {
+//				if ("freshly".equals(version) && (!"freshly".equals(castOther.version))) {
+//					return 1;
+//				} else if ((!"freshly".equals(version)) && "freshly".equals(castOther.version)) {
+//					return -1;
+//				}
+//			}
 
 			return new CompareToBuilder().append(castOther.version,version).
 				append(castOther.lastUpdate,lastUpdate).toComparison();

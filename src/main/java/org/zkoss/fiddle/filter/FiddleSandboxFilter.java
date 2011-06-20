@@ -15,7 +15,7 @@ import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.FiddleSandbox;
 
 public class FiddleSandboxFilter implements Filter {
-	FiddleSandboxManager sandboxManager;
+	private FiddleSandboxManager sandboxManager;
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest httprequest = ((HttpServletRequest) request);
