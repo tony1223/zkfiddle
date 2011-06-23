@@ -12,6 +12,7 @@
 				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs"/>
 				<tabpanels id="sourcetabpanels" />
 			</tabbox>
+			
 			<script>
 				jq(".tab-textbox",".sourceCodeEditor").live("focus",function(e){
 					if(this.value == "index.zul"){ //by default we don't show editable for index.zul ;)
@@ -29,7 +30,6 @@
 				<a id="download" visible="false" label="Download this sample" />
 			</div>
 		</vlayout>
-
 		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
 			title=" Insert New File" width="380px" height="105px" border="normal" position="center, center">
 			<!-- TODO use selectbox instead. -->

@@ -38,4 +38,8 @@ public interface ICase {
 	
 	public String getCaseUrl(String ver);
 	
+	public String getPosterIP() ;
+	
+	public void setPosterIP(String posterIP) ;
+
 }

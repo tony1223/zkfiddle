@@ -33,17 +33,22 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 	private Combobox instances = null;
 
-	private Button viewBtn = null;
-	
+	private Button viewBtn;
+
+	private Button forkBtn;
+
 	private Button saveBtn;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
 
-		if (requestScope.get("__case") != null) { //existing case
+		boolean newcase = requestScope.get("__case") == null; 
+		if (!newcase) { //existing case
 			saveBtn.setLabel("Update");
 			saveBtn.setImage("/img/arrow_refresh.png");
+		}else{
+			forkBtn.setVisible(false);
 		}
 
 		

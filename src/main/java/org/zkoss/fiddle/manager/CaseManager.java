@@ -18,7 +18,7 @@ public class CaseManager extends AbstractManager {
 
 	private IResourceDao resourceDao;
 	
-	public Case saveCase(final ICase _case, final List<Resource> resources, final String title, final boolean fork) {
+	public Case saveCase(final ICase _case, final List<Resource> resources, final String title, final boolean fork,final String posterIP) {
 
 		return getTxTemplate().execute(new TransactionCallback<Case>() {
 			public Case doInTransaction(TransactionStatus status) {
@@ -29,7 +29,6 @@ public class CaseManager extends AbstractManager {
 				if (_case == null || fork) { // Create a brand new case
 					newCase.setVersion(1);
 					newCase.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
-
 					if (_case != null) { // fork
 						newCase.setFromId(_case.getId());
 					}
@@ -39,7 +38,9 @@ public class CaseManager extends AbstractManager {
 					newCase.setThread(_case.getThread());
 					newCase.setVersion(caseDao.getLastVersionByToken(_case.getToken()) + 1);
 				}
+				
 				newCase.setTitle(title);
+				newCase.setPosterIP(posterIP);
 
 				caseDao.saveOrUdate(newCase);
 

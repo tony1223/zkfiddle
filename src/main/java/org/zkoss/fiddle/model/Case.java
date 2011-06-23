@@ -42,9 +42,11 @@ public class Case implements ICase, Serializable {
 	private Integer version;
 
 	private Date createDate;
+	
+	private String posterIP;
 
 	/**
-	 * A title for seo friendly and data collection
+	 * A title for SEO friendly and data collection
 	 */
 	private String title;
 
@@ -112,6 +114,15 @@ public class Case implements ICase, Serializable {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	
+	@Column
+	public String getPosterIP() {
+		return posterIP;
+	}
+	
+	public void setPosterIP(String posterIP) {
+		this.posterIP = posterIP;
 	}
 
 	@Transient
