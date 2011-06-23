@@ -26,6 +26,19 @@ public class FiddleSandboxManager {
 
 	private long checkTime = 1000 * 60 * 5;
 	
+	public FiddleSandboxManager(){
+		
+		boolean debugMode = Boolean.getBoolean("fiddle.debug");
+		if(debugMode){				
+			FiddleSandbox instance = new FiddleSandbox();
+			instance.setLastUpdate(new Date());
+			instance.setName("localtest");
+			instance.setVersion("5.0.7.1");
+			instance.setPath("http://localhost/");
+			this.addFiddleInstance(instance);
+		}
+	}
+	
 	/**
 	 * @throws IllegalArgumentException
 	 *             instance and instance path can't be null
