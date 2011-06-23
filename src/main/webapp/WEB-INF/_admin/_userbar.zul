@@ -1,0 +1,4 @@
+<?page title="ZK Fiddle Backend" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="client" xmlns:n="native" >
+	Hello ${account} , <a label="logout" onClick='session.invalidate();Executions.getCurrent().sendRedirect("/")' />
+</zk>

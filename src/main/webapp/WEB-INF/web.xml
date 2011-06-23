@@ -125,6 +125,19 @@
 	 </filter>
 
 	<filter>
+	  <description>auth filter</description>
+	  <display-name>AuthFilter</display-name>
+	  <filter-name>AuthFilter</filter-name>
+	  <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	  <init-param>
+	   <description>
+	   </description>
+	   <param-name>targetBeanName</param-name>
+	   <param-value>authFilter</param-value>
+	  </init-param>
+	 </filter>
+
+	<filter>
 	  <description>view filter</description>
 	  <display-name>ViewFilter</display-name>
 	  <filter-name>ViewFilter</filter-name>
@@ -178,7 +191,13 @@
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-		
+	
+	
+	<filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+	
 	
 	<!-- Miscellaneous -->
 	<session-config>

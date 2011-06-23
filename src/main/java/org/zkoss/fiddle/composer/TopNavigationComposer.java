@@ -50,7 +50,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		}else{
 			forkBtn.setVisible(false);
 		}
-
+	
 		
 		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil.getBean("sandboxManager");
 		Collection<FiddleSandbox> acounts = sandboxManager.listFiddleInstances().values();

@@ -34,4 +34,6 @@
 		<property name="sandboxManager"  ref="sandboxManager" />
     </bean>
 	
+	<bean id="authFilter" class="org.zkoss.fiddle.filter.FiddleAuthFilter" />
+	
 </beans>

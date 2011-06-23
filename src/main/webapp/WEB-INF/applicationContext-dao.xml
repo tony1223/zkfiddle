@@ -18,6 +18,8 @@
 	<bean id="caseRecordDao" class="org.zkoss.fiddle.dao.CaseRecordDaoImpl" parent="baseDao" />
 	
 	<bean id="resourceDao" class="org.zkoss.fiddle.dao.ResourceDaoImpl"  parent="baseDao" />
+	
+	<bean id="userDao" class="org.zkoss.fiddle.dao.UserDaoImpl"  parent="baseDao" />
 
 
 	<!-- services -->
