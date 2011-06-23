@@ -5,7 +5,14 @@
 		<vlayout sclass="source-vlayout">
 			<div>
 				<label value="Fiddle Name : " sclass="name" />
-				<textbox id="caseTitle" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 60 chars)" />
+				<textbox id="caseTitle" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 60 chars)" >
+					<attribute w:name="onChange" >
+						var val = this.$n().value.replace(/[^a-zA-Z0-9]+/gi,'-');
+						if(val[0] == '-') val = val.substring(1);
+						jq('$previewUrl').hide().html(val).fadeIn();
+					</attribute>	
+				</textbox>
+				<label id="previewUrl" stubonly="true" style="margin-left:15px;" />
 			</div>
 			<separator bar="true" spacing="5px" />
 			<tabbox height="100%" hflex="1">

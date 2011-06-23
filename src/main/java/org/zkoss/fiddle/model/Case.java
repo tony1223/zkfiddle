@@ -17,6 +17,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Index;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.util.UrlUtil;
 
 @Entity
 @Table(name = "cases")
@@ -127,16 +128,7 @@ public class Case implements ICase, Serializable {
 
 	@Transient
 	public String getURLFriendlyTitle() {
-		if (this.title == null || "".equals(this.title.trim()))
-			return "";
-
-		StringBuffer sb = new StringBuffer();
-		String[] tokens = this.title.split("[^a-zA-Z0-9]+");
-		for (String str : tokens) {
-			if(!"".equals(str))
-				sb.append("-" + str);
-		}
-		return sb.toString();
+		return UrlUtil.getURLFriendlyTitle(this.title);
 	}
 
 	@Transient

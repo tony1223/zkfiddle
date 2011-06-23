@@ -68,7 +68,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Window insertWin;
 	
 	private A download;
-
+	
 	/**
 	 * a state for if content is changed.
 	 * 
@@ -307,7 +307,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		return resources;
 	}
-
+	
 	public void onAdd$sourcetabs(Event e) {
 		try {
 			insertWin.doOverlapped();		
