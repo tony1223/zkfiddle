@@ -22,15 +22,11 @@
 			
 			<script>
 				jq(".tab-textbox",".sourceCodeEditor").live("focus",function(e){
-					if(this.value == "index.zul"){ //by default we don't show editable for index.zul ;)
-						return false;
-					}
 					if(!zk.Widget.$(this).parent.isSelected()){
 						jq.focusOut();
 					 	return false;
 					}
 				});
-				
 			</script>
 			
 			<div id="contentDesc">
