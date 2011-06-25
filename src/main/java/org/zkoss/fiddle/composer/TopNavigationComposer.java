@@ -10,6 +10,7 @@ import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.event.SourceChangedEvent;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.FiddleSandbox;
+import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -20,6 +21,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.ComboitemRenderer;
+import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.api.Button;
 import org.zkoss.zul.event.ZulEvents;
@@ -50,8 +52,20 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		}else{
 			forkBtn.setVisible(false);
 		}
-	
 		
+		initSandbox();
+
+		sourceQueue.subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if(event instanceof SourceChangedEvent){
+					viewBtn.setLabel("*Run");
+				}
+			}
+		});
+		
+	}
+	
+	private void initSandbox(){
 		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil.getBean("sandboxManager");
 		Collection<FiddleSandbox> acounts = sandboxManager.listFiddleInstances().values();
 
@@ -71,19 +85,45 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			instances.setModel(new ListModelList(tree));
 		}
 		instances.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
-				instances.setSelectedIndex(0);
-			}
-		});
-		
-		sourceQueue.subscribe(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				if(event instanceof SourceChangedEvent){
-					viewBtn.setLabel("*Run");
+				String inst = CookieUtil.getCookie("inst");
+				if (inst != null) {
+					ListModel lm = instances.getModel();
+
+					{// check last index first to speed it up
+						String indstr = CookieUtil.getCookie("ind");
+						int ind = indstr == null ? -1 : Integer.parseInt(indstr);
+						if (ind != -1) {
+							FiddleSandbox sandbox = (FiddleSandbox) lm.getElementAt(ind);
+							if (inst.equals(sandbox.getHash())) {
+								instances.setSelectedIndex(ind);
+								return;
+							}
+						}
+					}
+
+					for (int i = 0; i < lm.getSize(); ++i) {
+						FiddleSandbox sandbox = (FiddleSandbox) lm.getElementAt(i);
+						if (inst.equals(sandbox.getHash())) {
+							// update index
+							CookieUtil.setCookie("ind", String.valueOf(i), CookieUtil.AGE_ONE_YEAR);
+							instances.setSelectedIndex(i);
+							return;
+						}
+					}
+					instances.setSelectedIndex(0);
+				} else {
+					instances.setSelectedIndex(0);
 				}
 			}
 		});
-		
+	}
+	
+	public void onChange$instances(){
+		FiddleSandbox inst = (FiddleSandbox) instances.getSelectedItem().getValue();
+		CookieUtil.setCookie("inst",inst.getHash(),CookieUtil.AGE_ONE_YEAR);
+		CookieUtil.setCookie("ind",String.valueOf(instances.getSelectedIndex()),CookieUtil.AGE_ONE_YEAR);
 	}
 	
 	public void onClick$viewBtn() {

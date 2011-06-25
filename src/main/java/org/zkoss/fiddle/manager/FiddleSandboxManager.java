@@ -34,7 +34,15 @@ public class FiddleSandboxManager {
 			instance.setLastUpdate(new Date());
 			instance.setName("localtest");
 			instance.setVersion("5.0.7.1");
-			instance.setPath("http://localhost/");
+			instance.setPath("http://localhost/test1");
+			this.addFiddleInstance(instance);
+			
+			//open two sandboxes to help designer finetune the features.
+			instance = new FiddleSandbox();
+			instance.setLastUpdate(new Date());
+			instance.setName("localtest2");
+			instance.setVersion("5.0.6");
+			instance.setPath("http://localhost/test2");
 			this.addFiddleInstance(instance);
 		}
 	}
