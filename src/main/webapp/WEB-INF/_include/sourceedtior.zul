@@ -47,7 +47,14 @@
 					</n:td>
 					<n:td>
 						<combobox id="type" readonly="true" model="${typeset}" width="200px"
-							w:onChange="var type = this.getValue(); jq('$extension').html('.' + (type=='javascript' ?'js':type))" onCreate="self.setSelectedIndex(0)">
+							w:onChange="var type = this.getValue(); jq('$extension').html('.' + (type=='javascript' ?'js':type))" 
+							onCreate="self.setSelectedIndex(0)">
+							<attribute w:name="slideDown_">
+								function (pp) {
+									jq(pp).show();  //remove slidedown effect -_-#
+									this._afterSlideDown();
+								}
+							</attribute>
 						</combobox>
 					</n:td>
 					<n:td rowspan="2" >
