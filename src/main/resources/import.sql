@@ -1,4 +1,1 @@
-/*
- * The sql file is designed in Hsqldb and mysql , not sure if it will work on other db or not. ;)
- * 
- */
+INSERT INTO USERS VALUES(1,'admin',TRUE,'2011-06-23 20:37:40.320000000','127.0.0.1','1234')
