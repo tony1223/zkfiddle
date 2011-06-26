@@ -1,4 +1,4 @@
-package org.zkoss.fiddle.util;
+package org.zkoss.fiddle.core.utils;
 
 import java.io.BufferedReader;
 import java.io.File;

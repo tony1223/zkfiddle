@@ -1,4 +1,5 @@
-package org.zkoss.fiddle.util;
+package org.zkoss.fiddle.core.utils;
+
 
 
 /**

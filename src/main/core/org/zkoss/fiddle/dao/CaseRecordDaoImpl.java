@@ -8,10 +8,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
+import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.api.ICase;
-import org.zkoss.fiddle.util.FiddleCache;
 
 public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 

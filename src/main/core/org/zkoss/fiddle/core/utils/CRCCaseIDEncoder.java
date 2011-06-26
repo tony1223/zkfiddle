@@ -1,6 +1,7 @@
-package org.zkoss.fiddle.util;
+package org.zkoss.fiddle.core.utils;
 
 import java.util.zip.CRC32;
+
 
 public class CRCCaseIDEncoder implements ICaseIDEncoder {
 

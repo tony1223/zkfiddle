@@ -10,10 +10,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate3.HibernateCallback;
+import org.zkoss.fiddle.core.utils.CacheHandler;
+import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
-import org.zkoss.fiddle.util.CacheHandler;
-import org.zkoss.fiddle.util.FiddleCache;
 
 
 public class CaseDaoImpl extends AbstractDao implements ICaseDao {

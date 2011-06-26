@@ -16,8 +16,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.annotations.Index;
+import org.zkoss.fiddle.core.utils.UrlUtil;
 import org.zkoss.fiddle.model.api.ICase;
-import org.zkoss.fiddle.util.UrlUtil;
 
 @Entity
 @Table(name = "cases")

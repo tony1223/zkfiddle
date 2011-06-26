@@ -7,10 +7,10 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
+import org.zkoss.fiddle.core.utils.CacheHandler;
+import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Resource;
-import org.zkoss.fiddle.util.CacheHandler;
-import org.zkoss.fiddle.util.FiddleCache;
 
 public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 
