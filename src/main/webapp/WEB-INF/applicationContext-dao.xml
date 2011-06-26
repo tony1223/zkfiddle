@@ -21,6 +21,9 @@
 	
 	<bean id="userDao" class="org.zkoss.fiddle.dao.UserDaoImpl"  parent="baseDao" />
 
+	<bean id="tagDao" class="org.zkoss.fiddle.dao.TagDaoImpl"  parent="baseDao" />
+
+	<bean id="caseTagDao" class="org.zkoss.fiddle.dao.CaseTagDaoImpl"  parent="baseDao" />
 
 	<!-- services -->
 	
