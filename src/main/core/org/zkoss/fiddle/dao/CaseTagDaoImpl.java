@@ -33,7 +33,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao<CaseTag> 
 				Query query = session.createQuery("update Tag set amount = amount -1 "+
 						" where id in (select tagId from CaseTag where caseId = :caseId)");
 				query.setLong("caseId",_case.getId());
-				int dec = query.executeUpdate();
+				query.executeUpdate();
 				
 				//removeing the tag
 				Query query2 = session.createQuery("delete from CaseTag where caseId = :caseId");
@@ -51,7 +51,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao<CaseTag> 
 				Query query3 = session.createQuery("update Tag set amount = amount +1  "+
 				" where id in (select tagId from CaseTag where caseId = :caseId)");
 				query3.setLong("caseId",_case.getId());
-				int inc = query3.executeUpdate();
+				query3.executeUpdate();
 				
 				
 				return null;
