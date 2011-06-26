@@ -13,10 +13,6 @@ import org.zkoss.fiddle.model.User;
 
 public class UserDaoImpl extends AbstractDao implements IUserDao<User> {
 
-	public UserDaoImpl() {
-
-	}
-	
 	public List<User> list() {
 		return getHibernateTemplate().find("from User");
 	}

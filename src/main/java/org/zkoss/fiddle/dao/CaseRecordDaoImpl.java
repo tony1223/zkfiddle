@@ -20,10 +20,6 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	 */
 	private static final Logger logger = Logger.getLogger(CaseRecordDaoImpl.class);
 
-	public CaseRecordDaoImpl() {
-
-	}
-
 	public List<CaseRecord> list() {
 		if (logger.isDebugEnabled()) {
 			logger.debug("list() - start");

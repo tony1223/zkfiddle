@@ -14,10 +14,6 @@ import org.zkoss.fiddle.util.FiddleCache;
 
 public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 
-	public ResourceDaoImpl() {
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

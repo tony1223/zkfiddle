@@ -22,11 +22,6 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(CaseDaoImpl.class);
-
-	
-	public CaseDaoImpl() {
-
-	}
 	
 	/*
 	 * (non-Javadoc)
