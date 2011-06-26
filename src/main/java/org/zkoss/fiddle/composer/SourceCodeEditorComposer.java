@@ -119,6 +119,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			initForCaseExist();
 		}
 
+		
+		initSourceEvents();
 		for (IResource resource : resources) {
 			SourceTabRendererFactory.getRenderer(resource.getType()).
 				appendSourceTab(sourcetabs, sourcetabpanels,resource);
@@ -128,7 +130,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				sourceQueue.publish(new SourceChangedEvent(null, resource));
 			}
 		}
-		initSourceEvents();
 		
 		
 		// @see FiddleDispatcherFilter for those use this directly
@@ -216,6 +217,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		StringBuffer sb = new StringBuffer();
 		for(Tag tag:list){
 			A lbl = new A(tag.getName());
+			lbl.setHref("/tag/"+tag.getName());
 			lbl.setSclass("case-tag");
 			sb.append(tag.getName()+",");
 			tagContainer.appendChild(lbl);
@@ -239,7 +241,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 	}
 	private void initSourceEvents(){
-		//TODO: review this , shouldn't we subcribe before we publish SourceChangedEvent? 
 		sourceQueue.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				
