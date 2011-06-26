@@ -19,7 +19,6 @@
 				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs"/>
 				<tabpanels id="sourcetabpanels" />
 			</tabbox>
-			
 			<script>
 				jq(".tab-textbox",".sourceCodeEditor").live("focus",function(e){
 					if(!zk.Widget.$(this).parent.isSelected()){
@@ -30,7 +29,33 @@
 			</script>
 			
 			<div id="contentDesc">
-				<a id="download" visible="false" label="Download this sample" />
+				<div id="caseToolbar" visible="false">
+					<hlayout id="viewTag" style="height:30px;">
+						<attribute w:name="doDoubleClick_">
+							function(){
+								zk.Widget.$("$editTag").setVisible(true);
+								this.setVisible(false);
+							}
+						</attribute>
+						<label value="Tags:" stubonly="true" />
+						<hlayout id="tagContainer" >
+							<label id="tagEmpty" visible="false" value="currently no avaiable tag on this sample" />
+						</hlayout>
+					</hlayout>
+					<hlayout id="editTag" visible="false" style="height:30px;">
+						<attribute w:name="doDoubleClick_">
+							function(){
+								zk.Widget.$("$viewTag").setVisible(true);
+								this.setVisible(false);
+							}
+						</attribute>
+						<label value="Tags:" stubonly="true" />
+						<textbox id="tagInput" cols="50" maxlength="46" />
+						(separate with comma, ex. "grid,listbox,test" )
+					</hlayout>
+					
+					<a id="download" label="Download this sample" />
+				</div>
 			</div>
 		</vlayout>
 		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
