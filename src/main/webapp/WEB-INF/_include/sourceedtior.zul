@@ -39,7 +39,7 @@
 						</attribute>
 						<label value="Tags:" stubonly="true" />
 						<hlayout id="tagContainer" sclass="zkfiddle-source-tag-container" >
-							<label id="tagEmpty" visible="false" value="currently no avaiable tag on this sample" />
+							<label id="tagEmpty" visible="false" value="currently no available tag on this sample" />
 						</hlayout>
 						<checkbox id="cbSaveTag" label="keep tag when updating sample "/>
 					</hlayout>
