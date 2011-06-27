@@ -14,7 +14,8 @@ public enum FiddleCache {
 	CaseResources,
 	RecentlyCases,
 	CaseByToken,
-	top10liked;
+	CaseTag,
+	Top10liked;
 	
 	public Cache getInstance(){
 		return CacheManager.getInstance().getCache(this.name());
@@ -28,4 +29,7 @@ public enum FiddleCache {
 		getInstance().remove(key);
 	}
 	
+	public Object execute(CacheHandler handle){
+		return handle.get(getInstance());		
+	}
 }

@@ -75,7 +75,7 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 		// Implements cache by our self , note the resource should be readonly ,
 		// so it's ok to make a external cache .
 
-		return (new CacheHandler<List<Resource>>() {
+		return (List<Resource>) FiddleCache.CaseResources.execute(new CacheHandler<List<Resource>>() {
 
 			protected List<Resource> execute() {
 				return getHibernateTemplate().execute(new HibernateCallback<List<Resource>>() {
@@ -91,7 +91,7 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 			protected String getKey() {
 				return "listby:" + caseId;
 			}
-		}).get(FiddleCache.CaseResources);
+		});
 
 	}
 }

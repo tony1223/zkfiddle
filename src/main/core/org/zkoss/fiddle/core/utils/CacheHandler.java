@@ -52,9 +52,6 @@ public abstract class CacheHandler<T> {
 			return ret;
 		}
 	}
-	
-	public T get(FiddleCache c){
-		return get(c.getInstance());
-	}
+
 
 }

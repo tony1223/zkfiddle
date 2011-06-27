@@ -104,7 +104,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			if (logger.isDebugEnabled()) {
 				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
 			}
-			FiddleCache.top10liked.removeAll();
+			FiddleCache.Top10liked.removeAll();
 		}
 		boolean returnboolean = getTxTemplate().execute(
 				new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
@@ -149,7 +149,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			if (logger.isDebugEnabled()) {
 				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
 			}
-			FiddleCache.top10liked.removeAll();
+			FiddleCache.Top10liked.removeAll();
 		}
 		boolean returnboolean = getTxTemplate().execute(
 				new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {

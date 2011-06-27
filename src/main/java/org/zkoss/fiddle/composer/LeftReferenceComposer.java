@@ -40,7 +40,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		List<CaseRecord> list = (new CacheHandler<List<CaseRecord>>(){
+		List<CaseRecord> list = (List<CaseRecord>) FiddleCache.Top10liked.execute(new CacheHandler<List<CaseRecord>>(){
 			protected List<CaseRecord> execute() {
 				ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 				return caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
@@ -48,7 +48,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			protected String getKey() {
 				return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
 			}
-		}).get(FiddleCache.top10liked);
+		});
 		
 
 		likes.setModel(new ListModelList(list));
@@ -75,8 +75,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 		ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
 
-		List<Case> recentlyList = caseDao.getRecentlyCase(10);
-		recentlys.setModel(new ListModelList(recentlyList));
+		recentlys.setModel(new ListModelList(caseDao.getRecentlyCase(10)));
 
 		recentlys.setItemRenderer(new ListitemRenderer() {
 

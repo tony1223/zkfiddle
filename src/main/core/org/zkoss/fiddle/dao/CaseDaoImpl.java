@@ -77,7 +77,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	}
 
 	public Case findCaseByToken(final String token,final Integer version) {
-		return (new CacheHandler<Case>() {
+		return (Case) FiddleCache.CaseByToken.execute(new CacheHandler<Case>() {
 			protected Case execute() {
 				return getHibernateTemplate().execute(new HibernateCallback<Case>() {
 					public Case doInHibernate(Session session) throws HibernateException, SQLException {
@@ -93,7 +93,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 			protected String getKey() {
 				return token+"::"+version;
 			}
-		}).get(FiddleCache.CaseByToken);
+		});
 
 	}
 
@@ -113,7 +113,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	 */
 	public List<Case> getRecentlyCase(final Integer amount) {
 		
-		return (new CacheHandler<List<Case>>() {
+		return (List<Case>) FiddleCache.RecentlyCases.execute(new CacheHandler<List<Case>>() {
 
 			protected List<Case> execute() {
 				return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
@@ -129,7 +129,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 			protected String getKey() {
 				return "recently:" + amount;
 			}
-		}).get(FiddleCache.RecentlyCases);
+		});
 
 	}
 
