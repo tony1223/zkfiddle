@@ -92,7 +92,7 @@
 						<label value="File Name" />
 					</n:td>
 					<n:td>
-						<textbox id="fileName" maxlength="60" width="160px" />
+						<textbox id="fileName" maxlength="60" width="160px" forward="onOK=insert.onClick" />
 						<label id="extension" value=".zul" />
 					</n:td>
 				</n:tr>
