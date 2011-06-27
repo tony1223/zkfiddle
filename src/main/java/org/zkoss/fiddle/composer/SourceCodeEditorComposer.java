@@ -10,10 +10,10 @@ import org.apache.log4j.Logger;
 import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
+import org.zkoss.fiddle.composer.event.InsertResourceEvent;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.SaveCaseEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
-import org.zkoss.fiddle.composer.event.InsertResourceEvent;
 import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
 import org.zkoss.fiddle.core.utils.ResourceFactory;
@@ -44,6 +44,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.KeyEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.A;
@@ -178,19 +179,37 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		
 		EventListener handler = new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				updateTag();
+				performUpdateTag();
 			}
 		};
 		
 		tagInput.addEventListener("onChange",handler);
 		tagInput.addEventListener("onOK",handler);
-		
+		tagInput.addEventListener("onCancel",new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				tagInput.setValue(lastVal);
+				setTagEditable(false);
+			}
+		});
 	}
 	
-	private void updateTag(){
+	private void setTagEditable(boolean bool){
+		
+		//2011/6/27:TonyQ 
+		//set visible twice for forcing smart update
+		//sicne we set visible in client , so the visible state didn't sync with server,
+		//we need to make sure the server will really send the smartUpdate messages. ;)		
+		editTag.setVisible(!bool);
+		editTag.setVisible(bool); //actually we want editTag visible false
+		
+		viewTag.setVisible(bool);
+		viewTag.setVisible(!bool); //actually we want viewTag visible true
+	}
+	
+	private void performUpdateTag(){
 		String val = tagInput.getValue();
 		
-		boolean valueChange = lastVal == null || !val.equals(lastVal);
+		boolean valueChange = (!"".equals(val)) && ( lastVal == null || !val.equals(lastVal));
 		//Do nothing if it didn't change
 		if(valueChange){
 			ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
@@ -200,15 +219,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			updateTags(list);
 		}
 		
-		//2011/6/27:TonyQ 
-		//set visible twice for forcing smart update
-		//sicne we set visible in client , so the visible state didn't sync with server,
-		//we need to make sure the server will really send the smartUpdate messages. ;)
-		editTag.setVisible(true);
-		editTag.setVisible(false); //actually we want editTag visible false
-		
-		viewTag.setVisible(false);
-		viewTag.setVisible(true); //actually we want viewTag visible true
+		setTagEditable(false);
 	}
 	
 	private void updateTags(List<Tag> list){
