@@ -1,4 +1,4 @@
-package org.zkoss.fiddle.model;
+package org.zkoss.fiddle.visualmodel;
 
 public class ViewRequest {
 

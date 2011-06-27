@@ -1,7 +1,7 @@
 package org.zkoss.fiddle.composer.event;
 
-import org.zkoss.fiddle.model.FiddleSandbox;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.zk.ui.event.Event;
 
 public class ShowResultEvent extends Event {

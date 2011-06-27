@@ -12,7 +12,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
-import org.zkoss.fiddle.model.FiddleSandbox;
+import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 
 public class FiddleSandboxFilter implements Filter {
 	private FiddleSandboxManager sandboxManager;

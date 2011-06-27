@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.model.FiddleSandbox;
+import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;

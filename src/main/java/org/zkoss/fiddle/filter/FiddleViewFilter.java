@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
-import org.zkoss.fiddle.model.FiddleSandbox;
-import org.zkoss.fiddle.model.ViewRequest;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.visualmodel.FiddleSandbox;
+import org.zkoss.fiddle.visualmodel.ViewRequest;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleViewFilter implements Filter {

@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.zkoss.fiddle.model.VirtualCase;
+import org.zkoss.fiddle.visualmodel.VirtualCase;
 
 /**
  * This case dao is only for virtual case , which is temporary used and will be

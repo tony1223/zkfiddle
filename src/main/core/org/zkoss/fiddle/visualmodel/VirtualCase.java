@@ -1,4 +1,4 @@
-package org.zkoss.fiddle.model;
+package org.zkoss.fiddle.visualmodel;
 
 import java.util.Date;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.api.IResource;
 
 /**

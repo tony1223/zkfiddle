@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.zkoss.fiddle.model.FiddleSandbox;
+import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 
 /**
  * We store this data in system wild and not persisting,

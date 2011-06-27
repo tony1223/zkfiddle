@@ -29,9 +29,9 @@ import org.zkoss.fiddle.manager.VirtualCaseManager;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
-import org.zkoss.fiddle.model.VirtualCase;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
+import org.zkoss.fiddle.visualmodel.VirtualCase;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 
