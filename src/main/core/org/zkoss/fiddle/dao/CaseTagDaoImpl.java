@@ -8,6 +8,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.orm.hibernate3.HibernateCallback;
+import org.zkoss.fiddle.core.utils.CacheHandler;
+import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.CaseTag;
@@ -26,6 +28,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 		ct.setCaseId(c.getId());
 		ct.setTagId(t.getId());
 		super.saveOrUdateObject(ct);
+		FiddleCache.CaseTag.removeAll();
 	}
 	
 	public void replaceTags(final ICase _case,final List<Tag> list) {
@@ -56,7 +59,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 				query3.setLong("caseId",_case.getId());
 				query3.executeUpdate();
 				
-				
+				FiddleCache.CaseTag.removeAll();
 				return null;
 			}
 		});
@@ -92,6 +95,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 	}
 
 	public void saveOrUdate(CaseTag m) {
+		FiddleCache.CaseTag.removeAll();
 		super.saveOrUdateObject(m);
 	}
 
@@ -116,36 +120,44 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 	 * need to find a better approach , I do believe I miss something here; :-(
 	 */
 	public List<TagCaseListVO> findCaseRecordsBy(final Tag tag,final int pageIndex,final int pageSize) {
-		return getHibernateTemplate().execute(new HibernateCallback<List<TagCaseListVO>>() {
+		return (List<TagCaseListVO>) FiddleCache.CaseTag.execute(new CacheHandler<List<TagCaseListVO>>() {
+			protected List<TagCaseListVO> execute() {
+				return getHibernateTemplate().execute(new HibernateCallback<List<TagCaseListVO>>() {
 
-			public List<TagCaseListVO> doInHibernate(final Session session) throws HibernateException, SQLException {
-				Query query = session.createQuery(HQL_findCaseByTag);
-				query.setLong("tagId", tag.getId());
-				query.setResultTransformer(new ResultTransformer() {
+					public List<TagCaseListVO> doInHibernate(final Session session) throws HibernateException, SQLException {
+						Query query = session.createQuery(HQL_findCaseByTag);
+						query.setLong("tagId", tag.getId());
+						query.setResultTransformer(new ResultTransformer() {
 
-					public Object transformTuple(Object[] tuple, String[] aliases) {
-						TagCaseListVO tcvo = new TagCaseListVO();
+							public Object transformTuple(Object[] tuple, String[] aliases) {
+								TagCaseListVO tcvo = new TagCaseListVO();
 
-						CaseRecord cas = (CaseRecord) tuple[0];
-						tcvo.setCaseRecord(cas);
-						Query query = session.createQuery("select t from Tag t,CaseTag ct "
-								+ " where t.id = ct.tagId and ct.caseId = :caseId ");
-						query.setLong("caseId", cas.getCaseId());
-						List<Tag> list = query.list();
-						
-						tcvo.setTags(list);
-						return tcvo;
-					}
+								CaseRecord cas = (CaseRecord) tuple[0];
+								tcvo.setCaseRecord(cas);
+								Query query = session.createQuery("select t from Tag t,CaseTag ct "
+										+ " where t.id = ct.tagId and ct.caseId = :caseId ");
+								query.setLong("caseId", cas.getCaseId());
+								List<Tag> list = query.list();
+								
+								tcvo.setTags(list);
+								return tcvo;
+							}
 
-					public List transformList(List collection) {
-						return collection;
+							public List transformList(List collection) {
+								return collection;
+							}
+						});
+						query.setMaxResults(pageSize);
+						query.setFirstResult((pageIndex - 1) * pageSize);
+						return query.list();
 					}
 				});
-				query.setMaxResults(pageSize);
-				query.setFirstResult((pageIndex - 1) * pageSize);
-				return query.list();
+			}
+			protected String getKey() {
+				return tag.getId()+":"+pageIndex+":"+pageSize;
 			}
 		});
+
 	}
 	
 	private static String HQL_countCaseByTag = "select count(c) from CaseRecord c, CaseTag tc "

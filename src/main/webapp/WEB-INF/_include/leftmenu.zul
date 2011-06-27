@@ -33,7 +33,13 @@
 			</tabpanels>
 		</tabbox>
 		<groupbox sclass="leftabout" mold="3d" closable="false" height="150px">
-			<caption label="About ZK Fiddle"></caption>
+			<caption label="TagCloud" />
+			<div>
+				
+			</div>
+		</groupbox>		
+		<groupbox sclass="leftabout" mold="3d" closable="false" height="150px">
+			<caption label="About ZK Fiddle" />
 			<vlayout>
 				<button id="news" label="Maintenance Log" width="99%" />
 				<button id="whyfiddle" label="What's ZK Fiddle" width="99%" />

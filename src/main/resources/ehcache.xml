@@ -42,8 +42,14 @@
 	    overflowToDisk="false"/>
 	
 	<cache
-	    name="top10liked"
+	    name="Top10liked"
 	    maxElementsInMemory="20"
+	    eternal="false"
+	    overflowToDisk="false"/>
+
+	<cache
+	    name="CaseTag"
+	    maxElementsInMemory="100"
 	    eternal="false"
 	    overflowToDisk="false"/>
 						
