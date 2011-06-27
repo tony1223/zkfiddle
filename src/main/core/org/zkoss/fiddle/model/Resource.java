@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -85,6 +86,7 @@ public class Resource implements IResource, Cloneable, Serializable {
 		this.content = content;
 	}
 
+	@Lob
 	@Column
 	public String getContent() {
 		return this.content;
@@ -126,6 +128,7 @@ public class Resource implements IResource, Cloneable, Serializable {
 		}
 	}
 
+	@Lob
 	@Column
 	public String getFinalContent() {
 		return finalContent;
