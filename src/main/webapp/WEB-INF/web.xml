@@ -150,6 +150,18 @@
 	  </init-param>
 	 </filter>
 
+	<filter>
+	  <description>tag filter</description>
+	  <display-name>TagFilter</display-name>
+	  <filter-name>TagFilter</filter-name>
+	  <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	  <init-param>
+	   <description>
+	   </description>
+	   <param-name>targetBeanName</param-name>
+	   <param-value>tagFilter</param-value>
+	  </init-param>
+	 </filter>
 	<!-- open session in View start -->
 	<!-- we open session for those url need. -->
 	<filter-mapping>   
@@ -172,6 +184,10 @@
 		<filter-name>hibernateFilter</filter-name>   
 		<url-pattern>/</url-pattern>   
 	</filter-mapping>
+	<filter-mapping>   
+		<filter-name>hibernateFilter</filter-name>   
+		<url-pattern>/tag/*</url-pattern>   
+	</filter-mapping>	
 	
 	<!-- open session in View end -->
 	
@@ -183,16 +199,18 @@
         <filter-name>DataFilter</filter-name>
         <url-pattern>/data/*</url-pattern>
     </filter-mapping>
-	<filter-mapping>
-        <filter-name>DataFilter</filter-name>
-        <url-pattern>/download/*</url-pattern>
-    </filter-mapping>	
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-	
-	
+    <filter-mapping>
+        <filter-name>TagFilter</filter-name>
+        <url-pattern>/tag/*</url-pattern>
+    </filter-mapping>
+	<filter-mapping>
+        <filter-name>DataFilter</filter-name>
+        <url-pattern>/download/*</url-pattern>
+    </filter-mapping>		
 	<filter-mapping>
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/admin/*</url-pattern>

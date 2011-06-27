@@ -4,7 +4,7 @@ import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
-import org.zkoss.fiddle.composer.event.SourceChangedEvent;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.event.Event;
@@ -37,7 +37,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 				if(event instanceof InputEvent){
 					InputEvent inpEvt = (InputEvent) event;
 					resource.setContent(inpEvt.getValue());
-					sourceQueue.publish(new SourceChangedEvent(null,resource));
+					sourceQueue.publish(new ResourceChangedEvent(null,resource));
 				}
 			}
 		});
@@ -65,8 +65,8 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		eventQueue.subscribe(new EventListener() {
 
 			public void onEvent(Event event) throws Exception {
-				if (event instanceof SourceChangedEvent) {
-					if (((SourceChangedEvent) event).getResource() == resource) {
+				if (event instanceof ResourceChangedEvent) {
+					if (((ResourceChangedEvent) event).getResource() == resource) {
 						texttab.setLabel("*" + resource.getTypeName());
 					}
 				}
@@ -76,13 +76,13 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		box.addEventListener(Events.ON_CHANGE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				resource.setName(box.getValue());
-				eventQueue.publish(new SourceChangedEvent(null,resource));
+				eventQueue.publish(new ResourceChangedEvent(null,resource));
 			}
 		});
 		
 		texttab.addEventListener(Events.ON_CLOSE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				eventQueue.publish(new SourceChangedEvent(null,resource));
+				eventQueue.publish(new ResourceChangedEvent(null,resource));
 				eventQueue.publish(new SourceRemoveEvent(FiddleEvents.ON_SOURCE_REMOVE, null,resource ));
 			}
 		});

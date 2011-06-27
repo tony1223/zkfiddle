@@ -38,9 +38,10 @@
 							}
 						</attribute>
 						<label value="Tags:" stubonly="true" />
-						<hlayout id="tagContainer" >
+						<hlayout id="tagContainer" sclass="zkfiddle-source-tag-container" >
 							<label id="tagEmpty" visible="false" value="currently no avaiable tag on this sample" />
 						</hlayout>
+						<checkbox id="cbSaveTag" label="keep tag when updating sample "/>
 					</hlayout>
 					<hlayout id="editTag" visible="false" style="height:30px;">
 						<attribute w:name="doDoubleClick_">

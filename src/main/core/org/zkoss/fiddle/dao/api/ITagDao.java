@@ -2,10 +2,13 @@ package org.zkoss.fiddle.dao.api;
 
 import java.util.List;
 
+import org.zkoss.fiddle.model.Tag;
 
-public interface ITagDao<Tag> extends IDao<Tag> {
+
+public interface ITagDao extends IDao<Tag> {
 
 	public Tag getTag(String name);
+	
 	
 	public List<Tag> searchTag(String name);
 	

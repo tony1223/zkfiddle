@@ -3,7 +3,7 @@ package org.zkoss.fiddle.component.renderer;
 import java.util.regex.Pattern;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
-import org.zkoss.fiddle.composer.event.SourceChangedEvent;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -99,7 +99,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 								value = "";
 							}
 							resource.setPkg(value);
-							sourceQueue.publish(new SourceChangedEvent(null,resource));
+							sourceQueue.publish(new ResourceChangedEvent(null,resource));
 							a.setLabel(resource.getFullPackage());
 						}
 					}

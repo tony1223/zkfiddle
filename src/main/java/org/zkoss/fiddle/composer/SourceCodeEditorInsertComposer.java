@@ -1,7 +1,7 @@
 package org.zkoss.fiddle.composer;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
-import org.zkoss.fiddle.composer.event.SourceInsertEvent;
+import org.zkoss.fiddle.composer.event.InsertResourceEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
@@ -26,7 +26,7 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 		String selected = type.getSelectedItem().getLabel();
 		String fileNameVal = fileName.getValue() + ("javascript".equals(selected) ? ".js" : "." +selected);
 		
-		sourceQueue.publish(new SourceInsertEvent(null, null, fileNameVal, typeVal));
+		sourceQueue.publish(new InsertResourceEvent(null, null, fileNameVal, typeVal));
 		
 		type.setSelectedIndex(0);
 		fileName.setText("");

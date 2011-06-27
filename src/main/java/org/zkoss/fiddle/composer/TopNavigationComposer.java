@@ -5,9 +5,9 @@ import java.util.TreeSet;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
-import org.zkoss.fiddle.composer.event.SaveEvent;
+import org.zkoss.fiddle.composer.event.SaveCaseEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.composer.event.SourceChangedEvent;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.FiddleSandbox;
 import org.zkoss.fiddle.util.CookieUtil;
@@ -57,7 +57,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 		sourceQueue.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				if(event instanceof SourceChangedEvent){
+				if(event instanceof ResourceChangedEvent){
 					viewBtn.setLabel("*Run");
 				}
 			}
@@ -137,10 +137,10 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	}
 
 	public void onClick$saveBtn() {
-		sourceQueue.publish(new SaveEvent());
+		sourceQueue.publish(new SaveCaseEvent());
 	}
 
 	public void onClick$forkBtn() {
-		sourceQueue.publish(new SaveEvent(true));
+		sourceQueue.publish(new SaveCaseEvent(true));
 	}
 }

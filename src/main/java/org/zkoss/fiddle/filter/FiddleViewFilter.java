@@ -168,9 +168,11 @@ public class FiddleViewFilter implements Filter {
 		String uri = request.getRequestURI();
 		String context = request.getContextPath();
 		String path = uri.replaceFirst(context, "");
-
+		
+		//TODO review this and move it to global config , we can't count on a filter to handle this. 
+		request.setAttribute("hostName", getHostpath(request));
+		
 		if (path == null || path.equals("/")) {
-			request.setAttribute("hostName", getHostpath(request));
 			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			return;
 		}
@@ -180,7 +182,6 @@ public class FiddleViewFilter implements Filter {
 				return;
 			}
 		} else if (path.startsWith("/sample/")) {
-			request.setAttribute("hostName", getHostpath(request));
 			Matcher match = code.matcher(path);
 			if (match.find()) {
 

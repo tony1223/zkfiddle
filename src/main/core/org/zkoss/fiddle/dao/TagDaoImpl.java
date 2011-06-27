@@ -13,7 +13,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Tag;
 
-public class TagDaoImpl extends AbstractDao implements ITagDao<Tag> {
+public class TagDaoImpl extends AbstractDao implements ITagDao{
 
 	public List<Tag> list() {
 		return getHibernateTemplate().find("from Tag");

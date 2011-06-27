@@ -119,6 +119,26 @@ h1 {
 .sourcetabs .z-tab-hm {
 	background-image: url("/img/comp/tab-hm.png");
 }
+
+.zkfiddle-source-tag-container a{
+	margin-left:6px;
+}
+.zkfiddle-index{
+	text-align:center;
+}
+
+/***Taglist***/
+.zkfiddle-taglist .token{
+	display:block;
+	color:gray;
+	font-size:10px;
+	margin-left:15px;
+}
+.zkfiddle-taglist .tag-container *{
+	margin-left:5px;
+}
+
+
 /***CodeMirror***/
 span.c-like-keyword {
 	color: #7F0055;

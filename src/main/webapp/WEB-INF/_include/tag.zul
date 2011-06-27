@@ -4,7 +4,7 @@
 <?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
 <?script type="text/javascript" src="/js/fiddle.js.dsp"?>
 <zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook">
-	<div apply="org.zkoss.fiddle.composer.TopNavigationComposer" sclass="zkfiddle-header">
+	<div sclass="zkfiddle-header">
 		<div sclass="header-inner">
 			<hlayout sclass="menu">
 				<div sclass="logo-outer">
@@ -14,7 +14,8 @@
 				</div>
 				<n:h1 class="title">ZK Fiddle - Open Source ZK Example Platform</n:h1>
 				<div id="views" style="margin-left:100px;width:500px;">
-
+			<!-- TODO review this , 
+				 this is related to [Issue #79 survey sitemesh to build a template engine if possible]
 					<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png" />
 					<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png" />
 					<combobox id="instances" readonly="true" width="180px" >
@@ -26,7 +27,7 @@
 						</attribute>
 					</combobox>
 					<button width="100px" id="viewBtn" style="color:red;" label="Run" dir="reverse" image="/img/resultset_next.png" />
-
+ 			-->
 				</div>
 				<div sclass="social">
 					<n:iframe
@@ -42,12 +43,23 @@
 			<west title="ZK Fiddle Info" size="300px" collapsible="true" >
 				<include src="leftmenu.zul" />
 			</west>
+			<!-- TODO review this -->
 			<center autoscroll="true" border="none">
-				<include src="sourceedtior.zul" />
+				<groupbox apply="org.zkoss.fiddle.composer.TagListComposer" closable="false">
+					<caption label="Tag: ${tag}" />
+					<grid sclass="zkfiddle-taglist" id="tagCaseList" emptyMessage="Oops! No any cases related to this tag.">
+						<columns>
+							<column label="#" width="2%" sclass="zkfiddle-index" />
+							<column label="Title" width="40%" />
+							<column label="Tags" />	
+						</columns>
+					</grid>
+					<paging id="tagCasePaging" />
+				</groupbox>
 			</center>
 		</borderlayout>
 	</div>
 	<include src="viewresult.zul" />
-
+	
 	<include src="footer.zul" />
 </zk>

@@ -2,10 +2,12 @@ package org.zkoss.fiddle.dao.api;
 
 import java.util.List;
 
+import org.zkoss.fiddle.model.CaseTag;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.visualmodel.TagCaseListVO;
 
-public interface ICaseTagDao<CaseTag> extends IDao<CaseTag> {
+public interface ICaseTagDao extends IDao<CaseTag> {
 
 	/**
 	 * Save a new CaseTag,
@@ -25,4 +27,10 @@ public interface ICaseTagDao<CaseTag> extends IDao<CaseTag> {
 	public List<Tag> findTagsBy(ICase c, int pageIndex, int pageSize);
 
 	public List<Tag> findTagsBy(ICase c);
+	
+	
+	public List<TagCaseListVO> findCaseRecordsBy(Tag c, int pageIndex, int pageSize);
+	
+	public Long countCaseRecordsBy(Tag tag);
+	
 }

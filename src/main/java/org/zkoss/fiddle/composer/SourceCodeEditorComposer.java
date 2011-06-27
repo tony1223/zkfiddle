@@ -10,10 +10,10 @@ import org.apache.log4j.Logger;
 import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
-import org.zkoss.fiddle.composer.event.SaveEvent;
+import org.zkoss.fiddle.composer.event.SaveCaseEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.composer.event.SourceChangedEvent;
-import org.zkoss.fiddle.composer.event.SourceInsertEvent;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
+import org.zkoss.fiddle.composer.event.InsertResourceEvent;
 import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
 import org.zkoss.fiddle.core.utils.ResourceFactory;
@@ -47,6 +47,7 @@ import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.A;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Label;
@@ -91,6 +92,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private String lastVal;
 	
+	private Checkbox cbSaveTag;
+	
 	/**
 	 * a state for if content is changed.
 	 * 
@@ -127,7 +130,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			if (newCase) {
 				// Notify content to do some processing,since we use desktop
 				// scope eventQueue,it will not be a performance issue.
-				sourceQueue.publish(new SourceChangedEvent(null, resource));
+				sourceQueue.publish(new ResourceChangedEvent(null, resource));
 			}
 		}
 		
@@ -244,7 +247,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		sourceQueue.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				
-				if (event instanceof SourceChangedEvent) {
+				if (event instanceof ResourceChangedEvent) {
 					sourceChange = true;
 				} else if (event instanceof ShowResultEvent) {
 					ShowResultEvent result = (ShowResultEvent) event;
@@ -283,19 +286,20 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 					EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish(result);
 
-				} else if (event instanceof SourceInsertEvent) {
-					SourceInsertEvent insertEvent = (SourceInsertEvent) event;
+				} else if (event instanceof InsertResourceEvent) {
+					InsertResourceEvent insertEvent = (InsertResourceEvent) event;
 					Resource ir = ResourceFactory.getDefaultResource(insertEvent.getType(), insertEvent.getFileName());
 					resources.add(ir);
 					SourceTabRendererFactory.getRenderer(ir.getType()).appendSourceTab(sourcetabs, sourcetabpanels, ir);
 					insertWin.setVisible(false);
-				} else if (event instanceof SaveEvent) {
-					SaveEvent saveEvt = (SaveEvent) event;
+				} else if (event instanceof SaveCaseEvent) {
+					SaveCaseEvent saveEvt = (SaveCaseEvent) event;
 
 					CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
 					
 					String ip = Executions.getCurrent().getRemoteAddr();
-					ICase saved = caseManager.saveCase($case, resources, caseTitle.getValue(), saveEvt.isFork(), ip);
+					ICase saved = caseManager.saveCase($case, resources, caseTitle.getValue(), saveEvt.isFork(), ip,
+							cbSaveTag.isChecked());
 					if (saved != null) {
 						Executions.getCurrent().sendRedirect(
 								"/sample/" + saved.getToken() + "/" + saved.getVersion() + saved.getURLFriendlyTitle());

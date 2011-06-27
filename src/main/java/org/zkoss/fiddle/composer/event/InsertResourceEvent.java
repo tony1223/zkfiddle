@@ -4,20 +4,20 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 
 
-public class SourceInsertEvent extends Event{
+public class InsertResourceEvent extends Event{
 
 	private String folder ;
 	private String fileName ;
 	private int type;
 	
-	public SourceInsertEvent(String name,Component target,String pfolder,String pfileName,int ptype){
+	public InsertResourceEvent(String name,Component target,String pfolder,String pfileName,int ptype){
 		super(name,target,null);
 		type = ptype;
 		folder = pfolder;
 		fileName = pfileName;
 	}
 	
-	public SourceInsertEvent(Component target,String pfolder,String pfileName,int ptype){
+	public InsertResourceEvent(Component target,String pfolder,String pfileName,int ptype){
 		this(FiddleEvents.ON_SOURCE_INSERT,target,pfolder,pfileName,ptype);
 	}
 
