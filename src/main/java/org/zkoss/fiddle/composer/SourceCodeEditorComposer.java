@@ -174,11 +174,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private void initTagEditor(){
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 		List<Tag> list = caseTagDao.findTagsBy($case, 1, 30);
-		if(list.size() == 0){
-			tagEmpty.setVisible(true);
-		}else{
-			updateTags(list);
-		}
+		updateTags(list);
 		
 		EventListener handler = new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -216,20 +212,28 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 	
 	private void updateTags(List<Tag> list){
-		tagContainer.getChildren().clear();
-		StringBuffer sb = new StringBuffer();
-		for(Tag tag:list){
-			A lbl = new A(tag.getName());
-			lbl.setHref("/tag/"+tag.getName());
-			lbl.setSclass("case-tag");
-			sb.append(tag.getName()+",");
-			tagContainer.appendChild(lbl);
+		
+		if(list.size() == 0){
+			tagEmpty.setVisible(true);
+			cbSaveTag.setVisible(false);
+		}else{
+			tagContainer.getChildren().clear();
+			StringBuffer sb = new StringBuffer();
+			for(Tag tag:list){
+				A lbl = new A(tag.getName());
+				lbl.setHref("/tag/"+tag.getName());
+				lbl.setSclass("case-tag");
+				sb.append(tag.getName()+",");
+				tagContainer.appendChild(lbl);
+			}
+			if(sb.length()!=0){
+				sb.deleteCharAt(sb.length()-1);
+			}
+			tagInput.setValue(sb.toString());
+			lastVal = sb.toString();
+			tagEmpty.setVisible(false);
+			cbSaveTag.setVisible(true);
 		}
-		if(sb.length()!=0){
-			sb.deleteCharAt(sb.length()-1);
-		}
-		tagInput.setValue(sb.toString());
-		lastVal = sb.toString();
 	}
 	
 	private void runDirectlyView(ViewRequest viewRequestParam){
