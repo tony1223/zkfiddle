@@ -23,4 +23,9 @@ public enum FiddleCache {
 	public void removeAll(){
 		getInstance().removeAll();
 	}
+	
+	public void remove(String key){
+		getInstance().remove(key);
+	}
+	
 }
