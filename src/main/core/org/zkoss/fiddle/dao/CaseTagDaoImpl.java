@@ -130,7 +130,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 						tcvo.setCaseRecord(cas);
 						Query query = session.createQuery("select t from Tag t,CaseTag ct "
 								+ " where t.id = ct.tagId and ct.caseId = :caseId ");
-						query.setLong("caseId", cas.getId());
+						query.setLong("caseId", cas.getCaseId());
 						List<Tag> list = query.list();
 						
 						tcvo.setTags(list);
