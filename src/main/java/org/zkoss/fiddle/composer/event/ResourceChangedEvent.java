@@ -14,7 +14,7 @@ public class ResourceChangedEvent extends Event{
 	}
 
 	public ResourceChangedEvent(Component target,IResource resource){
-		this(FiddleEvents.ON_SOURCE_CHANGE,target,resource);
+		this(FiddleEvents.ON_RESOURCE_CHANGE,target,resource);
 	}
 
 	

@@ -14,7 +14,7 @@ public class SourceRemoveEvent extends Event{
 	}
 	
 	public SourceRemoveEvent(Component target,IResource ir){
-		super(FiddleEvents.ON_SOURCE_REMOVE,target,null);
+		super(FiddleEvents.ON_RESOURCE_REMOVE,target,null);
 		resource =ir;
 	}
 	

@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zkoss.fiddle.composer.event.FiddleEventQueues;
+import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.core.utils.CacheHandler;
 import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseDao;
@@ -21,6 +23,9 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
+import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.A;
@@ -47,6 +52,8 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	private Window popupContent;
 	
 	private Div tagContainer;
+	
+	private EventQueue tag = EventQueues.lookup(FiddleEventQueues.Tag,true);
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -62,6 +69,13 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		});
 		
 		initTags();
+		tag.subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if(FiddleEvents.ON_TAG_UPDATE.equals(event.getName())){
+					initTags();				
+				}
+			}
+		});
 
 		likes.setModel(new ListModelList(list));
 
@@ -112,11 +126,11 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	}
 
 	private void initTags(){
-		Div tagcont = tagContainer;
-		tagcont.setSclass("tag-container");
+		tagContainer.getChildren().clear();
+		tagContainer.setSclass("tag-container");
 		
 		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
-		List<Tag> list = tagDao.findPopularTags(30);
+		List<Tag> list = tagDao.findPopularTags(20);
 		TagCloudVO tcvo = new TagCloudVO(list);
 
 		
@@ -139,7 +153,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 				}
 
 				taglink.setHref("/tag/" + URLEncoder.encode(tag.getName(), "UTF-8"));
-				tagcont.appendChild(taglink);
+				tagContainer.appendChild(taglink);
 			} catch (UnsupportedEncodingException e) {
 			}	
 		}

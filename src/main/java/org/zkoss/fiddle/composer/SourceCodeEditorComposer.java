@@ -215,6 +215,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			List<Tag> list = tagDao.prepareTags(val.split("[ ]*,[ ]*"));
 			ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 			caseTagDao.replaceTags($case, list);
+			
+			EventQueues.lookup(FiddleEventQueues.Tag).
+				publish(new Event(FiddleEvents.ON_TAG_UPDATE,null));
+			
 			updateTags(list);
 		}
 		

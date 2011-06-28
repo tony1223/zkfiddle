@@ -134,7 +134,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		else
 			inst = (FiddleSandbox) instances.getSelectedItem().getValue();
 
-		sourceQueue.publish(new ShowResultEvent(FiddleEvents.ON_SOURCE_SHOW_RESULT , null, inst));
+		sourceQueue.publish(new ShowResultEvent(FiddleEvents.ON_TEMP_SHOW_RESULT , null, inst));
 	}
 
 	public void onClick$saveBtn() {

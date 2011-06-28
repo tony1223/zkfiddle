@@ -83,7 +83,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		texttab.addEventListener(Events.ON_CLOSE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				eventQueue.publish(new ResourceChangedEvent(null,resource));
-				eventQueue.publish(new SourceRemoveEvent(FiddleEvents.ON_SOURCE_REMOVE, null,resource ));
+				eventQueue.publish(new SourceRemoveEvent(FiddleEvents.ON_RESOURCE_REMOVE, null,resource ));
 			}
 		});
 
