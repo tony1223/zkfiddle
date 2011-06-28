@@ -157,7 +157,7 @@ public class FiddleViewFilter implements Filter {
 	
 	public void setPageTitle(HttpServletRequest request, ICase $case) {
 		boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
-		String title = emptytitle ? "Unnamed" : $case.getTitle();
+		String title = emptytitle ? "Untitled" : $case.getTitle();
 		request.setAttribute("_pgtitle", " - " + title);
 	}
 

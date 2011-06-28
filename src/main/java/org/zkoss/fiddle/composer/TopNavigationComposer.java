@@ -5,9 +5,9 @@ import java.util.TreeSet;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.SaveCaseEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
-import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
@@ -74,10 +74,11 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			viewBtn.setDisabled(true);
 		} else {
 			instances.setItemRenderer(new ComboitemRenderer() {
-				public void render(Comboitem item, Object data) throws Exception {
+				public void render(Comboitem comboItem, Object data) throws Exception {
 					FiddleSandbox inst = (FiddleSandbox) data;
-					item.setLabel(inst.getName() + "["+inst.getZKVersion()+"]");
-					item.setValue(data);
+					comboItem.setImage("/img/server-network.png");
+					comboItem.setLabel(inst.getName() + " ["+inst.getZKVersion()+"]");
+					comboItem.setValue(data);
 				}
 			});
 			

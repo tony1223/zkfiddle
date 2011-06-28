@@ -13,26 +13,23 @@ import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zul.A;
+import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Iframe;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.api.Window;
 
 public class ViewResultComposer extends GenericForwardComposer {
 
-	private Textbox directly;
+	private Textbox directUrl;
 
 	private Iframe content;
 
 	private Window viewEditor;
-
-	private Label zkver;
 	
-	private Label msg;
+	private Button openNewWindow;
 	
-	private A directlyLink;
+	private Button closeWindow;
 	
 	private Div directLinkContainer;
 
@@ -72,22 +69,18 @@ public class ViewResultComposer extends GenericForwardComposer {
 				if (event instanceof ShowResultEvent) {
 					ShowResultEvent evt = (ShowResultEvent) event;
 					FiddleSandbox inst = evt.getInstance();
-
-					zkver.setValue(inst.getZKVersion());
-					viewEditor.setTitle("Running sandbox:" + inst.getName());
+					viewEditor.setTitle("Running Sandbox : " + inst.getName() + " @ ZK " + inst.getZKVersion() );
 
 					
 					if(evt.getCase().getVersion() != 0){
 						String tokenpath = evt.getCase().getCaseUrl( inst.getZKVersion());
-						directly.setText( getHostpath() + "view/" + tokenpath	+ "?run=" + inst.getHash());
-						directlyLink.setHref( getHostpath() + "direct/" + tokenpath	+ "?run=" + inst.getHash());
+						directUrl.setText( getHostpath() + "view/" + tokenpath	+ "?run=" + inst.getHash());
+						openNewWindow.setHref( getHostpath() + "direct/" + tokenpath	+ "?run=" + inst.getHash());
 						directLinkContainer.setVisible(true);
 					}else{
 						directLinkContainer.setVisible(false);
 					}
-					
-					msg.setValue(""); //force it doing the update job 
-					msg.setValue("loading...");
+										
 					content.setSrc(inst.getPath() + evt.getCase().getToken() + "/" + evt.getCase().getVersion());
 					viewEditor.doModal();
 				}
@@ -95,7 +88,8 @@ public class ViewResultComposer extends GenericForwardComposer {
 		});
 	}
 	
-	public void onClose$viewEditor(ForwardEvent e) {
-		content.setSrc("");
+	public void onClick$closeWindow(ForwardEvent e) {
+		viewEditor.setVisible(false);
+		content.setSrc("/img/viewresult-loading.gif");
 	}
 }

@@ -1,43 +1,17 @@
 <?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:w="client">
 	<!-- TODO check if we need to load it at first. -->
-	<window id="viewEditor" use="org.zkoss.fiddle.component.ClosableWindow" visible="false" closable="true" title="" apply="org.zkoss.fiddle.composer.ViewResultComposer"
-		height="100%"
-		width="100%">
-		<vlayout sclass="source-vlayout" height="100%">
-			<div height="20px">
-				<div style="float:left;padding:3px;padding-left:15px;">
-					<label value="ZK Version:" />
-					<label id="zkver" />
-					
-					<label id="msg" style="margin-left:30px;color:red;" />
-				</div>
-				<div style="float:right;" id="directLinkContainer">
-					<label value="Direct Link:" />
-					<textbox id="directly" w:onClick="this.select()" style="width:500px;" readonly="true" />
-					<a id="directlyLink" target="_blank">
-						<image src="/img/arrow.png" height="20px;" />
-					</a>
-				</div>
+	<window id="viewEditor" sclass="viewresult" border="normal" visible="false" height="97%" width="97%" 
+	apply="org.zkoss.fiddle.composer.ViewResultComposer" action="hide: slideUp">
+		<caption>
+			<div id="directLinkContainer">
+				<label value="Direct Link:" sclass="text-bold"/>
+				<textbox id="directUrl" w:onClick="this.select()" cols="50" readonly="true" inplace="true" />
+				<button id="openNewWindow" target="_blank" src="/img/viewresult-newwindow.png" />
+				<button id="closeWindow" target="_blank" src="/img/viewresult-closewindow.png" />
 			</div>
-			<iframe id="content" width="98%" style="border:5px solid black;margin-left:10px;" height="95%">
-				<attribute w:name="bind_">
-					function(){
-						this.$bind_.apply(this,arguments);
-						jq(this.$n()).parent().css("height","100%")
-						/*
-						TonyQ:2011/6/2 
-						since we can't find the right event in server side , 
-						so that seems we have to do it by ourself in client side.
-						*/
-						jq(this.$n()).bind("load",function(){
-							zk.Widget.$(jq("$viewEditor $msg")).setValue("Finished");
-						});
-					}
-				</attribute>
-				
-			</iframe>
-		</vlayout>
+		</caption>
+		<div></div>
+		<iframe id="content" hflex="1" vflex="1" src="/img/viewresult-loading.gif" sclass="preview" />
 	</window>
-
 </zk>
