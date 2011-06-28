@@ -2,9 +2,12 @@ package org.zkoss.fiddle.dao;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -77,11 +80,12 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("from Tag where name in (:list) ");
-				query.setParameterList("list", tags);
+				Set<String> tagSet = new HashSet<String>(Arrays.asList(tags));
+				query.setParameterList("list", tagSet);
 				List<Tag> result = query.list();
 
 				// a quick result to make it faster if need not to insert.
-				if (result.size() == tags.length) {
+				if (result.size() == tagSet.size()) {
 					return result;
 				}
 				Map<String, Tag> map = new HashMap<String, Tag>();
@@ -90,7 +94,8 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 				}
 
 				List<Tag> list = new ArrayList<Tag>();
-				for (String token : tags) {
+				
+				for (String token : tagSet) {
 
 					if (!map.containsKey(token)) {
 						Tag t = new Tag();
