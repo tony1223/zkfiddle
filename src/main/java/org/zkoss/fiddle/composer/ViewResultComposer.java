@@ -11,7 +11,6 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Div;
 import org.zkoss.zul.Iframe;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
@@ -25,10 +24,8 @@ public class ViewResultComposer extends GenericForwardComposer {
 
 	private Window viewEditor;
 	
-	private Div directLinkContainer;
 	private Label directDesc;
 	private Button openNewWindow;
-	private Button closeWindow;
 	
 
 	/**
@@ -70,12 +67,9 @@ public class ViewResultComposer extends GenericForwardComposer {
 	
 	private void setDirectVisible(boolean show){
 		
-		if(show){
-			directLinkContainer.setVisible(show);
-			directDesc.setVisible(show);
-			openNewWindow.setVisible(show);
-		}
-		closeWindow.setVisible(true);
+		directDesc.setVisible(show);
+		openNewWindow.setVisible(show);
+		directUrl.setVisible(show);
 		
 	}
 	
