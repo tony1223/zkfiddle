@@ -223,6 +223,7 @@ public class FiddleDataFilter implements Filter {
 		return ret;
 	}
 	
+	@SuppressWarnings("unused")
 	private List<IResourceFile> getWebappTemplates(ICase c) throws IOException{
 		String filePath = servletContext.getRealPath("/WEB-INF/_download/ZKfiddleSample.zip");
 		
