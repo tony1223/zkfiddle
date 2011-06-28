@@ -125,7 +125,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 	private List<Tag> _findPopularTags(final int amount) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
-				Query query = session.createQuery("from Tag order by amount desc ");
+				Query query = session.createQuery("from Tag where amount > 0 order by amount desc ");
 				query.setMaxResults(amount);
 				return query.list();
 			}
