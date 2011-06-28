@@ -10,6 +10,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
+import org.zkoss.fiddle.core.utils.CacheHandler;
+import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Tag;
 
@@ -41,6 +43,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 			}
 		});
 	}
+	
 
 	public Tag getTag(final String name) {
 		return getHibernateTemplate().execute(new HibernateCallback<Tag>() {
@@ -102,6 +105,29 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 
 				return list;
 
+			}
+		});
+	}
+
+	public List<Tag> findPopularTags(final int amount) {
+		return (List<Tag>) FiddleCache.CaseTag.execute(new CacheHandler<List<Tag>>() {
+			protected List<Tag> execute() {
+				return  _findPopularTags(amount);
+			}
+
+			protected String getKey() {
+				return "popularTags:" + amount;
+			}
+		});
+
+	}
+	
+	private List<Tag> _findPopularTags(final int amount) {
+		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
+			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("from Tag order by amount desc ");
+				query.setMaxResults(amount);
+				return query.list();
 			}
 		});
 	}

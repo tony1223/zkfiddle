@@ -1,5 +1,9 @@
 package org.zkoss.fiddle.composer;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Level;
@@ -8,14 +12,19 @@ import org.zkoss.fiddle.core.utils.CacheHandler;
 import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
+import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
+import org.zkoss.fiddle.model.Tag;
+import org.zkoss.fiddle.visualmodel.TagCloudVO;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
+import org.zkoss.zul.A;
+import org.zkoss.zul.Div;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -36,6 +45,8 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	private Listbox recentlys;
 
 	private Window popupContent;
+	
+	private Div tagContainer;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -50,6 +61,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			}
 		});
 		
+		initTags();
 
 		likes.setModel(new ListModelList(list));
 
@@ -99,6 +111,40 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	}
 
+	private void initTags(){
+		Div tagcont = tagContainer;
+		tagcont.setSclass("tag-container");
+		
+		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
+		List<Tag> list = tagDao.findPopularTags(30);
+		TagCloudVO tcvo = new TagCloudVO(list);
+
+		
+		Collections.sort(list, new Comparator<Tag>() {
+			public int compare(Tag o1, Tag o2) {
+				return o1.getId().compareTo(o2.getId());
+			}
+		});
+		
+		for (int i = 0, size = list.size(); i < size; ++i) {
+			Tag tag = list.get(i);
+			try {
+				A taglink = new A(tag.getName() + "(" + tag.getAmount() + ") ");
+
+				String tagN = (String) requestScope.get("tag");
+				if (tagN != null && tagN.equals(tag.getName())) {
+					taglink.setSclass("tag-cloud tag-cloud-sel tag-cloud" + tcvo.getLevel(tag.getAmount().intValue()));
+				} else {
+					taglink.setSclass("tag-cloud tag-cloud" + tcvo.getLevel(tag.getAmount().intValue()));
+				}
+
+				taglink.setHref("/tag/" + URLEncoder.encode(tag.getName(), "UTF-8"));
+				tagcont.appendChild(taglink);
+			} catch (UnsupportedEncodingException e) {
+			}	
+		}
+	}
+	
 	public void onSelect$recentlys(Event e) {
 		Case cr = (Case) recentlys.getSelectedItem().getValue();
 		Executions.sendRedirect("/sample/" + cr.getCaseUrl());

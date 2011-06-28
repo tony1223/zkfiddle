@@ -138,6 +138,20 @@ h1 {
 	margin-left:5px;
 }
 
+/***Tag cloud ***/
+.leftabout .tag-container{
+	padding-top:3px;
+	padding-bottom:5px;	
+	line-height:23px;
+}
+.tag-cloud{
+	padding:5px;
+}
+.tag-cloud0 {font-size: 100%;}  
+.tag-cloud1 {font-size: 120%;}  
+.tag-cloud2 {font-size: 140%;}  
+.tag-cloud3 {font-size: 160%;}  
+.tag-cloud4 {font-size: 180%;}  
 
 /***CodeMirror***/
 span.c-like-keyword {
@@ -197,12 +211,19 @@ pre.CodeMirror-cursor {
 	border-width: 1px 0;
 }
 /** Left About**/
+.grouptop {
+	border-top: 1px solid #C5C5C5;
+}
 .leftabout .z-groupbox-cnt {
 	border-width: 1px 0 0;
 }
 
 .leftabout .z-groupbox-hm {
 	border-width: 0 0 1px 0;
+}
+.leftabout .z-caption-l{
+	font-weight: bold;
+	color: #555555;
 }
 /** Popup **/
 .popupContent .z-window-modal-cnt-noborder {

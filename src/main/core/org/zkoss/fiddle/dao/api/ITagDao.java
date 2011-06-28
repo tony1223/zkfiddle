@@ -19,4 +19,5 @@ public interface ITagDao extends IDao<Tag> {
 	 */
 	public List<Tag> prepareTags(String[] tags);
 	
+	public List<Tag> findPopularTags(int amount);
 }

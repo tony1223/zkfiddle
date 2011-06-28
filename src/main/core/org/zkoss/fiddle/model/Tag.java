@@ -10,29 +10,32 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Index;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.CompareToBuilder;
 
 @Entity
 @Table(name = "tags")
-public class Tag implements Serializable {
+public class Tag implements Comparable, Serializable {
 
 	private Long id;
-	
+
 	/**
 	 * 2011/6/26 TonyQ:
 	 * 
-	 * Note that I decide tag name is case-senstive,
-	 * it make more sense in generic way .
+	 * Note that I decide tag name is case-senstive, it make more sense in
+	 * generic way .
 	 * 
-	 * Although in some case it didn't make all sense ,like "grid" vs "Grid" , 
-	 * but comparing to make it all lower-case or upper-case,
-	 * we have to live with it .
-	 *
-	 * Yes , we could do some "smart" things , 
-	 * but do we really need that? ;) I don't think so.
-	 *  
+	 * Although in some case it didn't make all sense ,like "grid" vs "Grid" ,
+	 * but comparing to make it all lower-case or upper-case, we have to live
+	 * with it .
+	 * 
+	 * Yes , we could do some "smart" things , but do we really need that? ;) I
+	 * don't think so.
+	 * 
 	 */
 	private String name;
-	
+
 	private Long amount;
 
 	@Id
@@ -45,14 +48,15 @@ public class Tag implements Serializable {
 		this.id = id;
 	}
 
-	@Column(length=50)
-	@Index(name="tagIdx")
+	@Column(length = 50)
+	@Index(name = "tagIdx")
 	public String getName() {
 		return name;
 	}
 
 	/**
-	 * Don't enter the word that more then 25 chars. 
+	 * Don't enter the word that more then 25 chars.
+	 * 
 	 * @param name
 	 */
 	public void setName(String name) {
@@ -64,9 +68,24 @@ public class Tag implements Serializable {
 		return amount;
 	}
 
-	
 	public void setAmount(Long amount) {
 		this.amount = amount;
+	}
+
+	public boolean equals(final Object other) {
+		if (!(other instanceof Tag))
+			return false;
+		Tag castOther = (Tag) other;
+		return new EqualsBuilder().append(id, castOther.id).isEquals();
+	}
+
+	public int hashCode() {
+		return new HashCodeBuilder().append(id).toHashCode();
+	}
+
+	public int compareTo(final Object other) {
+		Tag castOther = (Tag) other;
+		return new CompareToBuilder().append(amount, castOther.amount).toComparison();
 	}
 
 }
