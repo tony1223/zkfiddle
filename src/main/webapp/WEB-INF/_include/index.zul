@@ -17,7 +17,7 @@
 
 					<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png" />
 					<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png" />
-					<combobox id="instances" readonly="true" width="180px" >
+					<combobox id="instances" readonly="true" width="180px" height="26px">
 						<attribute w:name="slideDown_">
 							function (pp) {
 								jq(pp).show();  //remove slidedown effect -_-#

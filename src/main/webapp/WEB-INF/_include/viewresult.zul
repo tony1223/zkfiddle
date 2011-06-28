@@ -14,5 +14,4 @@
 		<div></div>
 		<iframe id="content" hflex="1" vflex="1" src="/img/viewresult-loading.gif" sclass="preview" />
 	</window>
-
 </zk>
