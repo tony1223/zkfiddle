@@ -182,12 +182,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		};
 		
-		tagInput.addEventListener("onChange",handler);
 		tagInput.addEventListener("onOK",handler);
 		tagInput.addEventListener("onCancel",new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				tagInput.setValue(lastVal);
 				setTagEditable(false);
+				event.stopPropagation();
 			}
 		});
 	}
@@ -208,11 +208,13 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private void performUpdateTag(){
 		String val = tagInput.getValue();
 		
-		boolean valueChange = (!"".equals(val)) && ( lastVal == null || !val.equals(lastVal));
+		boolean valueChange = ( lastVal == null || !val.equals(lastVal));
 		//Do nothing if it didn't change
 		if(valueChange){
 			ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
-			List<Tag> list = tagDao.prepareTags(val.split("[ ]*,[ ]*"));
+			
+			List<Tag> list = "".equals(val.trim()) ? new ArrayList<Tag>() : 
+					tagDao.prepareTags(val.split("[ ]*,[ ]*"));
 			ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 			caseTagDao.replaceTags($case, list);
 			
@@ -226,12 +228,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 	
 	private void updateTags(List<Tag> list){
-		
+		tagContainer.getChildren().clear();		
 		if(list.size() == 0){
 			tagEmpty.setVisible(true);
 			cbSaveTag.setVisible(false);
 		}else{
-			tagContainer.getChildren().clear();
 			StringBuffer sb = new StringBuffer();
 			for(Tag tag:list){
 				A lbl = new A(tag.getName());

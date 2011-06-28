@@ -37,11 +37,13 @@
 								this.setVisible(false);
 							}
 						</attribute>
+						<checkbox id="cbSaveTag" style="float:right;" tooltiptext="keep tag when updating sample" />
 						<label value="Tags:" stubonly="true" />
-						<hlayout id="tagContainer" sclass="zkfiddle-source-tag-container" >
+						<div sclass="zkfiddle-source-tag-container" >
+							<hlayout id="tagContainer" style="float:left;" />
 							<label id="tagEmpty" visible="false" value="currently no available tag on this sample" />
-						</hlayout>
-						<checkbox id="cbSaveTag" label="keep tag when updating sample "/>
+						</div>
+					
 					</hlayout>
 					<hlayout id="editTag" visible="false" style="height:30px;">
 						<attribute w:name="doDoubleClick_">
