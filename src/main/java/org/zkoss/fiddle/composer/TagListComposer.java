@@ -71,7 +71,7 @@ public class TagListComposer extends GenericForwardComposer{
 				{
 					Div titlecont= new Div();
 					String title = tclvo.getCaseRecord().getTitle();
-					title = (title == null || "".equals(title.trim()) ? "unnamed" : title);					
+					title = (title == null || "".equals(title.trim()) ? "Untitled" : title);					
 					A titlelink = new A(title);
 					titlelink.setHref("/sample/" + tclvo.getCaseRecord().getCaseUrl());
 					titlecont.appendChild(titlelink);
