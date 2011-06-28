@@ -213,6 +213,8 @@ public class FiddleDataFilter implements Filter {
 		List<Resource> dbResources = resourceDao.listByCase(c.getId());
 		
 		ResourcePackager list = ResourcePackager.list();
+		
+		//decide to remove this 2011/6/28
 //		list.add(getWebappTemplates(c));
 		
 		for(IResource ir:dbResources){
