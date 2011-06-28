@@ -30,7 +30,11 @@ public class FiddleSandboxManager {
 		
 		boolean debugMode = Boolean.getBoolean("fiddle.debug");
 		if(debugMode){				
-			FiddleSandbox instance = new FiddleSandbox();
+			FiddleSandbox instance = new FiddleSandbox(){
+				public String getSrc(String token, Integer ver) {
+					return "http://www.google.com";
+				}
+			};
 			instance.setLastUpdate(new Date());
 			instance.setName("localtest");
 			instance.setVersion("5.0.7.1");
@@ -38,7 +42,11 @@ public class FiddleSandboxManager {
 			this.addFiddleInstance(instance);
 			
 			//open two sandboxes to help designer finetune the features.
-			instance = new FiddleSandbox();
+			instance = new FiddleSandbox(){
+				public String getSrc(String token, Integer ver) {
+					return "http://www.google.com";
+				}
+			};
 			instance.setLastUpdate(new Date());
 			instance.setName("localtest2");
 			instance.setVersion("5.0.6");

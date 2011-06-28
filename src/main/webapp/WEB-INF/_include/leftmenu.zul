@@ -22,7 +22,8 @@
 					</listbox>
 				</tabpanel>
 				<tabpanel>
-					<listbox id="likes" sclass="likes" emptyMessage="No Favorite ? Create your favorite fiddle now !" >
+					<!-- No Favorite ? Create your favorite fiddle now ! -->
+					<listbox id="likes" sclass="likes" emptyMessage="Coming soon" >
 						<listhead>
 							<listheader label="#" width="25px" />
 							<listheader label="Title" />

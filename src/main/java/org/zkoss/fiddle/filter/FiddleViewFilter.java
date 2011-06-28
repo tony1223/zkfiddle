@@ -144,7 +144,7 @@ public class FiddleViewFilter implements Filter {
 			vr.setFiddleInstance(inst);
 
 			if (directly) {
-				response.sendRedirect(inst.getPath() + vr.getToken() + "/" + vr.getTokenVersion());
+				response.sendRedirect(inst.getSrc(vr.getToken(), Integer.parseInt(vr.getTokenVersion())));
 			} else
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			return true;

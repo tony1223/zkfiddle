@@ -142,6 +142,10 @@ span.text-bold {
 	padding: 5px;
 	border: 1px solid #C5C5C5;
 }
+.viewresult .preview{
+	background:url("/img/viewresult-loading.gif") no-repeat;
+}
+
 /** Source Tabs **/
 .z-separator-hor-bar {
 	border-top: 1px solid #cccccc; 

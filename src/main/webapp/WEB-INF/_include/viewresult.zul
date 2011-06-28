@@ -5,7 +5,7 @@
 	apply="org.zkoss.fiddle.composer.ViewResultComposer" action="hide: slideUp">
 		<caption>
 			<div id="directLinkContainer">
-				<label value="Direct Link:" sclass="text-bold"/>
+				<label id="directDesc" value="Direct Link:" sclass="text-bold"/>
 				<textbox id="directUrl" w:onClick="this.select()" cols="50" readonly="true" inplace="true" />
 				<button id="openNewWindow" target="_blank" src="/img/viewresult-newwindow.png" />
 				<button id="closeWindow" target="_blank" src="/img/viewresult-closewindow.png" />

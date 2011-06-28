@@ -6,6 +6,7 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
+import org.zkoss.fiddle.model.api.ICase;
 
 public class FiddleSandbox implements Comparable {
 
@@ -65,6 +66,14 @@ public class FiddleSandbox implements Comparable {
 
 	public int hashCode() {
 		return new HashCodeBuilder().append(hash).toHashCode();
+	}
+	
+	public String getSrc(ICase _case){
+		return getSrc(_case.getToken() , _case.getVersion());
+	}
+	
+	public String getSrc(String token,Integer ver){
+		return 	getPath() + token + "/" + ver;
 	}
 
 	public int compareTo(final Object other) {

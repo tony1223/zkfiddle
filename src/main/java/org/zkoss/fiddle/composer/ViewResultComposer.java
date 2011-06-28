@@ -1,12 +1,9 @@
 package org.zkoss.fiddle.composer;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
@@ -16,6 +13,7 @@ import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Iframe;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.api.Window;
 
@@ -27,11 +25,11 @@ public class ViewResultComposer extends GenericForwardComposer {
 
 	private Window viewEditor;
 	
+	private Div directLinkContainer;
+	private Label directDesc;
 	private Button openNewWindow;
-	
 	private Button closeWindow;
 	
-	private Div directLinkContainer;
 
 	/**
 	 * we use desktop level event queue.
@@ -40,24 +38,6 @@ public class ViewResultComposer extends GenericForwardComposer {
 
 	private String hostpath;
 
-	private String getHostpath(){
-		if (hostpath == null) {
-			HttpServletRequest request = (HttpServletRequest) Executions.getCurrent().getNativeRequest();
-			StringBuffer hostName = new StringBuffer(request.getServerName());
-			if (request.getLocalPort() != 80) {
-				hostName.append(":" + request.getLocalPort());
-			}
-			if ("".equals(request.getContextPath())) {
-				hostName.append("/" + request.getContextPath());
-			} else {
-				hostName.append("/");
-			}
-			hostpath = "http://" + hostName.toString() ;
-		}
-		
-		return hostpath;
-	}
-	
 	public void doAfterCompose(final Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
@@ -74,18 +54,29 @@ public class ViewResultComposer extends GenericForwardComposer {
 					
 					if(evt.getCase().getVersion() != 0){
 						String tokenpath = evt.getCase().getCaseUrl( inst.getZKVersion());
-						directUrl.setText( getHostpath() + "view/" + tokenpath	+ "?run=" + inst.getHash());
-						openNewWindow.setHref( getHostpath() + "direct/" + tokenpath	+ "?run=" + inst.getHash());
-						directLinkContainer.setVisible(true);
+						directUrl.setText( hostpath + "view/" + tokenpath	+ "?run=" + inst.getHash());
+						openNewWindow.setHref( hostpath + "direct/" + tokenpath	+ "?run=" + inst.getHash());
+						setDirectVisible(true);
 					}else{
-						directLinkContainer.setVisible(false);
+						setDirectVisible(false);
 					}
 										
-					content.setSrc(inst.getPath() + evt.getCase().getToken() + "/" + evt.getCase().getVersion());
+					content.setSrc(inst.getSrc(evt.getCase()));
 					viewEditor.doModal();
 				}
 			}
 		});
+	}
+	
+	private void setDirectVisible(boolean show){
+		
+		if(show){
+			directLinkContainer.setVisible(show);
+			directDesc.setVisible(show);
+			openNewWindow.setVisible(show);
+		}
+		closeWindow.setVisible(true);
+		
 	}
 	
 	public void onClick$closeWindow(ForwardEvent e) {
