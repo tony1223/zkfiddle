@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.zkoss.web.servlet.Servlets;
 
@@ -38,7 +39,12 @@ public class FiddleTagFilter implements Filter {
 
 		Matcher m = tag.matcher(path);
 		if(m.find()){
-			request.setAttribute("tag",m.group(1));
+			String mtag = m.group(1);
+			if(mtag == null || "".equals(mtag.trim())){
+				((HttpServletResponse)response).sendRedirect("/");
+				return ;
+			}
+			request.setAttribute("tag",mtag);
 			if (logger.isInfoEnabled()) {
 				logger.info("doFilter(ServletRequest, ServletResponse, FilterChain) - Tag Name=" + m.group(1));
 			}
