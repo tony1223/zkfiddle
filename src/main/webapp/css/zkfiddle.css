@@ -25,6 +25,7 @@ span.text-bold {
 .zkfiddle-header .header-inner {
 	height: 60px;
 	box-shadow: 0 0 2px 1px #C1C1C1;
+	min-width: 1280px;
 }
 /** Menu **/
 .zkfiddle-header .menu {
