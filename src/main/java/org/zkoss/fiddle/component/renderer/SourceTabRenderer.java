@@ -30,7 +30,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 
 		//we use desktop scope , so it's ok to lookup every time.
 		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
-		
+		ce.setTheme("eclipse");
 		ce.addEventListener(Events.ON_CHANGE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 
