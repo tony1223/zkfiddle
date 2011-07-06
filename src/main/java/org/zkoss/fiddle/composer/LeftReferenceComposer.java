@@ -143,7 +143,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		for (int i = 0, size = list.size(); i < size; ++i) {
 			Tag tag = list.get(i);
 			try {
-				A taglink = new A(tag.getName() + "(" + tag.getAmount() + ") ");
+				A taglink = new A(tag.getName() + (tag.getAmount() > 1 ? "(" + tag.getAmount() + ") " :""));
 
 				String tagN = (String) requestScope.get("tag");
 				if (tagN != null && tagN.equals(tag.getName())) {

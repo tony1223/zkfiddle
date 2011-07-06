@@ -93,7 +93,8 @@ public class TagListComposer extends GenericForwardComposer {
 
 					for (int i = 0, size = tclvo.getTags().size(); i < size; ++i) {
 						Tag tag = tclvo.getTags().get(i);
-						A taglink = new A(tag.getName() + "(" + tag.getAmount() + ")");
+						A taglink = new A(tag.getName() + 
+								(tag.getAmount() > 1 ? "(" + tag.getAmount() + ")" :"") );
 						if(t.equals(tag)){
 							taglink.setSclass("tag-cloud tag-cloud-sel tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));	
 						}else{
