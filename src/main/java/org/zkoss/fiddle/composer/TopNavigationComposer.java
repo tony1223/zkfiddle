@@ -91,15 +91,21 @@ public class TopNavigationComposer extends GenericForwardComposer {
 				String inst = CookieUtil.getCookie("inst");
 				if (inst != null) {
 					ListModel lm = instances.getModel();
-
+					//when no instance
+					if(lm.getSize() > 0 && lm.getElementAt(0) instanceof String){
+						instances.setSelectedIndex(0);
+						return;
+					}
 					{// check last index first to speed it up
 						String indstr = CookieUtil.getCookie("ind");
 						int ind = indstr == null ? -1 : Integer.parseInt(indstr);
 						if (ind != -1) {
-							FiddleSandbox sandbox = (FiddleSandbox) lm.getElementAt(ind);
-							if (inst.equals(sandbox.getHash())) {
-								instances.setSelectedIndex(ind);
-								return;
+							if(ind < lm.getSize() ){
+								FiddleSandbox sandbox = (FiddleSandbox) lm.getElementAt(ind);
+								if (inst.equals(sandbox.getHash())) {
+									instances.setSelectedIndex(ind);
+									return;
+								}
 							}
 						}
 					}
