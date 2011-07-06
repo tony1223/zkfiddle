@@ -161,6 +161,7 @@ span.text-bold {
 }
 .sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr,.sourcetabs .z-tab-hm {
 	height: 29px;
+	*height:auto;
 }
 .source-vlayout .z-tabpanel {
 	padding: 0;
