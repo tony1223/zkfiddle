@@ -161,7 +161,7 @@ span.text-bold {
 }
 .sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr,.sourcetabs .z-tab-hm {
 	height: 29px;
-	*height:auto;
+	*height:auto; /* Tony: fix IE7 sourcetabs tab fly away */
 }
 .source-vlayout .z-tabpanel {
 	padding: 0;
@@ -298,4 +298,10 @@ pre.CodeMirror-cursor {
 div.z-listbox-header tr.z-listhead, div.z-listbox-header tr.z-auxhead {
 	background: transparent repeat-x 0 0;
 	background-image: url(${c:encodeURL('~./zul/img/breeze/grid/column-bg.png')});
+}
+
+/** Tony: Fix IE7 view result iframe is not 100% issue */
+.preview{
+	*width:100% !important;
+	*height:100% !important;
 }
