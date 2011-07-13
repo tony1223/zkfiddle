@@ -20,7 +20,8 @@ public enum FiddleCache {
 	public Cache getInstance(){
 		return CacheManager.getInstance().getCache(this.name());
 	}
-	
+
+
 	public void removeAll(){
 		getInstance().removeAll();
 	}
@@ -28,8 +29,8 @@ public enum FiddleCache {
 	public void remove(String key){
 		getInstance().remove(key);
 	}
-	
-	public Object execute(CacheHandler handle){
+
+	public <H> H execute(CacheHandler<H> handle){
 		return handle.get(getInstance());		
 	}
 }
