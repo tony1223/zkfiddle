@@ -136,6 +136,10 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
 		List<Tag> list = tagDao.findPopularTags(20);
+
+		//if there's no tag , need not to do this.
+		if( list.size() == 0 ) return ;
+
 		TagCloudVO tcvo = new TagCloudVO(list);
 
 
