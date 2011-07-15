@@ -73,7 +73,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Tabpanels sourcetabpanels;
 
-	private ICase $case = null;
+	private ICase _case = null;
 
 	private Textbox caseTitle;
 
@@ -117,12 +117,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		resources = new ArrayList<Resource>();
 
-		$case = (ICase) requestScope.get("__case"); // new Case();
+		_case = (ICase) requestScope.get("__case"); // new Case();
 
-		boolean newCase = ($case == null || $case.getId() == null);
+		boolean newCase = (_case == null || _case.getId() == null);
 		if (newCase) { // new case!
 			resources.addAll(getDefaultResources());
-			initSEOHandler($case, resources);
+			initSEOHandler(_case, resources);
 		} else {
 			initForCaseExist();
 		}
@@ -149,12 +149,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private void initForCaseExist(){
 		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-		manager.increase(CaseRecord.Type.View, $case);
+		manager.increase(CaseRecord.Type.View, _case);
 		if (logger.isDebugEnabled()) {
-			logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":view");
+			logger.debug("counting:" + _case.getToken() + ":" + _case.getVersion() + ":view");
 		}
 		IResourceDao dao = (IResourceDao) SpringUtil.getBean("resourceDao");
-		List<Resource> dbResources = dao.listByCase($case.getId());
+		List<Resource> dbResources = dao.listByCase(_case.getId());
 		for (Resource r : dbResources) {
 			// we clone it , since we will create a new resource instead of
 			// updating old one.
@@ -165,20 +165,20 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resources.add(resource);
 		}
 
-		caseTitle.setValue($case.getTitle());
+		caseTitle.setValue(_case.getTitle());
 
-		download.setHref("/download/"+$case.getToken() + "/" + $case.getVersion());
+		download.setHref("/download/"+_case.getToken() + "/" + _case.getVersion());
 		caseToolbar.setVisible(true);
 
 		initTagEditor();
 
-		initSEOHandler($case, dbResources);
+		initSEOHandler(_case, dbResources);
 	}
 
 
 	private void initTagEditor(){
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		List<Tag> list = caseTagDao.findTagsBy($case, 1, 30);
+		List<Tag> list = caseTagDao.findTagsBy(_case, 1, 30);
 		updateTags(list);
 
 		EventListener handler = new EventListener() {
@@ -221,7 +221,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			List<Tag> list = "".equals(val.trim()) ? new ArrayList<Tag>() :
 					tagDao.prepareTags(val.split("[ ]*,[ ]*"));
 			ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-			caseTagDao.replaceTags($case, list);
+			caseTagDao.replaceTags(_case, list);
 
 			EventQueues.lookup(FiddleEventQueues.Tag).
 				publish(new Event(FiddleEvents.ON_TAG_UPDATE,null));
@@ -261,7 +261,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		FiddleSandbox inst = viewRequestParam.getFiddleInstance();
 		if (inst != null) { // inst can't be null
 			// use echo event to find a good timing
-			ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, $case, viewRequestParam.getFiddleInstance());
+			ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, _case, viewRequestParam.getFiddleInstance());
 			Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, sv));
 		} else {
 			alert("Can't find sandbox from specific version ");
@@ -277,11 +277,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					ShowResultEvent result = (ShowResultEvent) event;
 
 					if (sourceChange) {
-						if ($case != null && $case.getId() != null) {
+						if (_case != null && _case.getId() != null) {
 							ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-							manager.increase(CaseRecord.Type.RunTemp, $case);
+							manager.increase(CaseRecord.Type.RunTemp, _case);
 							if (logger.isDebugEnabled()) {
-								logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":run-temp");
+								logger.debug("counting:" + _case.getToken() + ":" + _case.getVersion() + ":run-temp");
 							}
 						}
 						Case tmpcase = new Case();
@@ -300,11 +300,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						VirtualCaseManager.getInstance().save(virtualCase);
 						result.setCase(tmpcase);
 					} else {
-						result.setCase($case);
+						result.setCase(_case);
 						ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-						manager.increase(CaseRecord.Type.Run, $case);
+						manager.increase(CaseRecord.Type.Run, _case);
 						if (logger.isDebugEnabled()) {
-							logger.debug($case.getToken() + ":" + $case.getVersion() + ":run");
+							logger.debug(_case.getToken() + ":" + _case.getVersion() + ":run");
 						}
 					}
 
@@ -322,7 +322,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
 
 					String ip = Executions.getCurrent().getRemoteAddr();
-					ICase saved = caseManager.saveCase($case, resources, caseTitle.getValue(), saveEvt.isFork(), ip,
+					ICase saved = caseManager.saveCase(_case, resources, caseTitle.getValue(), saveEvt.isFork(), ip,
 							cbSaveTag.isChecked());
 					if (saved != null) {
 						Executions.getCurrent().sendRedirect(
@@ -344,14 +344,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		if (evt.isLiked()) {
 			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion() + ":like");
+				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":like");
 			}
-			manager.increase(CaseRecord.Type.Like, $case);
+			manager.increase(CaseRecord.Type.Like, _case);
 		} else {
 			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion() + ":unlike");
+				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":unlike");
 			}
-			manager.decrease(CaseRecord.Type.Like, $case.getId());
+			manager.decrease(CaseRecord.Type.Like, _case.getId());
 		}
 	}
 
