@@ -17,6 +17,7 @@ import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.visualmodel.TagCaseListVO;
 
+@SuppressWarnings("unchecked")
 public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 
 	public List<CaseTag> list() {
@@ -30,43 +31,43 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 		super.saveOrUdateObject(ct);
 		FiddleCache.CaseTag.removeAll();
 	}
-	
+
 	public void replaceTags(final ICase _case,final List<Tag> list) {
 		getTxTemplate().execute(new HibernateTransacationCallback<Void>(getHibernateTemplate()) {
 			public Void doInHibernate(Session session) throws HibernateException, SQLException {
-				
+
 				//decrease the amount
 				Query query = session.createQuery("update Tag set amount = amount -1 "+
 						" where id in (select tagId from CaseTag where caseId = :caseId)");
 				query.setLong("caseId",_case.getId());
 				query.executeUpdate();
-				
+
 				//removeing the tag
 				Query query2 = session.createQuery("delete from CaseTag where caseId = :caseId");
 				query2.setLong("caseId",_case.getId());
 				query2.executeUpdate();
-				
+
 				for(Tag tag:list){
 					CaseTag caseTag = new CaseTag();
 					caseTag.setCaseId(_case.getId());
 					caseTag.setTagId(tag.getId());
 					session.save(caseTag);
 				}
-				
-				//add the new amount 
+
+				//add the new amount
 				Query query3 = session.createQuery("update Tag set amount = amount +1  "+
 				" where id in (select tagId from CaseTag where caseId = :caseId)");
 				query3.setLong("caseId",_case.getId());
 				query3.executeUpdate();
-				
+
 				FiddleCache.CaseTag.removeAll();
 				return null;
 			}
 		});
-		
+
 	}
 
-	
+
 
 	public List<Tag> findTagsBy(final ICase c) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
@@ -114,7 +115,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 	private static String HQL_findCaseByTag = "select c from CaseRecord c, " + " CaseTag tc "
 			+ " where c.caseId = tc.caseId and c.type = 0 and tc.tagId = :tagId "+
 			" order by c.amount desc";
-	
+
 	/**
 	 * This one is also a time consuming one ,
 	 * need to find a better approach , I do believe I miss something here; :-(
@@ -129,6 +130,11 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 						query.setLong("tagId", tag.getId());
 						query.setResultTransformer(new ResultTransformer() {
 
+							/**
+							 *
+							 */
+							private static final long serialVersionUID = 5448254005740927852L;
+
 							public Object transformTuple(Object[] tuple, String[] aliases) {
 								TagCaseListVO tcvo = new TagCaseListVO();
 
@@ -138,11 +144,12 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 										+ " where t.id = ct.tagId and ct.caseId = :caseId ");
 								query.setLong("caseId", cas.getCaseId());
 								List<Tag> list = query.list();
-								
+
 								tcvo.setTags(list);
 								return tcvo;
 							}
 
+							@SuppressWarnings("rawtypes")
 							public List transformList(List collection) {
 								return collection;
 							}
@@ -159,7 +166,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 		});
 
 	}
-	
+
 	private static String HQL_countCaseByTag = "select count(c) from CaseRecord c, CaseTag tc "
 			+ " where c.caseId = tc.caseId and c.type = 0 and tc.tagId = :tagId ";
 

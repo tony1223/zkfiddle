@@ -7,27 +7,27 @@ import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.zkoss.fiddle.model.Case;
-import org.zkoss.fiddle.model.api.IResource;
+import org.zkoss.fiddle.model.Resource;
 
 /**
  * a virtual case object used for visual case.
- * 
+ *
  * @author tony
- * 
+ *
  */
-public class VirtualCase implements Comparable {
+public class VirtualCase implements Comparable<Object> {
 
 	private Case $case;
 
-	private List<IResource> resources;
-	
+	private List<Resource> resources;
+
 	private Date createDate;
 
 	public VirtualCase(){
 		createDate = new Date();
 	}
-	
-	public VirtualCase(Case $case,List<IResource> res){
+
+	public VirtualCase(Case $case,List<Resource> res){
 		this.$case = $case;
 		this.resources = res;
 		createDate = new Date();
@@ -41,11 +41,11 @@ public class VirtualCase implements Comparable {
 		this.$case = $case;
 	}
 
-	public List<IResource> getResources() {
+	public List<Resource> getResources() {
 		return resources;
 	}
 
-	public void setResources(List<IResource> resources) {
+	public void setResources(List<Resource> resources) {
 		this.resources = resources;
 	}
 
@@ -67,7 +67,7 @@ public class VirtualCase implements Comparable {
 		return new CompareToBuilder().append(createDate, castOther.createDate).toComparison();
 	}
 
-	
+
 	public Date getCreateDate() {
 		return createDate;
 	}
