@@ -3,6 +3,7 @@ package org.zkoss.fiddle.model.api;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
 
+@Deprecated
 public interface IResource{
 
 	public static int TYPE_ZUL = 0;
