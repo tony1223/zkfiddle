@@ -25,6 +25,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			logger.debug("list() - start");
 		}
 
+		@SuppressWarnings("unchecked")
 		List<CaseRecord> returnList = getHibernateTemplate().find("from CaseRecord");
 		if (logger.isDebugEnabled()) {
 			logger.debug("list() - end");
@@ -201,6 +202,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 				query.setFirstResult((pageIndex - 1) * pageSize);
 				query.setMaxResults(pageSize);
+				@SuppressWarnings("unchecked")
 				List<CaseRecord> returnList2 = query.list();
 				if (logger.isDebugEnabled()) {
 					logger.debug("doInHibernate(Session) - end");

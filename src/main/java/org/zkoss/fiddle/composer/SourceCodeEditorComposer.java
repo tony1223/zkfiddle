@@ -43,6 +43,11 @@ import org.zkoss.zul.Window;
 public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	/**
+	 *
+	 */
+	private static final long serialVersionUID = -5940380002871513285L;
+
+	/**
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(SourceCodeEditorComposer.class);
@@ -58,11 +63,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Textbox caseTitle;
 
 	private Window insertWin;
-	
-	
+
+
 	private Div caseToolbar;
-	
-	private A download;	
+
+	private A download;
 
 	/* for tags */
 	private Hlayout tagContainer;
@@ -145,15 +150,15 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	
 	private void initTagEditor(final ICase $case){
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		List<Tag> list = caseTagDao.findTagsBy($case, 1, 30);
+		List<Tag> list = caseTagDao.findTagsBy(_case, 1, 30);
 		updateTags(list);
-		
+
 		EventListener handler = new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				performUpdateTag();
 			}
 		};
-		
+
 		tagInput.addEventListener("onOK",handler);
 		tagInput.addEventListener("onCancel",new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -163,30 +168,30 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		});
 	}
-	
+
 	private void setTagEditable(boolean bool){
-		
-		//2011/6/27:TonyQ 
+
+		//2011/6/27:TonyQ
 		//set visible twice for forcing smart update
 		//sicne we set visible in client , so the visible state didn't sync with server,
-		//we need to make sure the server will really send the smartUpdate messages. ;)		
+		//we need to make sure the server will really send the smartUpdate messages. ;)
 		editTag.setVisible(!bool);
 		editTag.setVisible(bool); //actually we want editTag visible false
-		
+
 		viewTag.setVisible(bool);
 		viewTag.setVisible(!bool); //actually we want viewTag visible true
 	}
-	
+
 	private void performUpdateTag(){
 		
 		String val = tagInput.getValue();
-		
+
 		boolean valueChange = ( lastVal == null || !val.equals(lastVal));
 		//Do nothing if it didn't change
 		if(valueChange){
 			ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
-			
-			List<Tag> list = "".equals(val.trim()) ? new ArrayList<Tag>() : 
+
+			List<Tag> list = "".equals(val.trim()) ? new ArrayList<Tag>() :
 					tagDao.prepareTags(val.split("[ ]*,[ ]*"));
 			ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 			caseTagDao.replaceTags(
@@ -194,15 +199,15 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			
 			EventQueues.lookup(FiddleEventQueues.Tag).
 				publish(new Event(FiddleEvents.ON_TAG_UPDATE,null));
-			
+
 			updateTags(list);
 		}
-		
+
 		setTagEditable(false);
 	}
-	
+
 	private void updateTags(List<Tag> list){
-		tagContainer.getChildren().clear();		
+		tagContainer.getChildren().clear();
 		if(list.size() == 0){
 			tagEmpty.setVisible(true);
 			cbSaveTag.setVisible(false);
@@ -224,7 +229,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			cbSaveTag.setVisible(true);
 		}
 	}
-	
+
 	private void runDirectlyView(ViewRequest viewRequestParam){
 
 		FiddleSandbox inst = viewRequestParam.getFiddleInstance();
@@ -245,14 +250,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		ICase $case = WorkbenchContext.getInstance().getCurrentCase();
 		if (evt.isLiked()) {
 			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion() + ":like");
+				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":like");
 			}
-			manager.increase(CaseRecord.Type.Like, $case);
+			manager.increase(CaseRecord.Type.Like, _case);
 		} else {
 			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion() + ":unlike");
+				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":unlike");
 			}
-			manager.decrease(CaseRecord.Type.Like, $case.getId());
+			manager.decrease(CaseRecord.Type.Like, _case.getId());
 		}
 	}
 
@@ -264,7 +269,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	
 	public void onAdd$sourcetabs(Event e) {
 		try {
-			insertWin.doOverlapped();		
+			insertWin.doOverlapped();
 		} catch (Exception e1) {
 			logger.error("onAdd$sourcetabs(Event) - e=" + e, e1);
 		}

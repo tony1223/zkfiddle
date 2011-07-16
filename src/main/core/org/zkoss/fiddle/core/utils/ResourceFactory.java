@@ -42,9 +42,9 @@ public class ResourceFactory {
 			return null;
 	}
 
-	public static IResource getDefaultResource(int type) {
+	public static Resource getDefaultResource(int type) {
 		if (IResource.TYPE_ZUL == type) {
-			IResource r = getDefaultResource(type, "index.zul");
+			Resource r = getDefaultResource(type, "index.zul");
 			r.setCanDelete(false);
 			return r;
 		} else if (IResource.TYPE_JS == type)
@@ -58,11 +58,11 @@ public class ResourceFactory {
 		else
 			return null;
 	}
-	
+
 	private static String readThenReaplce(String filePath, String token, String replaced) {
 
 		ServletContext req = (ServletContext) Executions.getCurrent().getDesktop().getWebApp().getNativeContext();
-		
+
 		String template = FileUtil.readIfExist(req.getRealPath(filePath));
 		if (token != null && template != null)
 			template = template.replaceAll(token, replaced);

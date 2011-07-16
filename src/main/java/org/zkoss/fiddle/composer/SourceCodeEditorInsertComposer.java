@@ -15,6 +15,11 @@ import org.zkoss.zul.Textbox;
 
 public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -316305359195204898L;
+
 	private Combobox type;
 	private Label extension;
 	private Textbox fileName;
@@ -38,7 +43,7 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 			return;
 		}
 		int typeVal = type.getSelectedIndex();
-		
+
 		String selected = type.getSelectedItem().getLabel();
 		String fileNameVal = fileNameStr + getTypeExtension(selected);
 		

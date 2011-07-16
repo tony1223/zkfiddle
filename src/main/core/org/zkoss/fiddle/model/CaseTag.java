@@ -15,6 +15,11 @@ import javax.persistence.Table;
 @Table(name = "r_casetags")
 public class CaseTag implements Serializable {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -866627277113820180L;
+
 	private Long caseId;
 
 	private Long tagId;

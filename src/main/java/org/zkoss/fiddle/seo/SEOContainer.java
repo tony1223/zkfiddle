@@ -17,10 +17,11 @@ import org.zkoss.zk.ui.Desktop;
  * Used in FiddleSEORenderer Each execution should only have one SEOContainer,
  * and only the first execution will be enabled , if you put SEOContainer in a
  * ZKAU Request , it's meaning less.
- * 
+ *
  * @author tony
- * 
+ *
  */
+@SuppressWarnings("rawtypes")
 public class SEOContainer {
 
 	/**
@@ -47,6 +48,7 @@ public class SEOContainer {
 		handlers = new ArrayList<SEOTokenHandler>();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void doHandleSEO(Writer out, SEOToken token) {
 
 		for (SEOTokenHandler handler : handlers) {

@@ -43,11 +43,11 @@ public class FiddleDataFilter implements Filter {
 	private static final Logger logger = Logger.getLogger(FiddleDataFilter.class);
 
 	private ServletContext servletContext;
-	
+
 	private ICaseDao caseDao;
 
 	private IResourceDao resourceDao;
-	
+
 	private ICaseRecordDao caseRecordDao;
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
@@ -55,10 +55,10 @@ public class FiddleDataFilter implements Filter {
 		if (logger.isDebugEnabled()) {
 			logger.debug("doFilter(ServletRequest, ServletResponse, FilterChain) - start");
 		}
-			
+
 
 		HttpServletRequest httprequest = ((HttpServletRequest) request);
-		
+
 		String uri = httprequest.getRequestURI();
 		String context = httprequest.getContextPath();
 
@@ -134,15 +134,15 @@ public class FiddleDataFilter implements Filter {
 		}
 
 	}
-	
+
 	private void outputZIP(HttpServletResponse response, String token, Integer version) throws IOException {
 		try {
 			response.setContentType("application/zip");
-		
+
 			String fileName="fiddle-"+token+"-ver-"+version+".zip";
 			response.setHeader("content-disposition",  "attachment; filename=" + fileName );
 
-			
+
 			//In download case we always load saved case but not virtual cases
 			ByteArrayOutputStream baos = getZipedCaseResources(token, version, response);
 			response.setContentLength(baos.size());
@@ -155,6 +155,7 @@ public class FiddleDataFilter implements Filter {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private boolean renderVisualCase(String token, Integer version, ServletResponse response) throws IOException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("renderVisualCase(String, Integer, ServletResponse) - start");
@@ -204,46 +205,47 @@ public class FiddleDataFilter implements Filter {
 			}
 			return null;
 		}
-		
+
 		caseRecordDao.increase(CaseRecord.Type.Download, c);
 		ByteArrayOutputStream ret = new ByteArrayOutputStream();
 		/**
 		 * Here we assume it's IResource list
 		 */
 		List<Resource> dbResources = resourceDao.listByCase(c.getId());
-		
+
 		ResourcePackager list = ResourcePackager.list();
-		
+
 		//decide to remove this 2011/6/28
 //		list.add(getWebappTemplates(c));
-		
+
 		for(IResource ir:dbResources){
 			list.add(new ResourceFile(ir));
 		}
-		
+
 		list.export(ret);
 		return ret;
 	}
-	
+
 	@SuppressWarnings("unused")
 	private List<IResourceFile> getWebappTemplates(ICase c) throws IOException{
 		String filePath = servletContext.getRealPath("/WEB-INF/_download/ZKfiddleSample.zip");
-		
+
 		List<IResourceFile> list = ZipFileUtil.getFiles(new File(filePath));
-		
+
 		for(IResourceFile ir:list){
 			if(ir.getPath().endsWith(".project")){
-				
+
 				String str = new String(ir.getContentBytes());
 				String ns = str.replaceAll("<name>ZKfiddleSample</name>",
 						"<name>Fiddle_"+c.getToken()+"_"+ c.getVersion() +"</name>");
 				ir.setContentBytes(ns.getBytes());
 			}
 		}
-		
+
 		return  list;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	private boolean renderCase(String token, Integer version, ServletResponse response) throws IOException {
 		if (logger.isDebugEnabled()) {
 			logger.debug("renderCase(String, Integer, ServletResponse) - start");
@@ -273,7 +275,7 @@ public class FiddleDataFilter implements Filter {
 		/**
 		 * Here we assume it's IResource list
 		 */
-		List dbResources = resourceDao.listByCase(c.getId());
+		List<Resource> dbResources = resourceDao.listByCase(c.getId());
 		JSONArray json = renderResources(dbResources);
 
 		JSONObject jsonres = new JSONObject();
@@ -290,13 +292,14 @@ public class FiddleDataFilter implements Filter {
 		return true;
 	}
 
-	private JSONArray renderResources(List<IResource> dbResources) {
+	@SuppressWarnings("unchecked")
+	private JSONArray renderResources(List<Resource> dbResources) {
 		if (logger.isDebugEnabled()) {
 			logger.debug("renderResources(List<Resource>) - start");
 		}
 
 		JSONArray json = new JSONArray();
-		for (IResource ir : dbResources) {
+		for (Resource ir : dbResources) {
 
 			JSONObject obj = new JSONObject();
 			obj.put("type", ir.getType());
@@ -326,7 +329,7 @@ public class FiddleDataFilter implements Filter {
 		this.resourceDao = resourceDao;
 	}
 
-	
+
 	public void setCaseRecordDao(ICaseRecordDao caseRecordDao) {
 		this.caseRecordDao = caseRecordDao;
 	}

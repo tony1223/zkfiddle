@@ -14,6 +14,6 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/social-widget-0.8.0.fiddle.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/texttab-0.8.0.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/zk-fiddletabs-0.8.0.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/codeeditor-0.9.1.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/codeeditor-0.9.3.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

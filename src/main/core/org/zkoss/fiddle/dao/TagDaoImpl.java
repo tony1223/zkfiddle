@@ -18,6 +18,7 @@ import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Tag;
 
+@SuppressWarnings("unchecked")
 public class TagDaoImpl extends AbstractDao implements ITagDao{
 
 	public List<Tag> list() {
@@ -46,7 +47,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 			}
 		});
 	}
-	
+
 
 	public Tag getTag(final String name) {
 		return getHibernateTemplate().execute(new HibernateCallback<Tag>() {
@@ -94,7 +95,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 				}
 
 				List<Tag> list = new ArrayList<Tag>();
-				
+
 				for (String token : tagSet) {
 
 					if (!map.containsKey(token)) {
@@ -126,7 +127,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 		});
 
 	}
-	
+
 	private List<Tag> _findPopularTags(final int amount) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
