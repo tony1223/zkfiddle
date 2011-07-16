@@ -79,66 +79,54 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	
 	private Checkbox cbSaveTag;
 	
-	/**
-	 * a state for if content is changed.
-	 * 
-	 * Note: For implementation , If user modify the content and then modify it
-	 * back , we think that's a source changed state ,too.
-	 */
-//	private boolean sourceChange = false;
 
-	/**
-	 * we use desktop level event queue.
-	 */
-//	private EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-//		resources = new ArrayList<Resource>();
-
-
-
-		WorkbenchContext wbCtxt = WorkbenchContext.getInstance();
+		final WorkbenchContext wbCtxt = WorkbenchContext.getInstance();
 		boolean newCase = wbCtxt.isStartWithNewCase();
 		
-//		$case = (ICase) requestScope.get("__case"); // new Case();		
-//		boolean newCase = ($case == null || $case.getId() == null);
-		
-//		if (newCase) { // new case!
-//			resources.addAll(getDefaultResources());
-//			initSEOHandler($case, resources);
-//		} else {
 		if (!newCase) {
-//			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-//			manager.increase(CaseRecord.Type.View, $case);
-//			if (logger.isDebugEnabled()) {
-//				logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":view");
-//			}
-//			IResourceDao dao = (IResourceDao) SpringUtil.getBean("resourceDao");
-//			List<Resource> dbResources = dao.listByCase($case.getId());
-//			for (IResource r : dbResources) {
-//				// we clone it , since we will create a new resource instead of
-//				// updating old one.
-//				Resource resource = r.clone();
-//				resource.setId(null);
-//				resource.setCaseId(null);
-//				resource.setCreateDate(new Date());
-//				resources.add(resource);
-//			}
-//			initSEOHandler($case, dbResources);
 			ICase $case = wbCtxt.getCurrentCase();
 			caseTitle.setValue($case.getTitle());
-			
 			download.setHref("/download/"+$case.getToken() + "/" + $case.getVersion());
 			caseToolbar.setVisible(true);
-			
 			initTagEditor($case);
-			
-			
 		}
+		wbCtxt.subscribeResourceCreated(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if (event instanceof InsertResourceEvent) {
+					InsertResourceEvent insertEvent = (InsertResourceEvent) event;
+					IResource ir = insertEvent.getResource();
+					SourceTabRendererFactory.getRenderer(ir.getType()).appendSourceTab(
+							sourcetabs, 
+							sourcetabpanels, 
+							ir);
+				} 
+			}
+		});		
+		wbCtxt.subscribeResourceSaved(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				if (event instanceof SaveCaseEvent) {
+					SaveCaseEvent saveEvt = (SaveCaseEvent) event;
+					CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
+					String ip = Executions.getCurrent().getRemoteAddr();
+					ICase saved = caseManager.saveCase(wbCtxt.getCurrentCase(), 
+							wbCtxt.getResources(), 
+							caseTitle.getValue(), 
+							saveEvt.isFork(), 
+							ip,
+							cbSaveTag.isChecked());
+					if (saved != null) {
+						Executions.getCurrent().sendRedirect(
+								"/sample/" + saved.getToken() + "/" + saved.getVersion() + saved.getURLFriendlyTitle());
+					}
+				} 
+			}
+		});
 		
-		initSourceEvents();
+		
 		for (IResource resource : wbCtxt.getResources()) {
 			SourceTabRendererFactory.getRenderer(resource.getType()).
 				appendSourceTab(sourcetabs, sourcetabpanels,resource);
@@ -148,28 +136,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				wbCtxt.fireResourceChanged(resource);
 			}
 		}
-		
-		
 		// @see FiddleDispatcherFilter for those use this directly
 		ViewRequest viewRequestParam = (ViewRequest) requestScope.get("runview");
 		if (viewRequestParam != null) {
 			runDirectlyView(viewRequestParam);
 		}
 	}
-	
-//	private void initForCaseExist(List<Resource> dbResources){
-//
-//
-//		caseTitle.setValue($case.getTitle());
-//		
-//		download.setHref("/download/"+$case.getToken() + "/" + $case.getVersion());
-//		caseToolbar.setVisible(true);
-//		
-//		initTagEditor();
-//		
-//		initSEOHandler($case, dbResources);
-//	}
-
 	
 	private void initTagEditor(final ICase $case){
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
@@ -266,44 +238,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		} else {
 			alert("Can't find sandbox from specific version ");
 		}
-	}
-	private void initSourceEvents(){
-		final WorkbenchContext wbCtxt = WorkbenchContext.getInstance();
-		
-		wbCtxt.subscribeResourceCreated(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				if (event instanceof InsertResourceEvent) {
-					InsertResourceEvent insertEvent = (InsertResourceEvent) event;
-					IResource ir = insertEvent.getResource();
-					SourceTabRendererFactory.getRenderer(ir.getType()).appendSourceTab(
-							sourcetabs, 
-							sourcetabpanels, 
-							ir);
-				} 
-			}
-		});		
-		
-		
-		wbCtxt.subscribeResourceSaved(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				if (event instanceof SaveCaseEvent) {
-					SaveCaseEvent saveEvt = (SaveCaseEvent) event;
-					CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
-					String ip = Executions.getCurrent().getRemoteAddr();
-					ICase saved = caseManager.saveCase(wbCtxt.getCurrentCase(), 
-							wbCtxt.getResources(), 
-							caseTitle.getValue(), 
-							saveEvt.isFork(), 
-							ip,
-							cbSaveTag.isChecked());
-					if (saved != null) {
-						Executions.getCurrent().sendRedirect(
-								"/sample/" + saved.getToken() + "/" + saved.getVersion() + saved.getURLFriendlyTitle());
-					}
-				} 
-			}
-		});
-		
 	}
 	
 	public void onLike$fblike(LikeEvent evt) {

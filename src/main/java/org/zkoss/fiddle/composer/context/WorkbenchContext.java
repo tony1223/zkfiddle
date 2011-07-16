@@ -89,6 +89,7 @@ public class WorkbenchContext {
 		} else {
 			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 			manager.increase(CaseRecord.Type.View, $case);
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":view");
 			}
@@ -120,7 +121,7 @@ public class WorkbenchContext {
 	public void addResource(int type, String fileName){
 		Resource ir = ResourceFactory.getDefaultResource( type, fileName);
 		resources.add(ir);
-		fireResourceCreated( ir);
+		sourceQueue.publish(new InsertResourceEvent( ir));
 	}
 
 	public void removeResource(IResource ir) {
@@ -151,8 +152,6 @@ public class WorkbenchContext {
 	public ICase getCurrentCase(){
 		return $case;
 	}
-	
-	
 	
 	public void ShowResult(FiddleSandbox inst) {
 		ShowResultEvent result = new ShowResultEvent(
@@ -266,9 +265,6 @@ public class WorkbenchContext {
 		sourceQueue.subscribe(evtListener);
 	}
 	
-	public void fireResourceCreated(IResource resource){
-		sourceQueue.publish(new InsertResourceEvent( resource));
-	}
 	public void subscribeResourceCreated(EventListener evtListener){
 		sourceQueue.subscribe(evtListener);
 	}
