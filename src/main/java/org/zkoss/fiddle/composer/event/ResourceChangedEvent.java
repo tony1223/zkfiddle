@@ -7,6 +7,10 @@ import org.zkoss.zk.ui.event.Event;
 
 public class ResourceChangedEvent extends Event{
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 8569590747949787104L;
 	private IResource resource;
 	public ResourceChangedEvent(String name,Component target,IResource resource){
 		super(name,target,null);
@@ -17,14 +21,14 @@ public class ResourceChangedEvent extends Event{
 		this(FiddleEvents.ON_RESOURCE_CHANGE,target,resource);
 	}
 
-	
+
 	public IResource getResource() {
 		return resource;
 	}
 
-	
+
 	public void setResource(IResource resource) {
 		this.resource = resource;
 	}
-	
+
 }

@@ -6,6 +6,11 @@ import org.zkoss.zk.ui.event.Event;
 
 public class ShowResultEvent extends Event {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 8416621801805204156L;
+
 	private ICase $case;
 
 	private FiddleSandbox instance;
@@ -24,12 +29,12 @@ public class ShowResultEvent extends Event {
 	public void setInstance(FiddleSandbox instance) {
 		this.instance = instance;
 	}
-	
+
 	public ICase getCase() {
 		return $case;
 	}
 
-	
+
 	public void setCase(ICase $case) {
 		this.$case = $case;
 	}

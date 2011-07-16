@@ -41,6 +41,11 @@ import org.zkoss.zul.Window;
 public class LeftReferenceComposer extends GenericForwardComposer {
 
 	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1691313428073974036L;
+
+	/**
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(LeftReferenceComposer.class);
@@ -50,9 +55,9 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	private Listbox recentlys;
 
 	private Window popupContent;
-	
+
 	private Div tagContainer;
-	
+
 	private EventQueue tag = EventQueues.lookup(FiddleEventQueues.Tag,true);
 
 	public void doAfterCompose(Component comp) throws Exception {
@@ -67,12 +72,12 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 				return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
 			}
 		});
-		
+
 		initTags();
 		tag.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if(FiddleEvents.ON_TAG_UPDATE.equals(event.getName())){
-					initTags();				
+					initTags();
 				}
 			}
 		});
@@ -128,18 +133,22 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	private void initTags(){
 		tagContainer.getChildren().clear();
 		tagContainer.setSclass("tag-container");
-		
+
 		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
 		List<Tag> list = tagDao.findPopularTags(20);
+
+		//if there's no tag , need not to do this.
+		if( list.size() == 0 ) return ;
+
 		TagCloudVO tcvo = new TagCloudVO(list);
 
-		
+
 		Collections.sort(list, new Comparator<Tag>() {
 			public int compare(Tag o1, Tag o2) {
 				return o1.getId().compareTo(o2.getId());
 			}
 		});
-		
+
 		for (int i = 0, size = list.size(); i < size; ++i) {
 			Tag tag = list.get(i);
 			try {
@@ -155,10 +164,10 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 				taglink.setHref("/tag/" + URLEncoder.encode(tag.getName(), "UTF-8"));
 				tagContainer.appendChild(taglink);
 			} catch (UnsupportedEncodingException e) {
-			}	
+			}
 		}
 	}
-	
+
 	public void onSelect$recentlys(Event e) {
 		Case cr = (Case) recentlys.getSelectedItem().getValue();
 		Executions.sendRedirect("/sample/" + cr.getCaseUrl());
@@ -171,7 +180,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	public void onClick$news(Event e) {
 		try {
-			
+
 			popupContent.setTitle("Maintenance Log");
 			popupContent.doOverlapped();
 			((Include)popupContent.getFellow("popupInclude")).setSrc("/html/maintain.html");

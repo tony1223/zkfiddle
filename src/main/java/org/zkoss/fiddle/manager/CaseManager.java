@@ -19,35 +19,34 @@ public class CaseManager extends AbstractManager {
 	private ICaseDao caseDao;
 
 	private IResourceDao resourceDao;
-	
+
 	private ICaseTagDao caseTagDao;
-	
-	public Case saveCase(final ICase _case, final List<Resource> resources, final String title, 
+
+	public Case saveCase(final ICase _case, final List<Resource> resources, final String title,
 			final boolean fork,final String posterIP,final boolean keepTag) {
 
 		return getTxTemplate().execute(new TransactionCallback<Case>() {
 			public Case doInTransaction(TransactionStatus status) {
-				
+
 				Case newCase = new Case();
 				newCase.setCreateDate(new Date());
 				List<Tag> tags = null;
 				if (_case == null || fork) { // Create a brand new case
 					newCase.setVersion(1);
 					newCase.setToken(CRCCaseIDEncoder.getInstance().encode(new Date().getTime()));
-					if (_case != null) { // fork
-						newCase.setFromId(_case.getId());
-					}
-
 				} else {
 					newCase.setToken(_case.getToken());
 					newCase.setThread(_case.getThread());
 					newCase.setVersion(caseDao.getLastVersionByToken(_case.getToken()) + 1);
-					
+
 					if(keepTag){
 						tags = caseTagDao.findTagsBy(_case);
 					}
 				}
-				
+				if (_case != null) { // from a existing case
+					newCase.setFromId(_case.getId());
+				}
+
 				newCase.setTitle(title);
 				newCase.setPosterIP(posterIP);
 
@@ -65,11 +64,11 @@ public class CaseManager extends AbstractManager {
 					resource.setFinalConetnt(newCase);
 					resourceDao.saveOrUdate(resource);
 				}
-				
+
 				if(tags != null){ //keep tag!
 					caseTagDao.replaceTags(newCase, tags);
 				}
-				
+
 				return newCase;
 			}
 
@@ -88,5 +87,5 @@ public class CaseManager extends AbstractManager {
 	public void setCaseTagDao(ICaseTagDao caseTagDao) {
 		this.caseTagDao = caseTagDao;
 	}
-	
+
 }

@@ -16,9 +16,10 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.zkoss.usergroup.dao.IResourceDao#list()
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Resource> list() {
 		return getHibernateTemplate().find("from Resource");
 
@@ -26,7 +27,7 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.zkoss.usergroup.dao.IResourceDao#saveOrUdate(org.zkoss.usergroup.
 	 * model .Resource)
@@ -37,7 +38,7 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.zkoss.usergroup.dao.IResourceDao#get(java.lang.Long)
 	 */
 	public Resource get(Long id) {
@@ -45,13 +46,13 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 	}
 
 	/**
-	 * 
+	 *
 	 * Unsupported Operation As current design , all resource should be
 	 * readonly.
-	 * 
+	 *
 	 * @see org.zkoss.usergroup.dao.IResourceDao#remove(org.zkoss.usergroup.model.
 	 *      Resource)
-	 * 
+	 *
 	 */
 	public void remove(Resource m) {
 
@@ -64,7 +65,7 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 	/**
 	 * Unsupported Operation As current design , all resource should be
 	 * readonly.
-	 * 
+	 *
 	 * @see org.zkoss.usergroup.dao.IResourceDao#remove(java.lang.Long)
 	 */
 	public void remove(Long id) {
@@ -80,6 +81,7 @@ public class ResourceDaoImpl extends AbstractDao implements IResourceDao {
 			protected List<Resource> execute() {
 				return getHibernateTemplate().execute(new HibernateCallback<List<Resource>>() {
 
+					@SuppressWarnings("unchecked")
 					public List<Resource> doInHibernate(Session session) throws HibernateException, SQLException {
 						Query query = session.createQuery("from Resource where caseId = :caseId");
 						query.setLong("caseId", caseId);

@@ -7,12 +7,12 @@ import org.apache.log4j.Logger;
 
 /**
  * A cache implementation to wrap ehcache.
- * 
+ *
  * Need to review if we have better approach to handle this , at least we could
  * use the method from spring.
- * 
+ *
  * @author tony
- * 
+ *
  */
 public abstract class CacheHandler<T> {
 
@@ -26,7 +26,7 @@ public abstract class CacheHandler<T> {
 	 * @return
 	 */
 	abstract protected T execute();
-	
+
 	/**
 	 * how to get the key.
 	 * @return
@@ -38,6 +38,7 @@ public abstract class CacheHandler<T> {
 	 * @param cache
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public T get(Cache cache) {
 		String key = getKey();
 		if (cache.isKeyInCache(key)) {

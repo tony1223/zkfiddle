@@ -58,6 +58,11 @@ import org.zkoss.zul.Window;
 public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	/**
+	 *
+	 */
+	private static final long serialVersionUID = -5940380002871513285L;
+
+	/**
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(SourceCodeEditorComposer.class);
@@ -68,16 +73,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Tabpanels sourcetabpanels;
 
-	private ICase $case = null;
+	private ICase _case = null;
 
 	private Textbox caseTitle;
 
 	private Window insertWin;
-	
-	
+
+
 	private Div caseToolbar;
-	
-	private A download;	
+
+	private A download;
 
 	/* for tags */
 	private Hlayout tagContainer;
@@ -91,12 +96,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Hlayout viewTag;
 
 	private String lastVal;
-	
+
 	private Checkbox cbSaveTag;
-	
+
 	/**
 	 * a state for if content is changed.
-	 * 
+	 *
 	 * Note: For implementation , If user modify the content and then modify it
 	 * back , we think taht's a source changed state ,too.
 	 */
@@ -112,19 +117,19 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		resources = new ArrayList<Resource>();
 
-		$case = (ICase) requestScope.get("__case"); // new Case();
+		_case = (ICase) requestScope.get("__case"); // new Case();
 
-		boolean newCase = ($case == null || $case.getId() == null);
+		boolean newCase = (_case == null || _case.getId() == null);
 		if (newCase) { // new case!
 			resources.addAll(getDefaultResources());
-			initSEOHandler($case, resources);
+			initSEOHandler(_case, resources);
 		} else {
 			initForCaseExist();
 		}
 
-		
+
 		initSourceEvents();
-		for (IResource resource : resources) {
+		for (Resource resource : resources) {
 			SourceTabRendererFactory.getRenderer(resource.getType()).
 				appendSourceTab(sourcetabs, sourcetabpanels,resource);
 			if (newCase) {
@@ -133,24 +138,24 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				sourceQueue.publish(new ResourceChangedEvent(null, resource));
 			}
 		}
-		
-		
+
+
 		// @see FiddleDispatcherFilter for those use this directly
 		ViewRequest viewRequestParam = (ViewRequest) requestScope.get("runview");
 		if (viewRequestParam != null) {
 			runDirectlyView(viewRequestParam);
 		}
 	}
-	
+
 	private void initForCaseExist(){
 		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-		manager.increase(CaseRecord.Type.View, $case);
+		manager.increase(CaseRecord.Type.View, _case);
 		if (logger.isDebugEnabled()) {
-			logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":view");
+			logger.debug("counting:" + _case.getToken() + ":" + _case.getVersion() + ":view");
 		}
 		IResourceDao dao = (IResourceDao) SpringUtil.getBean("resourceDao");
-		List<Resource> dbResources = dao.listByCase($case.getId());
-		for (IResource r : dbResources) {
+		List<Resource> dbResources = dao.listByCase(_case.getId());
+		for (Resource r : dbResources) {
 			// we clone it , since we will create a new resource instead of
 			// updating old one.
 			Resource resource = r.clone();
@@ -160,28 +165,28 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			resources.add(resource);
 		}
 
-		caseTitle.setValue($case.getTitle());
-		
-		download.setHref("/download/"+$case.getToken() + "/" + $case.getVersion());
+		caseTitle.setValue(_case.getTitle());
+
+		download.setHref("/download/"+_case.getToken() + "/" + _case.getVersion());
 		caseToolbar.setVisible(true);
-		
+
 		initTagEditor();
-		
-		initSEOHandler($case, dbResources);
+
+		initSEOHandler(_case, dbResources);
 	}
 
-	
+
 	private void initTagEditor(){
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		List<Tag> list = caseTagDao.findTagsBy($case, 1, 30);
+		List<Tag> list = caseTagDao.findTagsBy(_case, 1, 30);
 		updateTags(list);
-		
+
 		EventListener handler = new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				performUpdateTag();
 			}
 		};
-		
+
 		tagInput.addEventListener("onOK",handler);
 		tagInput.addEventListener("onCancel",new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -191,44 +196,44 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		});
 	}
-	
+
 	private void setTagEditable(boolean bool){
-		
-		//2011/6/27:TonyQ 
+
+		//2011/6/27:TonyQ
 		//set visible twice for forcing smart update
 		//sicne we set visible in client , so the visible state didn't sync with server,
-		//we need to make sure the server will really send the smartUpdate messages. ;)		
+		//we need to make sure the server will really send the smartUpdate messages. ;)
 		editTag.setVisible(!bool);
 		editTag.setVisible(bool); //actually we want editTag visible false
-		
+
 		viewTag.setVisible(bool);
 		viewTag.setVisible(!bool); //actually we want viewTag visible true
 	}
-	
+
 	private void performUpdateTag(){
 		String val = tagInput.getValue();
-		
+
 		boolean valueChange = ( lastVal == null || !val.equals(lastVal));
 		//Do nothing if it didn't change
 		if(valueChange){
 			ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
-			
-			List<Tag> list = "".equals(val.trim()) ? new ArrayList<Tag>() : 
+
+			List<Tag> list = "".equals(val.trim()) ? new ArrayList<Tag>() :
 					tagDao.prepareTags(val.split("[ ]*,[ ]*"));
 			ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-			caseTagDao.replaceTags($case, list);
-			
+			caseTagDao.replaceTags(_case, list);
+
 			EventQueues.lookup(FiddleEventQueues.Tag).
 				publish(new Event(FiddleEvents.ON_TAG_UPDATE,null));
-			
+
 			updateTags(list);
 		}
-		
+
 		setTagEditable(false);
 	}
-	
+
 	private void updateTags(List<Tag> list){
-		tagContainer.getChildren().clear();		
+		tagContainer.getChildren().clear();
 		if(list.size() == 0){
 			tagEmpty.setVisible(true);
 			cbSaveTag.setVisible(false);
@@ -250,13 +255,13 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			cbSaveTag.setVisible(true);
 		}
 	}
-	
+
 	private void runDirectlyView(ViewRequest viewRequestParam){
 
 		FiddleSandbox inst = viewRequestParam.getFiddleInstance();
 		if (inst != null) { // inst can't be null
 			// use echo event to find a good timing
-			ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, $case, viewRequestParam.getFiddleInstance());
+			ShowResultEvent sv = new ShowResultEvent(FiddleEvents.ON_SHOW_RESULT, _case, viewRequestParam.getFiddleInstance());
 			Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, sv));
 		} else {
 			alert("Can't find sandbox from specific version ");
@@ -265,18 +270,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private void initSourceEvents(){
 		sourceQueue.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				
+
 				if (event instanceof ResourceChangedEvent) {
 					sourceChange = true;
 				} else if (event instanceof ShowResultEvent) {
 					ShowResultEvent result = (ShowResultEvent) event;
 
 					if (sourceChange) {
-						if ($case != null && $case.getId() != null) {
+						if (_case != null && _case.getId() != null) {
 							ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-							manager.increase(CaseRecord.Type.RunTemp, $case);
+							manager.increase(CaseRecord.Type.RunTemp, _case);
 							if (logger.isDebugEnabled()) {
-								logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":run-temp");
+								logger.debug("counting:" + _case.getToken() + ":" + _case.getVersion() + ":run-temp");
 							}
 						}
 						Case tmpcase = new Case();
@@ -285,9 +290,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						tmpcase.setToken(token);
 						tmpcase.setVersion(0);
 
-						List<IResource> newlist = new ArrayList<IResource>();
-						for (IResource current : resources) {
-							IResource cloneResource = current.clone();
+						List<Resource> newlist = new ArrayList<Resource>();
+						for (Resource current : resources) {
+							Resource cloneResource = current.clone();
 							cloneResource.setFinalConetnt(tmpcase);
 							newlist.add(cloneResource);
 						}
@@ -295,11 +300,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						VirtualCaseManager.getInstance().save(virtualCase);
 						result.setCase(tmpcase);
 					} else {
-						result.setCase($case);
+						result.setCase(_case);
 						ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-						manager.increase(CaseRecord.Type.Run, $case);
+						manager.increase(CaseRecord.Type.Run, _case);
 						if (logger.isDebugEnabled()) {
-							logger.debug($case.getToken() + ":" + $case.getVersion() + ":run");
+							logger.debug(_case.getToken() + ":" + _case.getVersion() + ":run");
 						}
 					}
 
@@ -315,9 +320,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					SaveCaseEvent saveEvt = (SaveCaseEvent) event;
 
 					CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
-					
+
 					String ip = Executions.getCurrent().getRemoteAddr();
-					ICase saved = caseManager.saveCase($case, resources, caseTitle.getValue(), saveEvt.isFork(), ip,
+					ICase saved = caseManager.saveCase(_case, resources, caseTitle.getValue(), saveEvt.isFork(), ip,
 							cbSaveTag.isChecked());
 					if (saved != null) {
 						Executions.getCurrent().sendRedirect(
@@ -331,22 +336,22 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					removeResource(sourceRmEvt.getResource());
 				}
 			}
-		});		
+		});
 	}
-	
+
 	public void onLike$fblike(LikeEvent evt) {
 		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 
 		if (evt.isLiked()) {
 			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion() + ":like");
+				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":like");
 			}
-			manager.increase(CaseRecord.Type.Like, $case);
+			manager.increase(CaseRecord.Type.Like, _case);
 		} else {
 			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion() + ":unlike");
+				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":unlike");
 			}
-			manager.decrease(CaseRecord.Type.Like, $case.getId());
+			manager.decrease(CaseRecord.Type.Like, _case.getId());
 		}
 	}
 
@@ -367,7 +372,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 
 	private List<Resource> getDefaultResources() {
-		List resources = new ArrayList<IResource>();
+		List<Resource> resources = new ArrayList<Resource>();
 		resources.add(ResourceFactory.getDefaultResource(IResource.TYPE_ZUL));
 		// resources.add(getDefaultResource(IResource.TYPE_JS));
 		// resources.add(getDefaultResource(IResource.TYPE_CSS));
@@ -376,16 +381,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		return resources;
 	}
-	
+
 	public void onAdd$sourcetabs(Event e) {
 		try {
-			insertWin.doOverlapped();		
+			insertWin.doOverlapped();
 		} catch (Exception e1) {
 			logger.error("onAdd$sourcetabs(Event) - e=" + e, e1);
 		}
 	}
 
-	
+
 	private void initSEOHandler(ICase $case, List<Resource> resources) {
 
 		SEOContainer seo = SEOContainer.getInstance(desktop);

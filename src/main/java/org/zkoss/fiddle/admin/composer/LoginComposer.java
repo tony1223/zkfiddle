@@ -9,6 +9,11 @@ import org.zkoss.zul.Textbox;
 
 public class LoginComposer extends GenericForwardComposer {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -8939520006607012735L;
+
 	private Textbox account;
 
 	private Textbox password;
@@ -23,7 +28,7 @@ public class LoginComposer extends GenericForwardComposer {
 			session.setAttribute("login", true);
 			session.setAttribute("account", u.getAccount());
 		}
-		
+
 		//force reload
 		Clients.evalJavaScript("self.location.href= self.location.href;");
 

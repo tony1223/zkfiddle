@@ -29,6 +29,11 @@ import org.zkoss.zul.event.ZulEvents;
 public class TopNavigationComposer extends GenericForwardComposer {
 
 	/**
+	 *
+	 */
+	private static final long serialVersionUID = 6098592769427716897L;
+
+	/**
 	 * we use desktop level event queue.
 	 */
 	private EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
@@ -45,14 +50,14 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		super.doAfterCompose(comp);
 
 
-		boolean newcase = requestScope.get("__case") == null; 
+		boolean newcase = requestScope.get("__case") == null;
 		if (!newcase) { //existing case
 			saveBtn.setLabel("Update");
 			saveBtn.setImage("/img/arrow_refresh.png");
 		}else{
 			forkBtn.setVisible(false);
 		}
-		
+
 		initSandbox();
 
 		sourceQueue.subscribe(new EventListener() {
@@ -62,9 +67,9 @@ public class TopNavigationComposer extends GenericForwardComposer {
 				}
 			}
 		});
-		
+
 	}
-	
+
 	private void initSandbox(){
 		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil.getBean("sandboxManager");
 		Collection<FiddleSandbox> acounts = sandboxManager.listFiddleInstances().values();
@@ -81,8 +86,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 					comboItem.setValue(data);
 				}
 			});
-			
-			TreeSet tree = new TreeSet(sandboxManager.listFiddleInstances().values());
+
+			TreeSet<FiddleSandbox> tree = new TreeSet<FiddleSandbox>(sandboxManager.listFiddleInstances().values());
 			instances.setModel(new ListModelList(tree));
 		}
 		instances.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
@@ -126,13 +131,13 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			}
 		});
 	}
-	
+
 	public void onChange$instances(){
 		FiddleSandbox inst = (FiddleSandbox) instances.getSelectedItem().getValue();
 		CookieUtil.setCookie("inst",inst.getHash(),CookieUtil.AGE_ONE_YEAR);
 		CookieUtil.setCookie("ind",String.valueOf(instances.getSelectedIndex()),CookieUtil.AGE_ONE_YEAR);
 	}
-	
+
 	public void onClick$viewBtn() {
 		FiddleSandbox inst = null;
 		if (instances.getSelectedIndex() == -1)

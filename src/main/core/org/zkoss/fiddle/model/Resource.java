@@ -22,6 +22,11 @@ import org.zkoss.fiddle.model.api.IResource;
 @Table(name = "resources")
 public class Resource implements IResource, Cloneable, Serializable {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -4759386406027188251L;
+
 	private Long id;
 
 	private String name;
@@ -178,7 +183,7 @@ public class Resource implements IResource, Cloneable, Serializable {
 	public String getFullPackage(){
 		return IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + this.getPkg();
 	}
-	
+
 	public Resource clone() {
 		Resource resource = new Resource();
 		resource.setCaseId(this.caseId);
@@ -225,7 +230,7 @@ public class Resource implements IResource, Cloneable, Serializable {
 		}
 
 	}
-	
+
 	public String buildFinalConetnt(String token, int version) {
 
 		if (token == null) {

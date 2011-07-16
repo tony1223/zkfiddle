@@ -11,10 +11,11 @@ import org.zkoss.fiddle.dao.api.IUserDao;
 import org.zkoss.fiddle.model.User;
 
 
-public class UserDaoImpl extends AbstractDao implements IUserDao<User> {
+public class UserDaoImpl extends AbstractDao implements IUserDao {
 
+	@SuppressWarnings("unchecked")
 	public List<User> list() {
-		return getHibernateTemplate().find("from User");
+		return (List<User>) getHibernateTemplate().find("from User");
 	}
 
 
@@ -43,7 +44,7 @@ public class UserDaoImpl extends AbstractDao implements IUserDao<User> {
 		});
 
 	}
-	
+
 	public void remove(final Long id) {
 
 		getTxTemplate().execute(new HibernateTransacationCallback<Void>(getHibernateTemplate()) {

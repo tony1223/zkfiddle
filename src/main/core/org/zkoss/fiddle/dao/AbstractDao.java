@@ -18,14 +18,14 @@ public class AbstractDao extends HibernateDaoSupport {
 		this.txTemplate.setPropagationBehavior(DefaultTransactionDefinition.PROPAGATION_REQUIRED);
 	}
 
-	
+
 	/*package*/ TransactionTemplate getTxTemplate() {
 		return txTemplate;
 	}
-	
+
 	protected void saveOrUdateObject(final Object m) {
-		getTxTemplate().execute(new HibernateTransacationCallback(getHibernateTemplate()) {
-			public Object doInHibernate(Session session) throws HibernateException, SQLException {
+		getTxTemplate().execute(new HibernateTransacationCallback<Void>(getHibernateTemplate()) {
+			public Void doInHibernate(Session session) throws HibernateException, SQLException {
 				session.saveOrUpdate(m);
 				return null;
 			}

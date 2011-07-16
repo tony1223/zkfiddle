@@ -26,6 +26,11 @@ import org.zkoss.zul.event.ZulEvents;
 
 public class TagListComposer extends GenericForwardComposer {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 8763856551822579585L;
+
 	private Grid tagCaseList;
 
 	private Paging tagCasePaging;
@@ -93,14 +98,14 @@ public class TagListComposer extends GenericForwardComposer {
 
 					for (int i = 0, size = tclvo.getTags().size(); i < size; ++i) {
 						Tag tag = tclvo.getTags().get(i);
-						A taglink = new A(tag.getName() + 
+						A taglink = new A(tag.getName() +
 								(tag.getAmount() > 1 ? "(" + tag.getAmount() + ")" :"") );
 						if(t.equals(tag)){
-							taglink.setSclass("tag-cloud tag-cloud-sel tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));	
+							taglink.setSclass("tag-cloud tag-cloud-sel tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));
 						}else{
 							taglink.setSclass("tag-cloud tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));
 						}
-						
+
 						taglink.setHref("/tag/" + URLEncoder.encode(tag.getName(), "UTF-8"));
 						tagcont.appendChild(taglink);
 					}

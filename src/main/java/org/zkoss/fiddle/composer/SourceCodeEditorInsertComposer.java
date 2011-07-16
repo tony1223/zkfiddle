@@ -11,6 +11,11 @@ import org.zkoss.zul.Textbox;
 
 public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -316305359195204898L;
+
 	private Combobox type;
 
 	private Textbox fileName;
@@ -22,12 +27,12 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 
 	public void onClick$insert(Event e) {
 		int typeVal = type.getSelectedIndex();
-		
+
 		String selected = type.getSelectedItem().getLabel();
 		String fileNameVal = fileName.getValue() + ("javascript".equals(selected) ? ".js" : "." +selected);
-		
+
 		sourceQueue.publish(new InsertResourceEvent(null, null, fileNameVal, typeVal));
-		
+
 		type.setSelectedIndex(0);
 		fileName.setText("");
 	}

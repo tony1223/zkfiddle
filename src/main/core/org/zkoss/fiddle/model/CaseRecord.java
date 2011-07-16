@@ -22,6 +22,11 @@ import org.hibernate.annotations.Index;
 @Table(name="caserecord")
 public class CaseRecord implements Serializable{
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -2427044850941659111L;
+
 	public enum Type {
 		View(0), Like(1), RunTemp(2), Run(3), Download(4);
 		private Integer type;
@@ -31,24 +36,24 @@ public class CaseRecord implements Serializable{
 		public Integer value() {
 			return type;
 		}
-		
+
 		public static boolean contains(int i){
 			return ( i >= 0 && i < 4 );
 		}
 	}
-	
+
 	private Long id;
-	
+
 	private Long caseId;
-	
+
 	private String token;
-	
+
 	private Integer version;
-	
+
 	private String title;
-	
+
 	private Long amount;
-	
+
 	private Integer type;
 
 	@Id
@@ -60,7 +65,7 @@ public class CaseRecord implements Serializable{
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	/*
 	 * About the index ,  we assume that we will usually find by type first, then find case second. (if need)
 	 */
@@ -79,7 +84,7 @@ public class CaseRecord implements Serializable{
 		return token;
 	}
 
-	
+
 	public void setToken(String token) {
 		this.token = token;
 	}
@@ -89,7 +94,7 @@ public class CaseRecord implements Serializable{
 		return title;
 	}
 
-	
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -98,7 +103,7 @@ public class CaseRecord implements Serializable{
 	public Long getAmount() {
 		return amount;
 	}
-	
+
 	public void setAmount(Long amount) {
 		this.amount = amount;
 	}
@@ -117,7 +122,7 @@ public class CaseRecord implements Serializable{
 	public Integer getType() {
 		return type;
 	}
-	
+
 	public void setType(Integer type) {
 		this.type = type;
 	}
@@ -134,12 +139,12 @@ public class CaseRecord implements Serializable{
 		}
 		return sb.toString();
 	}
-	
+
 	@Transient
 	public String getCaseUrl() {
 		return getToken() + "/" + getVersion() + getURLFriendlyTitle();
 	}
-	
+
 	public boolean equals(final Object other) {
 		if (!(other instanceof CaseRecord))
 			return false;

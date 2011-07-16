@@ -7,7 +7,7 @@ import org.zkoss.zul.api.Tabs;
 
 /**
  * A tab renderer means it have to render and handle resource data as well including remove , content ...etc
- * they are factory instances , don't save any information on member field! 
+ * they are factory instances , don't save any information on member field!
  * @author tony
  *
  */
