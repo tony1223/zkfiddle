@@ -17,8 +17,8 @@ public class InsertResourceEvent extends Event{
 		fileName = pfileName;
 	}
 	
-	public InsertResourceEvent(Component target,String pfolder,String pfileName,int ptype){
-		this(FiddleEvents.ON_RESOURCE_INSERT,target,pfolder,pfileName,ptype);
+	public InsertResourceEvent(Component target, String pfileName,int ptype){
+		this(FiddleEvents.ON_RESOURCE_INSERT, target, null, pfileName, ptype);
 	}
 
 	public String getFolder() {

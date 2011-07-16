@@ -14,6 +14,8 @@ public interface IResource{
 	public static int TYPE_HTML = 3;
 
 	public static int TYPE_CSS = 4;
+	
+	public static int TYPE_MEDIA = 5;
 
 	public static final String PACKAGE_TOKEN = "pkg$";
 

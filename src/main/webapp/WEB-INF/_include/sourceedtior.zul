@@ -64,19 +64,13 @@
 		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
 			title=" Insert New File" width="380px" height="105px" border="normal" position="center, center">
 			<!-- TODO use selectbox instead. -->
-			<zscript><![CDATA[
-				String[] data = new String[] { "zul", "java", "javascript", "html", "css" };
-				ListModel typeset = new ListModelList(data);
-			]]></zscript>
 			<n:table>
 				<n:tr>
 					<n:td class="insertTd" width="80px">
 						<label value="File Type" />
 					</n:td>
 					<n:td>
-						<combobox id="type" readonly="true" model="${typeset}" width="200px"
-							w:onChange="var type = this.getValue(); jq('$extension').html('.' + (type=='javascript' ?'js':type))" 
-							onCreate="self.setSelectedIndex(0)">
+						<combobox id="type" readonly="true"  width="200px">
 							<attribute w:name="slideDown_">
 								function (pp) {
 									jq(pp).show();  //remove slidedown effect -_-#
