@@ -2,15 +2,12 @@ package org.zkoss.fiddle.component.renderer;
 
 import java.util.regex.Pattern;
 
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
-import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
+import org.zkoss.fiddle.composer.context.WorkbenchContext;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zul.A;
@@ -35,7 +32,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		 
 		
 		//we use desktop scope , so it's ok to lookup every time.
-		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
+//		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
 
 		
 		{
@@ -99,7 +96,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 								value = "";
 							}
 							resource.setPkg(value);
-							sourceQueue.publish(new ResourceChangedEvent(null,resource));
+							WorkbenchContext.getInstance().fireResourceChanged(resource);
 							a.setLabel(resource.getFullPackage());
 						}
 					}

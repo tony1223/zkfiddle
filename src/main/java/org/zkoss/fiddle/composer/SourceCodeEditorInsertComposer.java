@@ -1,5 +1,6 @@
 package org.zkoss.fiddle.composer;
 
+import org.zkoss.fiddle.composer.context.WorkbenchContext;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.InsertResourceEvent;
 import org.zkoss.zk.ui.Component;
@@ -28,7 +29,7 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 	/**
 	 * we use desktop level event queue.
 	 */
-	private EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
+	//private EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
 
 	public void onClick$insert(Event e) {
 		String fileNameStr = fileName.getValue();
@@ -41,10 +42,12 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 		String selected = type.getSelectedItem().getLabel();
 		String fileNameVal = fileNameStr + getTypeExtension(selected);
 		
-		sourceQueue.publish(new InsertResourceEvent(null, fileNameVal, typeVal));
+//		sourceQueue.publish(new InsertResourceEvent(null, fileNameVal, typeVal));
+		WorkbenchContext.getInstance().addResource(typeVal, fileNameVal);
 		
 		type.setSelectedIndex(0);
 		fileName.setText("");
+		self.setVisible(false);
 	}
 	public void onCreate(){
 		type.setSelectedIndex(0);

@@ -7,7 +7,7 @@ public class SaveCaseEvent extends Event{
 
 	private boolean fork = false;
 	
-	public SaveCaseEvent(String name,boolean fork) {
+	protected SaveCaseEvent(String name,boolean fork) {
 		super(name);
 		this.fork = fork;
 	}

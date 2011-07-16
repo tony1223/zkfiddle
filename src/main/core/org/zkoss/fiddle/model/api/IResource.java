@@ -1,6 +1,14 @@
 package org.zkoss.fiddle.model.api;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.zkoss.fiddle.component.renderer.ISourceTabRenderer;
+import org.zkoss.fiddle.component.renderer.JavaSourceTabRenderer;
+import org.zkoss.fiddle.component.renderer.MediaSourceTabRenderer;
 import org.zkoss.fiddle.model.Case;
+import org.zkoss.fiddle.model.Media;
 import org.zkoss.fiddle.model.Resource;
 
 public interface IResource{
@@ -16,6 +24,7 @@ public interface IResource{
 	public static int TYPE_CSS = 4;
 	
 	public static int TYPE_MEDIA = 5;
+	
 
 	public static final String PACKAGE_TOKEN = "pkg$";
 
@@ -66,5 +75,9 @@ public interface IResource{
 	public void setFinalConetnt(Case c) ;
 	
 	public String getFullPackage();
+	
+	public Media getMedia();
+	
+	public void setMedia(Media media);
 	
 }

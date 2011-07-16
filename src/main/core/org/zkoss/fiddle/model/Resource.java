@@ -158,6 +158,18 @@ public class Resource implements IResource, Cloneable, Serializable {
 		this.createDate = createDate;
 	}
 
+	/*extra field to have a ref to media
+	* this approach is temporary, 
+	* should be changed if one day we eliminate the usage of Entity Object from UI Part.
+	*/
+	private Media media;
+	public Media getMedia(){
+		return media;
+	}
+	public void setMedia(Media media){
+		this.media = media;
+	}
+	
 	@Transient
 	public String getTypeMode() {
 		switch (type) {

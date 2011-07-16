@@ -1,11 +1,15 @@
 <?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
 
 <zk xmlns:n="native" xmlns:w="client" xmlns:fb="facebook">
-	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" sclass="sourceCodeEditor" vflex="1">
+	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" 
+		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" 
+		sclass="sourceCodeEditor" vflex="1">
+		
 		<vlayout sclass="source-vlayout">
 			<div>
 				<label value="Fiddle Name : " sclass="name" />
-				<textbox id="caseTitle" maxlength="60" cols="62" tooltiptext="Describe your case here! (allowed only 60 chars)" >
+				<textbox id="caseTitle" maxlength="60" cols="62" 
+					tooltiptext="Describe your case here! (allowed only 60 chars)" >
 					<attribute w:name="onChange" >
 						var val = this.$n().value.replace(/[^a-zA-Z0-9]+/gi,'-');
 						if(val[0] == '-') val = val.substring(1);

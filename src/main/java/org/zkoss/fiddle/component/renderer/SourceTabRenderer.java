@@ -2,15 +2,12 @@ package org.zkoss.fiddle.component.renderer;
 
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
+import org.zkoss.fiddle.composer.context.WorkbenchContext;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
-import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zul.Tabpanel;
@@ -29,7 +26,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		ce.setWidth("auto");
 
 		//we use desktop scope , so it's ok to lookup every time.
-		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
+//		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
 		ce.setTheme("eclipse");
 		ce.addEventListener(Events.ON_CHANGE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -37,7 +34,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 				if(event instanceof InputEvent){
 					InputEvent inpEvt = (InputEvent) event;
 					resource.setContent(inpEvt.getValue());
-					sourceQueue.publish(new ResourceChangedEvent(null,resource));
+					WorkbenchContext.getInstance().fireResourceChanged(resource);
 				}
 			}
 		});
@@ -60,10 +57,9 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		texttab.appendChild(box);
 		texttab.setClosable(resource.isCanDelete());
 
-		final EventQueue eventQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
+		final WorkbenchContext wbCtxt = WorkbenchContext.getInstance();
 		
-		eventQueue.subscribe(new EventListener() {
-
+		wbCtxt.subscribeResourceChanged(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if (event instanceof ResourceChangedEvent) {
 					if (((ResourceChangedEvent) event).getResource() == resource) {
@@ -76,14 +72,14 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		box.addEventListener(Events.ON_CHANGE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				resource.setName(box.getValue());
-				eventQueue.publish(new ResourceChangedEvent(null,resource));
+				wbCtxt.fireResourceChanged(resource);
 			}
 		});
 		
 		texttab.addEventListener(Events.ON_CLOSE, new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				eventQueue.publish(new ResourceChangedEvent(null,resource));
-				eventQueue.publish(new SourceRemoveEvent(FiddleEvents.ON_RESOURCE_REMOVE, null,resource ));
+				wbCtxt.fireResourceChanged(resource);
+				wbCtxt.removeResource(resource);
 			}
 		});
 

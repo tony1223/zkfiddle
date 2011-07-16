@@ -13,6 +13,7 @@ import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.model.api.IResource;
 
 public class CaseManager extends AbstractManager {
 
@@ -22,7 +23,7 @@ public class CaseManager extends AbstractManager {
 	
 	private ICaseTagDao caseTagDao;
 	
-	public Case saveCase(final ICase _case, final List<Resource> resources, final String title, 
+	public Case saveCase(final ICase _case, final List<IResource> resources, final String title, 
 			final boolean fork,final String posterIP,final boolean keepTag) {
 
 		return getTxTemplate().execute(new TransactionCallback<Case>() {
@@ -59,11 +60,11 @@ public class CaseManager extends AbstractManager {
 					caseDao.saveOrUdate(newCase);
 				}
 
-				for (Resource resource : resources) {
+				for (IResource resource : resources) {
 					resource.setId(null);
 					resource.setCaseId(newCase.getId());
 					resource.setFinalConetnt(newCase);
-					resourceDao.saveOrUdate(resource);
+					resourceDao.saveOrUdate((Resource)resource);//IAN: no solution if the View keep using resource entity bean!!!
 				}
 				
 				if(tags != null){ //keep tag!
