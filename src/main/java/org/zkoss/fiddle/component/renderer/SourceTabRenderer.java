@@ -5,6 +5,7 @@ import org.zkoss.fiddle.component.Texttab;
 import org.zkoss.fiddle.composer.context.WorkbenchContext;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
+import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -18,7 +19,7 @@ import org.zkoss.zul.api.Tabs;
 
 public class SourceTabRenderer implements ISourceTabRenderer {
 
-	protected CodeEditor prepareCodeEditor(final IResource resource) {
+	protected CodeEditor prepareCodeEditor(final Resource resource) {
 		CodeEditor ce = new CodeEditor();
 		ce.setMode(resource.getTypeMode());
 		ce.setValue(resource.getContent());
@@ -41,7 +42,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		return ce;
 	}
 
-	protected Tab renderTab(final IResource resource) {
+	protected Tab renderTab(final Resource resource) {
 		final Texttab texttab = new Texttab(resource.getTypeName());
 		texttab.setAttribute("model", resource);
 
@@ -86,7 +87,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		return texttab;
 	}
 
-	protected Tabpanel renderTabpanel(IResource resource) {
+	protected Tabpanel renderTabpanel(Resource resource) {
 		/* creating Tabpanel */
 		Tabpanel sourcepanel = new Tabpanel();
 		sourcepanel.appendChild(prepareCodeEditor(resource));
@@ -101,7 +102,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 	 * (org.zkoss.zul.api.Tabs, org.zkoss.zul.api.Tabpanels,
 	 * org.zkoss.fiddle.model.api.IResource)
 	 */
-	public void appendSourceTab(Tabs sourcetabs, Tabpanels sourcetabpanels, final IResource resource) {
+	public void appendSourceTab(Tabs sourcetabs, Tabpanels sourcetabpanels, final Resource resource) {
 		if (sourcetabs == null || sourcetabpanels == null) {
 			throw new IllegalStateException("sourcetabpanels/sourcetabs is not ready !!\n"
 					+ " do you call this after doAfterCompose "

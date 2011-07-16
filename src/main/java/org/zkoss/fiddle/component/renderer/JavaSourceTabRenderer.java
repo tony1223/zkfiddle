@@ -3,6 +3,7 @@ package org.zkoss.fiddle.component.renderer;
 import java.util.regex.Pattern;
 
 import org.zkoss.fiddle.composer.context.WorkbenchContext;
+import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
@@ -21,7 +22,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 
 	private Pattern packageRule = Pattern.compile("^[a-zA-Z_\\$][\\w\\$]*(?:\\.[a-zA-Z_\\$][\\w\\$]*)*$");
 
-	protected Tabpanel renderTabpanel(final IResource resource) {
+	protected Tabpanel renderTabpanel(final Resource resource) {
 
 		Tabpanel sourcepanel = new Tabpanel();
 

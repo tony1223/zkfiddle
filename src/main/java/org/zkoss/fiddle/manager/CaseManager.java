@@ -59,11 +59,11 @@ public class CaseManager extends AbstractManager {
 					caseDao.saveOrUdate(newCase);
 				}
 
-				for (IResource resource : resources) {
+				for (Resource resource : resources) {
 					resource.setId(null);
 					resource.setCaseId(newCase.getId());
 					resource.setFinalConetnt(newCase);
-					resourceDao.saveOrUdate((Resource)resource);//IAN: no solution if the View keep using resource entity bean!!!
+					resourceDao.saveOrUdate(resource);
 				}
 
 				if(tags != null){ //keep tag!

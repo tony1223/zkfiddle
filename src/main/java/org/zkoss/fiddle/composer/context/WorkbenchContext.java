@@ -28,7 +28,6 @@ import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
-import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.fiddle.seo.SEOContainer;
 import org.zkoss.fiddle.seo.handle.SEOTokenHandlerAdpter;
 import org.zkoss.fiddle.seo.model.SEOToken;
@@ -75,10 +74,10 @@ public class WorkbenchContext {
 	private boolean sourceChange;
 	private ICase $case;
 	private boolean newCase;
-	private List<IResource> resources;
+	private List<Resource> resources;
 	
 	protected WorkbenchContext(final Execution exec){
-		resources = new ArrayList<IResource>();
+		resources = new ArrayList<Resource>();
 		$case = (ICase) ((HttpServletRequest)exec.getNativeRequest())
 			.getAttribute("__case"); // new Case();
 
@@ -94,9 +93,9 @@ public class WorkbenchContext {
 				logger.debug("counting:" + $case.getToken() + ":" + $case.getVersion() + ":view");
 			}
 			IResourceDao dao = (IResourceDao) SpringUtil.getBean("resourceDao");
-			List<IResource> dbResources = 
-				new ArrayList<IResource>(dao.listByCase($case.getId()));
-			for (IResource r : dbResources) {
+			List<Resource> dbResources = 
+				new ArrayList<Resource>(dao.listByCase($case.getId()));
+			for (Resource r : dbResources) {
 				// we clone it , since we will create a new resource instead of
 				// updating old one.
 				Resource resource = r.clone();
@@ -124,7 +123,7 @@ public class WorkbenchContext {
 		sourceQueue.publish(new InsertResourceEvent( ir));
 	}
 
-	public void removeResource(IResource ir) {
+	public void removeResource(Resource ir) {
 		if (ir == null){
 			throw new IllegalStateException("removing null resource ");
 		}
@@ -142,7 +141,7 @@ public class WorkbenchContext {
 		return newCase;
 	}
 	
-	public List<IResource> getResources(){
+	public List<Resource> getResources(){
 		return resources;
 	}
 	
@@ -171,9 +170,9 @@ public class WorkbenchContext {
 			tmpcase.setToken(token);
 			tmpcase.setVersion(0);
 
-			List<IResource> newlist = new ArrayList<IResource>();
-			for (IResource current : resources) {
-				IResource cloneResource = current.clone();
+			List<Resource> newlist = new ArrayList<Resource>();
+			for (Resource current : resources) {
+				Resource cloneResource = current.clone();
 				cloneResource.setFinalConetnt(tmpcase);
 				newlist.add(cloneResource);
 			}
@@ -195,25 +194,25 @@ public class WorkbenchContext {
 		sourceQueue.subscribe(evtListener);
 	}
 	
-	private static List<IResource> getDefaultResources() {
-		List<IResource> resources = new ArrayList<IResource>();
-		resources.add(ResourceFactory.getDefaultResource(IResource.TYPE_ZUL));
-		// resources.add(getDefaultResource(IResource.TYPE_JS));
-		// resources.add(getDefaultResource(IResource.TYPE_CSS));
-		// resources.add(getDefaultResource(IResource.TYPE_HTML));
-		resources.add(ResourceFactory.getDefaultResource(IResource.TYPE_JAVA));
+	private static List<Resource> getDefaultResources() {
+		List<Resource> resources = new ArrayList<Resource>();
+		resources.add(ResourceFactory.getDefaultResource(Resource.TYPE_ZUL));
+		// resources.add(getDefaultResource(Resource.TYPE_JS));
+		// resources.add(getDefaultResource(Resource.TYPE_CSS));
+		// resources.add(getDefaultResource(Resource.TYPE_HTML));
+		resources.add(ResourceFactory.getDefaultResource(Resource.TYPE_JAVA));
 
 		return resources;
 	}
 
-	private static void initSEOHandler(ICase $case, List<IResource> resources, Desktop desktop) {
+	private static void initSEOHandler(ICase $case, List<Resource> resources, Desktop desktop) {
 
 		SEOContainer seo = SEOContainer.getInstance(desktop);
 
 		if ($case != null)
 			seo.addToken(new SEOToken<ICase>("case", $case));
 		if (resources != null)
-			seo.addToken(new SEOToken<List<IResource>>("resources", resources));
+			seo.addToken(new SEOToken<List<Resource>>("resources", resources));
 
 		seo.addHandler(new SEOTokenHandlerAdpter<ICase>() {
 
@@ -258,7 +257,7 @@ public class WorkbenchContext {
 	}
 	
 	
-	public void fireResourceChanged(IResource resource){
+	public void fireResourceChanged(Resource resource){
 		sourceQueue.publish(new ResourceChangedEvent(null, resource));
 	}
 	public void subscribeResourceChanged(EventListener evtListener){

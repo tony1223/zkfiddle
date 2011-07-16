@@ -17,6 +17,7 @@ import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.fiddletabs.Fiddletabs;
 import org.zkoss.fiddle.manager.CaseManager;
 import org.zkoss.fiddle.model.CaseRecord;
+import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IResource;
@@ -103,7 +104,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			public void onEvent(Event event) throws Exception {
 				if (event instanceof InsertResourceEvent) {
 					InsertResourceEvent insertEvent = (InsertResourceEvent) event;
-					IResource ir = insertEvent.getResource();
+					Resource ir = insertEvent.getResource();
 					SourceTabRendererFactory.getRenderer(ir.getType()).appendSourceTab(
 							sourcetabs, 
 							sourcetabpanels, 
@@ -132,7 +133,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		});
 		
 		
-		for (IResource resource : wbCtxt.getResources()) {
+		for (Resource resource : wbCtxt.getResources()) {
 			SourceTabRendererFactory.getRenderer(resource.getType()).
 				appendSourceTab(sourcetabs, sourcetabpanels,resource);
 			if (newCase) {
@@ -150,7 +151,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	
 	private void initTagEditor(final ICase $case){
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		List<Tag> list = caseTagDao.findTagsBy(_case, 1, 30);
+		List<Tag> list = caseTagDao.findTagsBy($case, 1, 30);
 		updateTags(list);
 
 		EventListener handler = new EventListener() {
@@ -250,22 +251,20 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		ICase $case = WorkbenchContext.getInstance().getCurrentCase();
 		if (evt.isLiked()) {
 			if (logger.isDebugEnabled()) {
-				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":like");
+				logger.debug($case.getToken() + ":" + $case.getVersion() + ":like");
 			}
-			manager.increase(CaseRecord.Type.Like, _case);
+			manager.increase(CaseRecord.Type.Like, $case);
 		} else {
 			if (logger.isDebugEnabled()) {
-				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":unlike");
+				logger.debug($case.getToken() + ":" + $case.getVersion() + ":unlike");
 			}
-			manager.decrease(CaseRecord.Type.Like, _case.getId());
+			manager.decrease(CaseRecord.Type.Like, $case.getId());
 		}
 	}
 
 	public void onShowResult(Event e) {
 		EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish((ShowResultEvent) e.getData());
 	}
-
-
 	
 	public void onAdd$sourcetabs(Event e) {
 		try {
