@@ -109,7 +109,6 @@ public class WorkbenchContext {
 		sourceQueue = EventQueues.lookup(SOURCE, true);
 		sourceQueue.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				
 				if (event instanceof ResourceChangedEvent) {
 					sourceChange = true;
 				} 
@@ -190,10 +189,6 @@ public class WorkbenchContext {
 		EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true).publish(result);
 	}
 	
-	public void subscribeShowResult(EventListener evtListener){
-		sourceQueue.subscribe(evtListener);
-	}
-	
 	private static List<Resource> getDefaultResources() {
 		List<Resource> resources = new ArrayList<Resource>();
 		resources.add(ResourceFactory.getDefaultResource(Resource.TYPE_ZUL));
@@ -251,11 +246,13 @@ public class WorkbenchContext {
 					appendText(out, "fileContent", r.getFinalContent() == null ? r.getContent() : r.getFinalContent());
 				}
 				appendTagEnd(out, "div");
-
 			}
 		});
 	}
 	
+	public void subscribeShowResult(EventListener evtListener){
+		sourceQueue.subscribe(evtListener);
+	}
 	
 	public void fireResourceChanged(Resource resource){
 		sourceQueue.publish(new ResourceChangedEvent(null, resource));
@@ -267,6 +264,7 @@ public class WorkbenchContext {
 	public void subscribeResourceCreated(EventListener evtListener){
 		sourceQueue.subscribe(evtListener);
 	}
+	
 	
 	public void fireResourceSaved(boolean folk){
 		sourceQueue.publish(new SaveCaseEvent( folk));
