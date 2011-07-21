@@ -13,6 +13,7 @@ import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.model.api.IResource;
 
 public class CaseManager extends AbstractManager {
 

@@ -128,6 +128,8 @@ public class Resource implements IResource, Cloneable, Serializable {
 			return "html";
 		case TYPE_CSS:
 			return "css";
+		case TYPE_MEDIA:
+			return "media";
 		default:
 			return "unknown";
 		}
@@ -161,6 +163,18 @@ public class Resource implements IResource, Cloneable, Serializable {
 		this.createDate = createDate;
 	}
 
+	/*extra field to have a ref to media
+	* this approach is temporary, 
+	* should be changed if one day we eliminate the usage of Entity Object from UI Part.
+	*/
+	private Media media;
+	public Media getMedia(){
+		return media;
+	}
+	public void setMedia(Media media){
+		this.media = media;
+	}
+	
 	@Transient
 	public String getTypeMode() {
 		switch (type) {
@@ -188,7 +202,6 @@ public class Resource implements IResource, Cloneable, Serializable {
 		Resource resource = new Resource();
 		resource.setCaseId(this.caseId);
 		resource.setContent(this.content);
-		resource.setCanDelete(this.canDelete);
 		resource.setName(this.name);
 		resource.setType(this.type);
 		resource.setId(this.id);

@@ -3,6 +3,7 @@ package org.zkoss.fiddle.composer;
 import java.util.Collection;
 import java.util.TreeSet;
 
+import org.zkoss.fiddle.composer.context.WorkbenchContext;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
@@ -33,10 +34,6 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	 */
 	private static final long serialVersionUID = 6098592769427716897L;
 
-	/**
-	 * we use desktop level event queue.
-	 */
-	private EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
 
 	private Combobox instances = null;
 
@@ -60,7 +57,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 		initSandbox();
 
-		sourceQueue.subscribe(new EventListener() {
+		WorkbenchContext.getInstance().subscribeResourceChanged(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if(event instanceof ResourceChangedEvent){
 					viewBtn.setLabel("*Run");
@@ -144,15 +141,15 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			inst = (FiddleSandbox) instances.getItemAtIndex(0).getValue();
 		else
 			inst = (FiddleSandbox) instances.getSelectedItem().getValue();
-
-		sourceQueue.publish(new ShowResultEvent(FiddleEvents.ON_TEMP_SHOW_RESULT , null, inst));
+		
+		WorkbenchContext.getInstance().ShowResult(inst);
 	}
 
 	public void onClick$saveBtn() {
-		sourceQueue.publish(new SaveCaseEvent());
+		WorkbenchContext.getInstance().fireResourceSaved(false);
 	}
 
 	public void onClick$forkBtn() {
-		sourceQueue.publish(new SaveCaseEvent(true));
+		WorkbenchContext.getInstance().fireResourceSaved(true);
 	}
 }

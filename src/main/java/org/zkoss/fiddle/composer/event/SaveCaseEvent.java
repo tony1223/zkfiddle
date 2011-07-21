@@ -10,8 +10,8 @@ public class SaveCaseEvent extends Event{
 	 */
 	private static final long serialVersionUID = -3824637295049138682L;
 	private boolean fork = false;
-
-	public SaveCaseEvent(String name,boolean fork) {
+	
+	protected SaveCaseEvent(String name,boolean fork) {
 		super(name);
 		this.fork = fork;
 	}

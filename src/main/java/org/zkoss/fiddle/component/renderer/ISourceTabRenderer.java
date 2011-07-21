@@ -1,5 +1,6 @@
 package org.zkoss.fiddle.component.renderer;
 
+import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zul.api.Tabpanels;
 import org.zkoss.zul.api.Tabs;
@@ -18,6 +19,6 @@ public interface ISourceTabRenderer {
 	 * @param sourcetabpanels
 	 * @param resource
 	 */
-	public void appendSourceTab(Tabs sourcetabs, Tabpanels sourcetabpanels, final IResource resource);
+	public void appendSourceTab(Tabs sourcetabs, Tabpanels sourcetabpanels, final Resource resource);
 
 }
