@@ -2,11 +2,10 @@ package org.zkoss.fiddle.component.renderer;
 
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
-import org.zkoss.fiddle.composer.context.WorkbenchContext;
-import org.zkoss.fiddle.composer.event.FiddleEvents;
+import org.zkoss.fiddle.composer.event.FiddleEventListener;
+import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.model.Resource;
-import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -26,16 +25,18 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		ce.setHeight("400px");
 		ce.setWidth("auto");
 
-		//we use desktop scope , so it's ok to lookup every time.
-//		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
+		// we use desktop scope , so it's ok to lookup every time.
+		// final EventQueue sourceQueue =
+		// EventQueues.lookup(FiddleEventQueues.SOURCE);
 		ce.setTheme("eclipse");
 		ce.addEventListener(Events.ON_CHANGE, new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
 
-				if(event instanceof InputEvent){
+				if (event instanceof InputEvent) {
 					InputEvent inpEvt = (InputEvent) event;
 					resource.setContent(inpEvt.getValue());
-					WorkbenchContext.getInstance().fireResourceChanged(resource);
+					FiddleSourceEventQueue.lookup().fireResourceChanged(resource, ResourceChangedEvent.Type.Modified);
 				}
 			}
 		});
@@ -50,7 +51,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		box.setSclass("tab-textbox");
 		box.setConstraint("no empty");
 		box.setInplace(true);
-		if(!resource.isCanDelete()){
+		if (!resource.isCanDelete()) {
 			box.setReadonly(true);
 			box.setTooltiptext("you can't edit this file name since it's a must have.");
 		}
@@ -58,29 +59,28 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		texttab.appendChild(box);
 		texttab.setClosable(resource.isCanDelete());
 
-		final WorkbenchContext wbCtxt = WorkbenchContext.getInstance();
-		
-		wbCtxt.subscribeResourceChanged(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				if (event instanceof ResourceChangedEvent) {
-					if (((ResourceChangedEvent) event).getResource() == resource) {
-						texttab.setLabel("*" + resource.getTypeName());
-					}
+		final FiddleSourceEventQueue queue = FiddleSourceEventQueue.lookup();
+		queue.subscribeResourceChanged(new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class) {
+
+			public void onFiddleEvent(ResourceChangedEvent event) throws Exception {
+				if (((ResourceChangedEvent) event).getResource() == resource) {
+					texttab.setLabel("*" + resource.getTypeName());
 				}
 			}
 		});
-		
+
 		box.addEventListener(Events.ON_CHANGE, new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
 				resource.setName(box.getValue());
-				wbCtxt.fireResourceChanged(resource);
+				queue.fireResourceChanged(resource, ResourceChangedEvent.Type.Modified);
 			}
 		});
-		
+
 		texttab.addEventListener(Events.ON_CLOSE, new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
-				wbCtxt.fireResourceChanged(resource);
-				wbCtxt.removeResource(resource);
+				queue.fireResourceChanged(resource, ResourceChangedEvent.Type.Removed);
 			}
 		});
 

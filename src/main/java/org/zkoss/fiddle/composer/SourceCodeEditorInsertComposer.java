@@ -1,12 +1,8 @@
 package org.zkoss.fiddle.composer;
 
-import org.zkoss.fiddle.composer.context.WorkbenchContext;
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
-import org.zkoss.fiddle.composer.event.InsertResourceEvent;
+import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
@@ -47,8 +43,7 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 		String selected = type.getSelectedItem().getLabel();
 		String fileNameVal = fileNameStr + getTypeExtension(selected);
 		
-//		sourceQueue.publish(new InsertResourceEvent(null, fileNameVal, typeVal));
-		WorkbenchContext.getInstance().addResource(typeVal, fileNameVal);
+		FiddleSourceEventQueue.lookup().fireResourceInsert(fileNameVal, typeVal);
 		
 		type.setSelectedIndex(0);
 		fileName.setText("");

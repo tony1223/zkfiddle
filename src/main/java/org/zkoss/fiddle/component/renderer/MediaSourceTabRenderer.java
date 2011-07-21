@@ -5,18 +5,14 @@
 package org.zkoss.fiddle.component.renderer;
 
 import org.zkoss.fiddle.model.Media;
-import org.zkoss.fiddle.model.api.IResource;
+import org.zkoss.fiddle.model.Resource;
 import org.zkoss.image.Image;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.UploadEvent;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Fileupload;
 import org.zkoss.zul.Hlayout;
-import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
-import org.zkoss.zul.api.Tabpanels;
-import org.zkoss.zul.api.Tabs;
 
 /**
  * @author Ian YT Tsai(Zanyking)
@@ -27,7 +23,7 @@ public class MediaSourceTabRenderer  extends SourceTabRenderer {
 	private static final int HEIGHT = 400;
 	private static final String STR_HEIGHT = HEIGHT + "px";
 	
-	protected Tabpanel renderTabpanel(final IResource resource) {
+	protected Tabpanel renderTabpanel(final Resource resource) {
 		Tabpanel tabpanel = new Tabpanel();
 		final Hlayout hl = new Hlayout();
 		hl.setHeight(STR_HEIGHT);

@@ -14,6 +14,8 @@ public class FiddleEvents {
 	
 	public static final String ON_SHOW_RESULT = "onShowResult";
 	
+	public static final String ON_PREPARING_SHOW_RESULT = "onPreparingShowResult";
+	
 	public static final String ON_TAG_UPDATE = "onTagUpdate";
 	
 }

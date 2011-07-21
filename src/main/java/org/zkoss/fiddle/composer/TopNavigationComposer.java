@@ -3,12 +3,9 @@ package org.zkoss.fiddle.composer;
 import java.util.Collection;
 import java.util.TreeSet;
 
-import org.zkoss.fiddle.composer.context.WorkbenchContext;
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
-import org.zkoss.fiddle.composer.event.FiddleEvents;
+import org.zkoss.fiddle.composer.event.FiddleEventListener;
+import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
-import org.zkoss.fiddle.composer.event.SaveCaseEvent;
-import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
@@ -16,8 +13,6 @@ import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -57,13 +52,13 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 		initSandbox();
 
-		WorkbenchContext.getInstance().subscribeResourceChanged(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				if(event instanceof ResourceChangedEvent){
+		FiddleSourceEventQueue.lookup().subscribeResourceChanged(
+			new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class) {
+				public void onFiddleEvent(ResourceChangedEvent evt) {
 					viewBtn.setLabel("*Run");
-				}
+				};
 			}
-		});
+		);
 
 	}
 
@@ -142,14 +137,14 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		else
 			inst = (FiddleSandbox) instances.getSelectedItem().getValue();
 		
-		WorkbenchContext.getInstance().ShowResult(inst);
+		FiddleSourceEventQueue.lookup().firePreparingShowResult(inst);
 	}
 
 	public void onClick$saveBtn() {
-		WorkbenchContext.getInstance().fireResourceSaved(false);
+		FiddleSourceEventQueue.lookup().fireResourceSaved(false);
 	}
 
 	public void onClick$forkBtn() {
-		WorkbenchContext.getInstance().fireResourceSaved(true);
+		FiddleSourceEventQueue.lookup().fireResourceSaved(true);
 	}
 }

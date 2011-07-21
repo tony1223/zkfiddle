@@ -2,9 +2,9 @@ package org.zkoss.fiddle.component.renderer;
 
 import java.util.regex.Pattern;
 
-import org.zkoss.fiddle.composer.context.WorkbenchContext;
+import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
 import org.zkoss.fiddle.model.Resource;
-import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
@@ -39,7 +39,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		{
 			final Label label2 = new Label(resource.getFullPackage());
 			label2.setTooltiptext("since we have to prevent package conflict for every version ," + " so we use "
-					+ IResource.PACKAGE_TOKEN + " as your class package by default.");
+					+ Resource.PACKAGE_TOKEN + " as your class package by default.");
 			hlayout.appendChild(label2);
 
 			label2.setVisible(false);
@@ -53,7 +53,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 	
 			txtPkg.setConstraint(new Constraint() {
 				public void validate(Component comp, Object value) throws WrongValueException {
-					String fullval = IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + (String) value;
+					String fullval = Resource.PACKAGE_PREFIX + Resource.PACKAGE_TOKEN + (String) value;
 					boolean accepted =".".equals(value) || packageRule.matcher( fullval).matches();
 					
 					if (!accepted) {
@@ -97,7 +97,8 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 								value = "";
 							}
 							resource.setPkg(value);
-							WorkbenchContext.getInstance().fireResourceChanged(resource);
+							FiddleSourceEventQueue.lookup().
+								fireResourceChanged(resource,Type.Modified);
 							a.setLabel(resource.getFullPackage());
 						}
 					}

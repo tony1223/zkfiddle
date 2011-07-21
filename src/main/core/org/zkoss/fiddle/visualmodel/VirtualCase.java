@@ -8,7 +8,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
-import org.zkoss.fiddle.model.api.IResource;
 
 /**
  * a virtual case object used for visual case.
