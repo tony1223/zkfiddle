@@ -1,7 +1,6 @@
 package org.zkoss.fiddle.model.api;
 
 import org.zkoss.fiddle.model.Case;
-import org.zkoss.fiddle.model.Media;
 import org.zkoss.fiddle.model.Resource;
 
 @Deprecated
@@ -50,9 +49,5 @@ public interface IResource{
 	public void setFinalConetnt(Case c) ;
 	
 	public String getFullPackage();
-	
-	public Media getMedia();
-	
-	public void setMedia(Media media);
 	
 }
