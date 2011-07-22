@@ -1,14 +1,11 @@
 package org.zkoss.fiddle.composer;
 
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
+import org.zkoss.fiddle.composer.event.FiddleEventListener;
+import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
@@ -34,36 +31,27 @@ public class ViewResultComposer extends GenericForwardComposer {
 	private Button openNewWindow;
 
 
-	/**
-	 * we use desktop level event queue.
-	 */
-	private EventQueue queue = EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true);
-
-
 	public void doAfterCompose(final Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		queue.subscribe(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				if (event instanceof ShowResultEvent) {
-					ShowResultEvent evt = (ShowResultEvent) event;
-					FiddleSandbox inst = evt.getInstance();
-					viewEditor.setTitle("Running Sandbox : " + inst.getName() + " @ ZK " + inst.getZKVersion() );
+		FiddleSourceEventQueue.lookup().subscribeShowResult(new FiddleEventListener<ShowResultEvent>(ShowResultEvent.class) {
+			public void onFiddleEvent(ShowResultEvent event) throws Exception {
+				ShowResultEvent evt = (ShowResultEvent) event;
+				FiddleSandbox inst = evt.getInstance();
+				viewEditor.setTitle("Running Sandbox : " + inst.getName() + " @ ZK " + inst.getZKVersion() );
 
 
-					if(evt.getCase().getVersion() != 0){
-						String host = FiddleConfig.getHostName();
-						String tokenpath = evt.getCase().getCaseUrl( inst.getZKVersion());
-						directUrl.setText( host + "direct/" + tokenpath	+ "?run=" + inst.getHash());
-						openNewWindow.setHref( host + "direct/" + tokenpath	+ "?run=" + inst.getHash());
-						setDirectVisible(true);
-					}else{
-						setDirectVisible(false);
-					}
-
-					content.setSrc(inst.getSrc(evt.getCase()));
-					viewEditor.doModal();
+				if(evt.getCase().getVersion() != 0){
+					String tokenpath = evt.getCase().getCaseUrl( inst.getZKVersion());
+					directUrl.setText( FiddleConfig.getHostName() + "direct/" + tokenpath	+ "?run=" + inst.getHash());
+					openNewWindow.setHref( FiddleConfig.getHostName() + "direct/" + tokenpath	+ "?run=" + inst.getHash());
+					setDirectVisible(true);
+				}else{
+					setDirectVisible(false);
 				}
+
+				content.setSrc(inst.getSrc(evt.getCase()));
+				viewEditor.doModal();
 			}
 		});
 	}

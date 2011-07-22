@@ -18,6 +18,7 @@ import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Tag;
+import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.visualmodel.TagCloudVO;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -72,6 +73,11 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 				return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
 			}
 		});
+		
+		if(list.size() != 0){
+			SEOUtils.render(desktop, "Top 10 Favorites :" , list);
+		}
+
 
 		initTags();
 		tag.subscribe(new EventListener() {
@@ -105,8 +111,11 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		});
 
 		ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
-
-		recentlys.setModel(new ListModelList(caseDao.getRecentlyCase(10)));
+		List<Case> caseList = caseDao.getRecentlyCase(10);
+		if(caseList.size() != 0){
+			SEOUtils.render(desktop, "Latest 10 Fiddles :" , caseList);
+		}
+		recentlys.setModel(new ListModelList(caseList));
 
 		recentlys.setItemRenderer(new ListitemRenderer() {
 

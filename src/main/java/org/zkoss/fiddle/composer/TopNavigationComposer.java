@@ -3,11 +3,9 @@ package org.zkoss.fiddle.composer;
 import java.util.Collection;
 import java.util.TreeSet;
 
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
-import org.zkoss.fiddle.composer.event.FiddleEvents;
+import org.zkoss.fiddle.composer.event.FiddleEventListener;
+import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
-import org.zkoss.fiddle.composer.event.SaveCaseEvent;
-import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
@@ -16,8 +14,6 @@ import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -34,10 +30,6 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	 */
 	private static final long serialVersionUID = 6098592769427716897L;
 
-	/**
-	 * we use desktop level event queue.
-	 */
-	private EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE, true);
 
 	private Combobox instances = null;
 
@@ -65,13 +57,13 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 		initSandbox();
 
-		sourceQueue.subscribe(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				if(event instanceof ResourceChangedEvent){
+		FiddleSourceEventQueue.lookup().subscribeResourceChanged(
+			new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class) {
+				public void onFiddleEvent(ResourceChangedEvent evt) {
 					viewBtn.setLabel("*Run");
-				}
+				};
 			}
-		});
+		);
 
 	}
 
@@ -149,15 +141,15 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			inst = (FiddleSandbox) instances.getItemAtIndex(0).getValue();
 		else
 			inst = (FiddleSandbox) instances.getSelectedItem().getValue();
-
-		sourceQueue.publish(new ShowResultEvent(FiddleEvents.ON_TEMP_SHOW_RESULT , null, inst));
+		
+		FiddleSourceEventQueue.lookup().firePreparingShowResult(inst);
 	}
 
 	public void onClick$saveBtn() {
-		sourceQueue.publish(new SaveCaseEvent());
+		FiddleSourceEventQueue.lookup().fireResourceSaved(false);
 	}
 
 	public void onClick$forkBtn() {
-		sourceQueue.publish(new SaveCaseEvent(true));
+		FiddleSourceEventQueue.lookup().fireResourceSaved(true);
 	}
 }

@@ -30,7 +30,6 @@ import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
-import org.zkoss.fiddle.model.api.IResource;
 import org.zkoss.fiddle.visualmodel.VirtualCase;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -98,8 +97,6 @@ public class FiddleDataFilter implements Filter {
 			return;
 
 		if(download){
-			//TODO review
-			servletContext = ((HttpServletRequest)request).getSession().getServletContext();
 			outputZIP( (HttpServletResponse) response, token, version);
 		}else
 			outputJSON(response, token, version);
@@ -218,7 +215,7 @@ public class FiddleDataFilter implements Filter {
 		//decide to remove this 2011/6/28
 //		list.add(getWebappTemplates(c));
 
-		for(IResource ir:dbResources){
+		for(Resource ir:dbResources){
 			list.add(new ResourceFile(ir));
 		}
 

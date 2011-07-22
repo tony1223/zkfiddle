@@ -8,18 +8,15 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.zkoss.fiddle.seo.handle.DefaultSEOTokenHandler;
-import org.zkoss.fiddle.seo.handle.SEOTokenHandler;
-import org.zkoss.fiddle.seo.model.SEOToken;
 import org.zkoss.zk.ui.Desktop;
 
 /**
  * Used in FiddleSEORenderer Each execution should only have one SEOContainer,
  * and only the first execution will be enabled , if you put SEOContainer in a
  * ZKAU Request , it's meaning less.
- *
+ * 
  * @author tony
- *
+ * 
  */
 @SuppressWarnings("rawtypes")
 public class SEOContainer {
@@ -28,14 +25,10 @@ public class SEOContainer {
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(SEOContainer.class);
-
-	private List<SEOToken> tokens;
-
-	private List<SEOTokenHandler> handlers;
-
-	private static SEOTokenHandler handler = new DefaultSEOTokenHandler();
-
+	
 	private static final String attr = "__seoHandler";
+	
+	private List<ISEOHandler> items;
 
 	/**
 	 * if a SEO Container is rendered , we just drop items and then archive it
@@ -44,38 +37,7 @@ public class SEOContainer {
 	private boolean isAchived = false;
 
 	public SEOContainer() {
-		tokens = new ArrayList<SEOToken>();
-		handlers = new ArrayList<SEOTokenHandler>();
-	}
-
-	@SuppressWarnings("unchecked")
-	private void doHandleSEO(Writer out, SEOToken token) {
-
-		for (SEOTokenHandler handler : handlers) {
-			if (handler.accept(token.getType())) {
-				try {
-					handler.resolve(out, token.getType(), token.getModel());
-				} catch (IOException e) {
-					if (logger.isEnabledFor(Level.ERROR)) {
-						logger.error("resolve(Writer, T)", e);
-					}
-				}
-
-				return;
-			}
-		}
-
-		try {
-			handler.resolve(out, token.getType(), token.getModel());
-		} catch (IOException e) {
-			if (logger.isEnabledFor(Level.ERROR)) {
-				logger.error("resolve(Writer, T)", e);
-			}
-		}
-	}
-
-	public void addHandler(SEOTokenHandler handler) {
-		handlers.add(handler);
+		items = new ArrayList<ISEOHandler>();
 	}
 
 	/**
@@ -84,25 +46,30 @@ public class SEOContainer {
 	 */
 	public void process(Writer out) {
 
-		for (SEOToken token : tokens) {
-			doHandleSEO(out, token);
+		for (ISEOHandler token : items) {
+			try {
+				token.process(out);
+			} catch (IOException e) {
+				if (logger.isEnabledFor(Level.ERROR))
+					logger.error(e);
+			}
 		}
 
 		isAchived = true;
-		tokens = null;
+		items = null;
 	}
 
-	public List<SEOToken> getTokens() {
+	public List<ISEOHandler> getTokens() {
 		if (!isAchived) {
-			return Collections.unmodifiableList(tokens);
+			return Collections.unmodifiableList(items);
 		} else {
 			return null;
 		}
 	}
 
-	public void addToken(SEOToken token) {
+	public void addHandler(ISEOHandler token) {
 		if (!isAchived) {
-			tokens.add(token);
+			items.add(token);
 		} else {
 			if (logger.isEnabledFor(Level.WARN)) {
 				logger.warn(
@@ -112,18 +79,18 @@ public class SEOContainer {
 		}
 	}
 
-	public static SEOContainer getInstance(Desktop exe) {
-		if (exe == null) {
+	public static SEOContainer getInstance(Desktop desktop) {
+		if (desktop == null) {
 			throw new IllegalArgumentException("execution can't be null ");
 		}
-		if (exe.hasAttribute(attr)) {
-			if (!(exe.getAttribute(attr) instanceof SEOContainer)) {
+		if (desktop.hasAttribute(attr)) {
+			if (!(desktop.getAttribute(attr) instanceof SEOContainer)) {
 				throw new IllegalStateException("It might be a naming conflict for " + attr + ", type not matching ");
 			}
-			return (SEOContainer) exe.getAttribute(attr);
+			return (SEOContainer) desktop.getAttribute(attr);
 		} else {
 			SEOContainer seoc = new SEOContainer();
-			exe.setAttribute(attr, seoc);
+			desktop.setAttribute(attr, seoc);
 			return seoc;
 		}
 	}

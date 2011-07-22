@@ -25,6 +25,7 @@ public class CaseManager extends AbstractManager {
 	public Case saveCase(final ICase _case, final List<Resource> resources, final String title,
 			final boolean fork,final String posterIP,final boolean keepTag) {
 
+		System.out.println(fork+":"+title);
 		return getTxTemplate().execute(new TransactionCallback<Case>() {
 			public Case doInTransaction(TransactionStatus status) {
 

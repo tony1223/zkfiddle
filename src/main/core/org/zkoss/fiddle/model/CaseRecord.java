@@ -1,6 +1,7 @@
 package org.zkoss.fiddle.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Index;
+import org.zkoss.fiddle.model.api.IRenderCase;
 
 
 /*
@@ -20,7 +22,7 @@ import org.hibernate.annotations.Index;
  */
 @Entity
 @Table(name="caserecord")
-public class CaseRecord implements Serializable{
+public class CaseRecord implements Serializable,IRenderCase{
 
 	/**
 	 *
@@ -154,6 +156,12 @@ public class CaseRecord implements Serializable{
 
 	public int hashCode() {
 		return new HashCodeBuilder().append(id).toHashCode();
+	}
+
+	//TODO review this ,see if we need to provide this information in case recoord.
+	@Transient
+	public Date getCreateDate() {
+		return null;
 	}
 
 }

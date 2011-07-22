@@ -113,7 +113,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	 * yes , it's a often updated field , but it's on the index page , so it's worth to cache it here.
 	 */
 	public List<Case> getRecentlyCase(final Integer amount) {
-
+		//TODO review , I think we should remove out the cache code to app.
 		return (List<Case>) FiddleCache.RecentlyCases.execute(new CacheHandler<List<Case>>() {
 
 			protected List<Case> execute() {

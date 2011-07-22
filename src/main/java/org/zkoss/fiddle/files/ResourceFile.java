@@ -3,13 +3,13 @@ package org.zkoss.fiddle.files;
 import java.io.File;
 import java.util.regex.Pattern;
 
-import org.zkoss.fiddle.model.api.IResource;
+import org.zkoss.fiddle.model.Resource;
 
 public class ResourceFile implements IResourceFile {
 
 	private static final String DOWNLOAD_JAVA_PACKAGE = "fiddle";
 
-	private IResource resource;
+	private Resource resource;
 
 	private static String replacedSeparator = String.valueOf(File.separatorChar);
 	{
@@ -18,7 +18,7 @@ public class ResourceFile implements IResourceFile {
 		}
 	}
 
-	public ResourceFile(IResource ir) {
+	public ResourceFile(Resource ir) {
 		if (ir == null)
 			throw new IllegalArgumentException("resource can't be null");
 		resource = ir;
@@ -31,7 +31,7 @@ public class ResourceFile implements IResourceFile {
 	}
 
 	public String getPath() {
-		if (resource.getType() != IResource.TYPE_JAVA) {
+		if (resource.getType() != Resource.TYPE_JAVA) {
 			return "WebContent/" + resource.getName();
 		} else {
 			return "src/" + convertPackageToFolder(DOWNLOAD_JAVA_PACKAGE + resource.getPkg()) + "/"

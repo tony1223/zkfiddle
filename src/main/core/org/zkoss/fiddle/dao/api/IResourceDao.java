@@ -6,6 +6,7 @@ import org.zkoss.fiddle.model.Resource;
 
 public interface IResourceDao extends IDao<Resource> {
 	
-	public abstract List<Resource> listByCase(Long caseId);
+	public List<Resource> listByCase(Long caseId);
+	
 
 }

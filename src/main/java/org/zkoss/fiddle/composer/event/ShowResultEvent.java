@@ -15,8 +15,8 @@ public class ShowResultEvent extends Event {
 
 	private FiddleSandbox instance;
 
-	public ShowResultEvent(String evtName,ICase _case,FiddleSandbox inst) {
-		super(evtName);
+	public ShowResultEvent(ICase _case,FiddleSandbox inst) {
+		super(FiddleEvents.ON_SHOW_RESULT);
 		this.instance = inst;
 		this.$case= _case;
 	}
