@@ -115,7 +115,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		if(caseList.size() != 0){
 			SEOUtils.render(desktop, "Latest 10 Fiddles :" , caseList);
 		}
-		recentlys.setModel(new ListModelList(caseDao.getRecentlyCase(10)));
+		recentlys.setModel(new ListModelList(caseList));
 
 		recentlys.setItemRenderer(new ListitemRenderer() {
 
