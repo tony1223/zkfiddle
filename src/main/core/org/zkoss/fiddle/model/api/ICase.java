@@ -2,7 +2,7 @@ package org.zkoss.fiddle.model.api;
 
 import java.util.Date;
 
-public interface ICase {
+public interface ICase extends IRenderCase{
 
 	public Long getId();
 

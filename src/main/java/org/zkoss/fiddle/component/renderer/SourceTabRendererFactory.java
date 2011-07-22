@@ -13,7 +13,6 @@ public class SourceTabRendererFactory {
 	static{
 		Map<Integer,ISourceTabRenderer> map = new HashMap<Integer,ISourceTabRenderer>(); 
 		map.put(Resource.TYPE_JAVA, new JavaSourceTabRenderer());
-		map.put(Resource.TYPE_MEDIA, new MediaSourceTabRenderer());
 		
 		renderer = Collections.unmodifiableMap(map);
 		
