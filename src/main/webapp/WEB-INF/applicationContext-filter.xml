@@ -38,4 +38,8 @@
 	
 	<bean id="authFilter" class="org.zkoss.fiddle.filter.FiddleAuthFilter" />
 	
+	<bean id="sitemapFilter" class="org.zkoss.fiddle.filter.FiddleSiteMapFilter" >
+	    <property name="caseDao" ref="caseDao" />
+	</bean>
+	
 </beans>

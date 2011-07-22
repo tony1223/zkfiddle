@@ -64,5 +64,10 @@
 	    maxElementsInMemory="1000"
 	    eternal="false"
 	    overflowToDisk="true" />	
-		
+	<cache
+	    name="SiteMap"
+	    maxElementsInMemory="1"
+	    eternal="false"
+	    timeToLiveSeconds="21600"
+	    overflowToDisk="true"/>
 </ehcache>

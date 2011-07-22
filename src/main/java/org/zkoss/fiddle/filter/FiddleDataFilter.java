@@ -97,8 +97,6 @@ public class FiddleDataFilter implements Filter {
 			return;
 
 		if(download){
-			//TODO review
-			servletContext = ((HttpServletRequest)request).getSession().getServletContext();
 			outputZIP( (HttpServletResponse) response, token, version);
 		}else
 			outputJSON(response, token, version);

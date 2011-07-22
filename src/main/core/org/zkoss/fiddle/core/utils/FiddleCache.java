@@ -15,7 +15,8 @@ public enum FiddleCache {
 	RecentlyCases,
 	CaseByToken,
 	CaseTag,
-	Top10liked;
+	Top10liked,
+	SiteMap;
 	
 	public Cache getInstance(){
 		return CacheManager.getInstance().getCache(this.name());
