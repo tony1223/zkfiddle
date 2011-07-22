@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <zk>
-	
+
     <!-- Defines the application's name -->
     <preference>
         <name>
@@ -11,11 +11,11 @@
             ZK Fiddle
         </value>
     </preference>
-	
+
 	<!-- -->
 	<client-config>
 		<debug-js>false</debug-js>
-	</client-config>	
+	</client-config>
     <library-property>
         <name>
             org.zkoss.zul.grid.rod
@@ -52,6 +52,12 @@
         </value>
     </library-property>
 
+    <library-property>
+        <name>org.zkoss.zk.config.path</name>
+        <value>/WEB-INF/zk-extra.xml</value>
+    </library-property>
+
+
 	<session-config>
 		<timeout-uri />
 	</session-config>
@@ -59,6 +65,6 @@
 		<timer-keep-alive>true</timer-keep-alive>
 	</session-config>
     <!-- ===Hibernate START=== -->
-    
-    
+
+
 </zk>

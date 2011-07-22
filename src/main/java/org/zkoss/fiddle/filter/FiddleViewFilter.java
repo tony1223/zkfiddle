@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.fiddle.visualmodel.ViewRequest;
 import org.zkoss.web.servlet.Servlets;
@@ -31,10 +32,10 @@ public class FiddleViewFilter implements Filter {
 	private Pattern view = Pattern.compile("^/([^/.]{5,}?)/(\\d+)(/v([0-9\\.]+)/?)?.*$");
 
 	private ServletContext ctx;
-	
-	private ICaseDao caseDao; 
-	
-	private FiddleSandboxManager sandboxManager; 
+
+	private ICaseDao caseDao;
+
+	private FiddleSandboxManager sandboxManager;
 
 //	public static void main(String[] args) {
 //		String path = "/3591l7m/2";
@@ -48,21 +49,6 @@ public class FiddleViewFilter implements Filter {
 //
 //	}
 
-	private String getHostpath(HttpServletRequest request) {
-		StringBuffer hostName = new StringBuffer("zkfiddle.org");
-		//FIXME 
-		/*
-		StringBuffer hostName = new StringBuffer(request.getServerName());
-		if (request.getLocalPort() != 80) {
-			hostName.append(":" + request.getLocalPort());
-		}*/
-		
-		if ("".equals(request.getContextPath())) {
-			hostName.append("/" + request.getContextPath());
-		} 
-		return "http://" + hostName.toString();
-
-	}
 
 	private ICase getCase(String caseToken, String version) {
 
@@ -86,7 +72,7 @@ public class FiddleViewFilter implements Filter {
 
 	private boolean handleView(HttpServletRequest request, HttpServletResponse response, String path)
 			throws IOException, ServletException {
-		request.setAttribute("hostName", getHostpath(request));
+
 		boolean directly = path.startsWith("/direct");
 		String newpath = directly ? path.substring(7) : path.substring(5);
 		// inst.getPath() + evt.getToken() + "/" + evt.getVersion()
@@ -103,14 +89,9 @@ public class FiddleViewFilter implements Filter {
 				return true;
 			}
 
-			request.setAttribute("__case", $case);
-			
-			String host = getHostpath(request);
-			request.setAttribute("hostName", host);
-			request.setAttribute("caseUrl", host + "/sample/"+ $case.getCaseUrl());
-			
-			setPageTitle(request,$case);
-			
+			request.setAttribute("__case", $case);
+			request.setAttribute("caseUrl", FiddleConfig.getHostName() + "/sample/"+ $case.getCaseUrl());
+			setPageTitle(request,$case);
 			ViewRequest vr = new ViewRequest();
 			vr.setToken(match.group(1));
 			vr.setTokenVersion(match.group(2));
@@ -153,8 +134,7 @@ public class FiddleViewFilter implements Filter {
 			response.sendRedirect("/");
 			return true;
 		}
-	}
-	
+	}
 	public void setPageTitle(HttpServletRequest request, ICase $case) {
 		boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
 		String title = emptytitle ? "Untitled" : $case.getTitle();
@@ -167,12 +147,7 @@ public class FiddleViewFilter implements Filter {
 
 		String uri = request.getRequestURI();
 		String context = request.getContextPath();
-		String path = uri.replaceFirst(context, "");
-		
-		//TODO review this and move it to global config , we can't count on a filter to handle this. 
-		request.setAttribute("hostName", getHostpath(request));
-		
-		if (path == null || path.equals("/")) {
+		String path = uri.replaceFirst(context, "");		if (path == null || path.equals("/")) {
 			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			return;
 		}
@@ -193,10 +168,8 @@ public class FiddleViewFilter implements Filter {
 					((HttpServletResponse) response).sendRedirect("/");
 					return;
 				}
-				String host = getHostpath(request);
-				setPageTitle(request, $case);		
-				request.setAttribute("hostName", host);
-				request.setAttribute("caseUrl", host  + "/sample/" + $case.getCaseUrl());
+				setPageTitle(request, $case);
+				request.setAttribute("caseUrl", FiddleConfig.getHostName()  + "/sample/" + $case.getCaseUrl());
 				request.setAttribute("__case", $case);
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 				return;
@@ -216,12 +189,10 @@ public class FiddleViewFilter implements Filter {
 
 	public void destroy() {
 	}
-
-	
+
 	public void setCaseDao(ICaseDao caseDao) {
 		this.caseDao = caseDao;
-	}
-	
+	}
 	public void setSandboxManager(FiddleSandboxManager sandboxManager) {
 		this.sandboxManager = sandboxManager;
 	}

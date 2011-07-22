@@ -4,7 +4,7 @@
 <?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
 <?script type="text/javascript" src="/js/fiddle.js.dsp"?>
 <zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook">
-	<div apply="org.zkoss.fiddle.composer.TopNavigationComposer" sclass="zkfiddle-header">
+	<div id="header" apply="org.zkoss.fiddle.composer.TopNavigationComposer" sclass="zkfiddle-header">
 		<div sclass="header-inner">
 			<hlayout sclass="menu">
 				<div sclass="logo-outer">
@@ -30,7 +30,7 @@
 				</div>
 				<div sclass="social">
 					<n:iframe
-						src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${hostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35"
+						src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${header$composer.hostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35"
 						scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:35px;" allowTransparency="true">
 					</n:iframe>
 				</div>

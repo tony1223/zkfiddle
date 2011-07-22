@@ -2,6 +2,7 @@ package org.zkoss.fiddle.composer;
 
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
+import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -38,13 +39,9 @@ public class ViewResultComposer extends GenericForwardComposer {
 	 */
 	private EventQueue queue = EventQueues.lookup(FiddleEventQueues.SHOW_RESULT, true);
 
-	private String hostpath;
 
 	public void doAfterCompose(final Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
-		//save the host name in member field. (it's coming from FiddleDispatcherFilter )
-		hostpath = (String) requestScope.get("hostName");
 
 		queue.subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
@@ -55,9 +52,10 @@ public class ViewResultComposer extends GenericForwardComposer {
 
 
 					if(evt.getCase().getVersion() != 0){
+						String host = FiddleConfig.getHostName();
 						String tokenpath = evt.getCase().getCaseUrl( inst.getZKVersion());
-						directUrl.setText( hostpath + "direct/" + tokenpath	+ "?run=" + inst.getHash());
-						openNewWindow.setHref( hostpath + "direct/" + tokenpath	+ "?run=" + inst.getHash());
+						directUrl.setText( host + "direct/" + tokenpath	+ "?run=" + inst.getHash());
+						openNewWindow.setHref( host + "direct/" + tokenpath	+ "?run=" + inst.getHash());
 						setDirectVisible(true);
 					}else{
 						setDirectVisible(false);

@@ -10,6 +10,7 @@ import org.zkoss.fiddle.composer.event.SaveCaseEvent;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.util.CookieUtil;
+import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
@@ -46,9 +47,13 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 	private Button saveBtn;
 
+
+	public String getHostName(){
+		return FiddleConfig.getHostName();
+	}
+
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
 
 		boolean newcase = requestScope.get("__case") == null;
 		if (!newcase) { //existing case
