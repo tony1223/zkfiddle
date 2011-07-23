@@ -91,13 +91,13 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Checkbox cbSaveTag;
 
 	private ViewRequest viewRequestParam;
-	
+
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
 		//TODO: move "__case" to constant
-		ICase $case = (ICase) requestScope.get("__case"); 
-		
+		ICase $case = (ICase) requestScope.get("__case");
+
 		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
 		caseModel = new CaseModel($case);
 		boolean newCase = caseModel.isStartWithNewCase();
@@ -109,10 +109,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			caseToolbar.setVisible(true);
 			initTagEditor($case);
 		}
-		
+
 		sourceQueue.subscribeShowResult(new FiddleEventListener<PreparingShowResultEvent>(PreparingShowResultEvent.class) {
 			public void onFiddleEvent(PreparingShowResultEvent evt) throws Exception {
-				caseModel.ShowResult(evt.getSandbox());	
+				caseModel.ShowResult(evt.getSandbox());
 			}
 		});
 		sourceQueue.subscribeResourceCreated(new FiddleEventListener<InsertResourceEvent>(InsertResourceEvent.class) {
@@ -147,7 +147,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		}
 		initSEOHandler(caseModel,desktop);
-		
+
 		// @see FiddleDispatcherFilter for those use this directly
 		viewRequestParam = (ViewRequest) requestScope.get("runview");
 		if (viewRequestParam != null) {
@@ -155,10 +155,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 	}
 
-	private void initTagEditor(final ICase $case) {
+	private void initTagEditor(final ICase pCase) {
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		List<Tag> list = caseTagDao.findTagsBy($case, 1, 30);
-		updateTags(list);
+		//TODO check if we need to cache this.
+		updateTags(caseTagDao.findTagsBy(pCase));
 
 		EventListener handler = new EventListener() {
 
@@ -169,7 +169,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		tagInput.addEventListener("onOK", handler);
 		tagInput.addEventListener("onCancel", new EventListener() {
-
 			public void onEvent(Event event) throws Exception {
 				tagInput.setValue(lastVal);
 				setTagEditable(false);
