@@ -17,6 +17,7 @@ import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.util.CaseUtil;
+import org.zkoss.fiddle.util.FiddleConfig;
 
 
 public class FiddleSiteMapFilter implements Filter {
@@ -53,7 +54,7 @@ public class FiddleSiteMapFilter implements Filter {
 	}
 
 	private String renderSiteMap(List<Case> list){
-		String domain = "http://zkfiddle.org";
+		String domain = FiddleConfig.getHostName();
 		StringBuffer sb= new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 		sb.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" >\n");
