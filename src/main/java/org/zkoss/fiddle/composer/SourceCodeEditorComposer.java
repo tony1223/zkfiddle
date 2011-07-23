@@ -128,9 +128,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			public void onFiddleEvent(SaveCaseEvent event) throws Exception {
 				SaveCaseEvent saveEvt = (SaveCaseEvent) event;
 				CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
+				
+				String title = caseTitle.getValue().trim();
 				String ip = Executions.getCurrent().getRemoteAddr();
 				ICase saved = caseManager.saveCase(caseModel.getCurrentCase(), caseModel.getResources(),
-						caseTitle.getValue(), saveEvt.isFork(), ip, cbSaveTag.isChecked());
+						title, saveEvt.isFork(), ip, cbSaveTag.isChecked());
 				if (saved != null) {
 					Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
 				}
