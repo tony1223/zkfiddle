@@ -64,7 +64,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
-				Query query = session.createQuery("from Tag where name like :name");
+				Query query = session.createQuery("from Tag where lower(name) like lower(:name)" );
 				query.setString("name", name + "%");
 				query.setMaxResults(amount);
 				return (List<Tag>) query.list();
@@ -77,7 +77,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
-				Query query = session.createQuery("from Tag where name like :name");
+				Query query = session.createQuery("from Tag where lower(name) like lower(:name)");
 				query.setString("name", name + "%");
 				return (List<Tag>) query.list();
 			}
