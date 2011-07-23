@@ -193,13 +193,27 @@ span.text-bold {
 }
 
 /***Tag cloud ***/
-.leftabout .tag-container{
+.left-tag .z-caption-r,.left-tag .z-caption-l{
+	text-align:left;
+}
+.left-tag .z-caption-r input{
+    width:65%;
+}
+
+.left-tag .tag-container{
 	padding-top:3px;
 	padding-bottom:5px;	
 	line-height:23px;
 }
+
 .tag-cloud{
 	padding:5px;
+	z-index:1;
+	position: relative;	
+}
+.tag-cloud-sel{
+	background:#DDDDDD;
+	z-index:0;
 }
 .tag-cloud0 {font-size: 100%;}  
 .tag-cloud1 {font-size: 120%;}  

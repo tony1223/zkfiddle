@@ -56,7 +56,18 @@
         <name>org.zkoss.zk.config.path</name>
         <value>/WEB-INF/zk-extra.xml</value>
     </library-property>
+	<device-config>
+	    <device-type>ajax</device-type>
+	    <embed><![CDATA[
+	<script type="text/javascript">
+		zk.afterLoad("zul.inp",function(){
+	    	zul.inp.InputWidget.onChangingDelay = 1200;
+		});
+	</script>
+	    ]]></embed>
+	</device-config>
 
+	
 
 	<session-config>
 		<timeout-uri />

@@ -60,6 +60,19 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 		});
 	}
 
+	public List<Tag> searchTag(final String name,final int amount) {
+		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
+
+			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("from Tag where name like :name");
+				query.setString("name", name + "%");
+				query.setMaxResults(amount);
+				return (List<Tag>) query.list();
+			}
+		});
+	}
+
+	
 	public List<Tag> searchTag(final String name) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 
@@ -137,5 +150,6 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 			}
 		});
 	}
+
 
 }

@@ -12,6 +12,8 @@ public interface ITagDao extends IDao<Tag> {
 	
 	public List<Tag> searchTag(String name);
 	
+	public List<Tag> searchTag(String name,int amount);
+	
 	/**
 	 * return the tag list that in given tag array
 	 * @param tags
