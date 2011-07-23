@@ -52,7 +52,7 @@ span.text-bold {
 }
 
 .zkfiddle-header .logo {
-	background: url("/img/top_zk_logo.png") no-repeat scroll 0 7px
+	background: url("../img/top_zk_logo.png") no-repeat scroll 0 7px
 		transparent;
 	margin-left: 18px;
 	float: left;
@@ -168,10 +168,10 @@ span.text-bold {
 }
 .sourcetabs .z-tab-hl,
 .sourcetabs .z-tab-hr {
-	background-image: url("/img/comp/tab-corner.png");
+	background-image: url("../img/comp/tab-corner.png");
 }
 .sourcetabs .z-tab-hm {
-	background-image: url("/img/comp/tab-hm.png");
+	background-image: url("../img/comp/tab-hm.png");
 }
 
 .zkfiddle-source-tag-container a{
