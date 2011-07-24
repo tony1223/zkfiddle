@@ -3,7 +3,7 @@
 <?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax OpenSource Framework) sameples right now!" ?>
 <?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
 <?script type="text/javascript" src="/js/fiddle.js.dsp"?>
-<zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook">
+<zk xmlns:w="client" xmlns:n="native">
 	<div id="header" apply="org.zkoss.fiddle.composer.TopNavigationComposer" sclass="zkfiddle-header">
 		<div sclass="header-inner">
 			<hlayout sclass="menu">
