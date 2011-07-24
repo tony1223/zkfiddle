@@ -1,8 +1,6 @@
 package org.zkoss.fiddle.filter;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -29,10 +27,6 @@ import org.zkoss.web.servlet.Servlets;
 public class FiddleViewFilter implements Filter {
 
 	private static final Logger logger = Logger.getLogger(FiddleViewFilter.class);
-
-	private Pattern code = Pattern.compile("^/sample/([^/.]{5,}?)/(\\d+)/?.*$");
-
-	private Pattern view = Pattern.compile("^/([^/.]{5,}?)/(\\d+)(/v([0-9\\.]+)/?)?.*$");
 
 	private ServletContext ctx;
 
@@ -71,6 +65,8 @@ public class FiddleViewFilter implements Filter {
 
 			if (viewRequest.getType() == Type.Direct) {
 				response.sendRedirect(viewRequest.getFiddleDirectURL());
+//			} else if(viewRequest.getType() == Type.Widget){
+//				Servlets.forward(ctx, request, response, "/WEB-INF/_include/widget.zul");
 			} else {
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			}
@@ -150,14 +146,10 @@ public class FiddleViewFilter implements Filter {
 		if ((type == SandboxNotFoundException.Type.DEFAULT)) {
 			return FiddleConfig.getHostName() + "sample/" + tokenLink;
 		}
-
+		
+		String prefix = viewRequest.getType().getPrefixNotStartWithSlash();
+		
 		boolean showVer = (type == SandboxNotFoundException.Type.HASH);
-
-		String prefix = "view";
-		if (viewRequest.getType() == Type.Direct) {
-			prefix = "direct";
-		}
-
 		return FiddleConfig.getHostName() + prefix + "/" + tokenLink + (showVer ? zkVer : "");
 	}
 
@@ -186,36 +178,9 @@ public class FiddleViewFilter implements Filter {
 		request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_TITLE, " - " + title);
 	}
 
+	
 	protected CaseRequest getAttributeFromURL(String path) {
-		if (path.startsWith("/view/") || path.startsWith("/direct/")) {
-			boolean directly = path.startsWith("/direct");
-			String newpath = directly ? path.substring(7) : path.substring(5);
-			Matcher match = view.matcher(newpath);
-			if (match.find()) {
-				String version = match.group(2);
-				String token = match.group(1);
-				String zkversion = match.group(4);
-
-				CaseRequest viewRequest = new CaseRequest(directly ? Type.Direct : Type.View);
-				viewRequest.setToken(token);
-				viewRequest.setTokenVersion(version);
-				viewRequest.setZkversion(zkversion);
-				return viewRequest;
-			}
-		} else if (path.startsWith("/sample/")) {
-			Matcher match = code.matcher(path);
-			if (match.find()) {
-
-				String version = match.group(2);
-				String token = match.group(1);
-
-				CaseRequest viewRequest = new CaseRequest(Type.Sample);
-				viewRequest.setToken(token);
-				viewRequest.setTokenVersion(version);
-				return viewRequest;
-			}
-		}
-		return null;
+		return CaseRequest.getCaseRequest(path);
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {
