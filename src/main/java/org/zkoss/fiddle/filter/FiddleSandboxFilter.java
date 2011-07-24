@@ -27,7 +27,7 @@ public class FiddleSandboxFilter implements Filter {
 		in.setLastUpdate(new Date());
 		
 		try {
-			sandboxManager.addFiddleInstance(in);
+			sandboxManager.addFiddleSandbox(in);
 			response.getWriter().println("true");
 		} catch (Exception e) {
 			e.printStackTrace();

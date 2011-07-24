@@ -21,8 +21,8 @@ public class PreparingShowResultEvent extends Event {
 		return sandbox;
 	}
 
-	public void setSandbox(FiddleSandbox instance) {
-		this.sandbox = instance;
+	public void setSandbox(FiddleSandbox sandbox) {
+		this.sandbox = sandbox;
 	}
 
 }

@@ -32,7 +32,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	private static final long serialVersionUID = 6098592769427716897L;
 
 
-	private Combobox instances = null;
+	private Combobox sandboxes = null;
 
 	private Button viewBtn;
 
@@ -73,10 +73,10 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		Collection<FiddleSandbox> acounts = sandboxManager.listFiddleInstances().values();
 
 		if (acounts.size() == 0) {
-			instances.setModel(new ListModelList(new String[] { "No available Sandbox now" }));
+			sandboxes.setModel(new ListModelList(new String[] { "No available Sandbox now" }));
 			viewBtn.setDisabled(true);
 		} else {
-			instances.setItemRenderer(new ComboitemRenderer() {
+			sandboxes.setItemRenderer(new ComboitemRenderer() {
 				public void render(Comboitem comboItem, Object data) throws Exception {
 					FiddleSandbox inst = (FiddleSandbox) data;
 					comboItem.setImage("/img/server-network.png");
@@ -86,17 +86,17 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			});
 
 			TreeSet<FiddleSandbox> tree = new TreeSet<FiddleSandbox>(sandboxManager.listFiddleInstances().values());
-			instances.setModel(new ListModelList(tree));
+			sandboxes.setModel(new ListModelList(tree));
 		}
-		instances.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
+		sandboxes.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
 
 			public void onEvent(Event event) throws Exception {
 				String inst = CookieUtil.getCookie("inst");
 				if (inst != null) {
-					ListModel lm = instances.getModel();
+					ListModel lm = sandboxes.getModel();
 					//when no instance
 					if(lm.getSize() > 0 && lm.getElementAt(0) instanceof String){
-						instances.setSelectedIndex(0);
+						sandboxes.setSelectedIndex(0);
 						return;
 					}
 					{// check last index first to speed it up
@@ -106,7 +106,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 							if(ind < lm.getSize() ){
 								FiddleSandbox sandbox = (FiddleSandbox) lm.getElementAt(ind);
 								if (inst.equals(sandbox.getHash())) {
-									instances.setSelectedIndex(ind);
+									sandboxes.setSelectedIndex(ind);
 									return;
 								}
 							}
@@ -118,30 +118,30 @@ public class TopNavigationComposer extends GenericForwardComposer {
 						if (inst.equals(sandbox.getHash())) {
 							// update index
 							CookieUtil.setCookie("ind", String.valueOf(i), CookieUtil.AGE_ONE_YEAR);
-							instances.setSelectedIndex(i);
+							sandboxes.setSelectedIndex(i);
 							return;
 						}
 					}
-					instances.setSelectedIndex(0);
+					sandboxes.setSelectedIndex(0);
 				} else {
-					instances.setSelectedIndex(0);
+					sandboxes.setSelectedIndex(0);
 				}
 			}
 		});
 	}
 
 	public void onChange$instances(){
-		FiddleSandbox inst = (FiddleSandbox) instances.getSelectedItem().getValue();
+		FiddleSandbox inst = (FiddleSandbox) sandboxes.getSelectedItem().getValue();
 		CookieUtil.setCookie("inst",inst.getHash(),CookieUtil.AGE_ONE_YEAR);
-		CookieUtil.setCookie("ind",String.valueOf(instances.getSelectedIndex()),CookieUtil.AGE_ONE_YEAR);
+		CookieUtil.setCookie("ind",String.valueOf(sandboxes.getSelectedIndex()),CookieUtil.AGE_ONE_YEAR);
 	}
 
 	public void onClick$viewBtn() {
 		FiddleSandbox inst = null;
-		if (instances.getSelectedIndex() == -1)
-			inst = (FiddleSandbox) instances.getItemAtIndex(0).getValue();
+		if (sandboxes.getSelectedIndex() == -1)
+			inst = (FiddleSandbox) sandboxes.getItemAtIndex(0).getValue();
 		else
-			inst = (FiddleSandbox) instances.getSelectedItem().getValue();
+			inst = (FiddleSandbox) sandboxes.getSelectedItem().getValue();
 		
 		FiddleSourceEventQueue.lookup().firePreparingShowResult(inst);
 	}

@@ -165,13 +165,13 @@ public class FiddleViewFilter implements Filter {
 		FiddleSandbox inst;
 		SandboxNotFoundException.Type type = SandboxNotFoundException.Type.DEFAULT;
 		if (instHash != null) {
-			inst = sandboxManager.getFiddleInstance(instHash);
+			inst = sandboxManager.getFiddleSandbox(instHash);
 			type = (SandboxNotFoundException.Type.HASH);
 		} else if (zkver != null) {
-			inst = sandboxManager.getFiddleInstanceByVersion(zkver);
+			inst = sandboxManager.getFiddleSandboxByVersion(zkver);
 			type = (SandboxNotFoundException.Type.ZK_VERSION);
 		} else {
-			inst = sandboxManager.getFiddleInstanceForLastestVersion();
+			inst = sandboxManager.getFiddleSandboxForLastestVersion();
 			type = (SandboxNotFoundException.Type.DEFAULT);
 		}
 		if (inst == null) {

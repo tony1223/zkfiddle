@@ -37,7 +37,7 @@ public class ViewResultComposer extends GenericForwardComposer {
 		FiddleSourceEventQueue.lookup().subscribeShowResult(new FiddleEventListener<ShowResultEvent>(ShowResultEvent.class) {
 			public void onFiddleEvent(ShowResultEvent event) throws Exception {
 				ShowResultEvent evt = (ShowResultEvent) event;
-				FiddleSandbox inst = evt.getInstance();
+				FiddleSandbox inst = evt.getSandbox();
 				viewEditor.setTitle("Running Sandbox : " + inst.getName() + " @ ZK " + inst.getZKVersion() );
 
 

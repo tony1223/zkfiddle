@@ -13,21 +13,21 @@ public class ShowResultEvent extends Event {
 
 	private ICase $case;
 
-	private FiddleSandbox instance;
+	private FiddleSandbox sandbox;
 
 	public ShowResultEvent(ICase _case,FiddleSandbox inst) {
 		super(FiddleEvents.ON_SHOW_RESULT);
-		this.instance = inst;
+		this.sandbox = inst;
 		this.$case= _case;
 	}
 
 
-	public FiddleSandbox getInstance() {
-		return instance;
+	public FiddleSandbox getSandbox() {
+		return sandbox;
 	}
 
-	public void setInstance(FiddleSandbox instance) {
-		this.instance = instance;
+	public void setSandbox(FiddleSandbox pSandbox) {
+		this.sandbox = pSandbox;
 	}
 
 	public ICase getCase() {
