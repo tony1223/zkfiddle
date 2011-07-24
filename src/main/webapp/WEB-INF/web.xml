@@ -221,11 +221,27 @@
     <filter-mapping>
         <filter-name>SandboxFilter</filter-name>
         <url-pattern>/sandbox/*</url-pattern>
-    </filter-mapping>			
+    </filter-mapping>	
+	
+	<!-- view mapping start -->		
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>ViewFilter</filter-name>
+        <url-pattern>/view/*</url-pattern>
+    </filter-mapping>	
+    <filter-mapping>
+        <filter-name>ViewFilter</filter-name>
+        <url-pattern>/direct/*</url-pattern>
+    </filter-mapping>		
+    <filter-mapping>
+        <filter-name>ViewFilter</filter-name>
+        <url-pattern>/sample/*</url-pattern>
+    </filter-mapping>
+	<!--view mapping end-->
+	
     <filter-mapping>
         <filter-name>TagFilter</filter-name>
         <url-pattern>/tag/*</url-pattern>

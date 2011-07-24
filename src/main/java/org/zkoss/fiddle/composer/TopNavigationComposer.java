@@ -3,6 +3,7 @@ package org.zkoss.fiddle.composer;
 import java.util.Collection;
 import java.util.TreeSet;
 
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.FiddleEventListener;
 import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
@@ -47,7 +48,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		boolean newcase = requestScope.get("__case") == null;
+		boolean newcase = requestScope.get(FiddleConstant.REQUEST_ATTR_CASE) == null;
 		if (!newcase) { //existing case
 			saveBtn.setLabel("Update");
 			saveBtn.setImage("/img/arrow_refresh.png");

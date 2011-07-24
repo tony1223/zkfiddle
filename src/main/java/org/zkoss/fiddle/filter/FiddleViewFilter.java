@@ -15,12 +15,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.dao.api.ICaseDao;
+import org.zkoss.fiddle.exception.SandboxNotFoundException;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.fiddle.visualmodel.ViewRequest;
+import org.zkoss.fiddle.visualmodel.ViewRequest.Type;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleViewFilter implements Filter {
@@ -37,20 +40,71 @@ public class FiddleViewFilter implements Filter {
 
 	private FiddleSandboxManager sandboxManager;
 
-//	public static void main(String[] args) {
-//		String path = "/3591l7m/2";
-//
-//		Pattern pattern = Pattern.compile("^/([^/.]{5,}?)/(\\d*)/?.*$");
-//		Matcher match = pattern.matcher(path);
-//		if (match.find()) {
-//			System.out.println(match.group(1));
-//			System.out.println(match.group(2));
-//		}
-//
-//	}
+	public void doFilter(ServletRequest request2, ServletResponse response2, FilterChain chain) throws IOException,
+			ServletException {
+		HttpServletRequest request = ((HttpServletRequest) request2);
+		HttpServletResponse response = ((HttpServletResponse) response2);
 
+		String uri = request.getRequestURI();
+		String context = request.getContextPath();
+		String path = uri.replaceFirst(context, "");
 
-	private ICase getCase(String caseToken, String version) {
+		if (path == null || path.equals("/")) {
+			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
+			return;
+		}
+
+		ViewRequest viewRequest = getAttributeFromURL(path);
+		if (viewRequest != null) {
+			ICase $case = handleCaseInRequest(request, viewRequest);
+			if ($case == null) {
+				((HttpServletResponse) response).sendRedirect("/");
+				return;
+			}
+			if (viewRequest.needInitSandbox()) {
+				try {
+					initSandbox(response, request, viewRequest);
+				} catch (IllegalArgumentException ex) { // sandbox not found
+					return;
+				}
+			}
+
+			if (viewRequest.getType() == Type.Direct) {
+				response.sendRedirect(viewRequest.getFiddleDirectURL());
+			} else {
+				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
+			}
+
+		} else {
+			chain.doFilter(request2, response);
+		}
+
+	}
+
+	/* ------------ internal implemenation ------------- */
+
+	protected void initSandbox(HttpServletResponse response, HttpServletRequest request, ViewRequest viewRequest)
+			throws IOException {
+		try {
+			String instHash = ((String) request.getParameter("run"));
+			viewRequest.setFiddleSandbox(getSandbox(instHash, viewRequest.getZkversion()));
+			request.setAttribute(FiddleConstant.REQUEST_ATTR_RUN_VIEW, viewRequest);
+		} catch (SandboxNotFoundException e) {
+
+			/**
+			 * 1. if we lookup hash and hash not found , we lookup ZK version
+			 * then. 2. if we lookup zkversion not found , we lookup a specific
+			 * sandbox by default and will not came in this this one.
+			 */
+			String url = getURL(viewRequest, e.getType());
+			if (url != null) {
+				response.sendRedirect(url);
+				throw new IllegalArgumentException("Sandbox Not Found");
+			}
+		}
+	}
+
+	protected ICase getCase(String caseToken, String version) {
 
 		ICase $case = null; // new Case();
 
@@ -70,91 +124,83 @@ public class FiddleViewFilter implements Filter {
 		return $case;
 	}
 
-	private boolean handleView(HttpServletRequest request, HttpServletResponse response, String path)
-			throws IOException, ServletException {
+	protected ICase handleCaseInRequest(HttpServletRequest request, ViewRequest viewRequest) throws IOException,
+			ServletException {
 
-		boolean directly = path.startsWith("/direct");
-		String newpath = directly ? path.substring(7) : path.substring(5);
-		// inst.getPath() + evt.getToken() + "/" + evt.getVersion()
-		// http://localhost:9999/view/3591l7m/3/v5.0.7?run=TonyQ
-		Matcher match = view.matcher(newpath);
-		if (match.find()) {
+		// same path between the two
 
-			String version = match.group(2);
-			String token = match.group(1);
-
-			ICase $case = getCase(token, version);
-			if ($case == null) {
-				response.sendRedirect("/");
-				return true;
-			}
-
-			request.setAttribute("__case", $case);
-			request.setAttribute("caseUrl", FiddleConfig.getHostName() + "/sample/"+ $case.getCaseUrl());
-			setPageTitle(request,$case);
-			ViewRequest vr = new ViewRequest();
-			vr.setToken(match.group(1));
-			vr.setTokenVersion(match.group(2));
-			vr.setZkversion(match.group(4));
-
-			String instHash = (String) request.getAttribute("run");
-			String newurl = null;
-			FiddleSandbox inst;
-
-			if (instHash != null) {
-				inst = sandboxManager.getFiddleInstance(instHash);
-				if (inst == null) {
-					newurl = ("/view/" + vr.getToken() + "/" + vr.getTokenVersion() + "/v" + vr.getZkversion());
-					response.sendRedirect(newurl);
-					return true;
-				}
-				request.setAttribute("runview", vr);
-			} else if (vr.getZkversion() != null) {
-				inst = sandboxManager.getFiddleInstanceByVersion(vr.getZkversion());
-
-				if (inst == null) {
-					newurl = ("/view/" + vr.getToken() + "/" + vr.getTokenVersion());
-					response.sendRedirect(newurl);
-					return true;
-				}
-				request.setAttribute("runview", vr);
-			} else {
-				inst = sandboxManager.getFiddleInstanceForLastestVersion();
-			}
-
-			vr.setFiddleInstance(inst);
-
-			if (directly) {
-				response.sendRedirect(inst.getSrc(vr.getToken(), Integer.parseInt(vr.getTokenVersion())));
-			} else
-				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
-			return true;
-
-		} else {
-			response.sendRedirect("/");
-			return true;
+		ICase $case = getCase(viewRequest.getToken(), viewRequest.getTokenVersion());
+		if ($case == null) {
+			return null;
 		}
-	}
-	public void setPageTitle(HttpServletRequest request, ICase $case) {
-		boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
-		String title = emptytitle ? "Untitled" : $case.getTitle();
-		request.setAttribute("_pgtitle", " - " + title);
+		// response.sendRedirect("/");
+
+		request.setAttribute(FiddleConstant.REQUEST_ATTR_CASE, $case);
+		setPageTitle(request, $case);
+		return $case;
 	}
 
-	public void doFilter(ServletRequest request2, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
-		HttpServletRequest request = ((HttpServletRequest) request2);
+	protected String getURL(ViewRequest viewRequest, SandboxNotFoundException.Type type) {
 
-		String uri = request.getRequestURI();
-		String context = request.getContextPath();
-		String path = uri.replaceFirst(context, "");		if (path == null || path.equals("/")) {
-			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
-			return;
+		String tokenLink = viewRequest.getToken() + "/" + viewRequest.getTokenVersion();
+		String zkVer = "/v" + viewRequest.getZkversion();
+
+		// means we can't find any sandbox for it , then go back to sample view
+		// directly.
+		if ((type == SandboxNotFoundException.Type.DEFAULT)) {
+			return FiddleConfig.getHostName() + "sample/" + tokenLink;
 		}
 
+		boolean showVer = (type == SandboxNotFoundException.Type.HASH);
+
+		String prefix = "view";
+		if (viewRequest.getType() == Type.Direct) {
+			prefix = "direct";
+		}
+
+		return FiddleConfig.getHostName() + prefix + "/" + tokenLink + (showVer ? zkVer : "");
+	}
+
+	protected FiddleSandbox getSandbox(String instHash, String zkver) throws SandboxNotFoundException {
+		FiddleSandbox inst;
+		SandboxNotFoundException.Type type = SandboxNotFoundException.Type.DEFAULT;
+		if (instHash != null) {
+			inst = sandboxManager.getFiddleInstance(instHash);
+			type = (SandboxNotFoundException.Type.HASH);
+		} else if (zkver != null) {
+			inst = sandboxManager.getFiddleInstanceByVersion(zkver);
+			type = (SandboxNotFoundException.Type.ZK_VERSION);
+		} else {
+			inst = sandboxManager.getFiddleInstanceForLastestVersion();
+			type = (SandboxNotFoundException.Type.DEFAULT);
+		}
+		if (inst == null) {
+			throw new SandboxNotFoundException(type);
+		}
+		return inst;
+	}
+
+	protected void setPageTitle(HttpServletRequest request, ICase $case) {
+		boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
+		String title = emptytitle ? "Untitled" : $case.getTitle();
+		request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_TITLE, " - " + title);
+	}
+
+	protected ViewRequest getAttributeFromURL(String path) {
 		if (path.startsWith("/view/") || path.startsWith("/direct/")) {
-			if (handleView(request, (HttpServletResponse) response, path)) {
-				return;
+			boolean directly = path.startsWith("/direct");
+			String newpath = directly ? path.substring(7) : path.substring(5);
+			Matcher match = view.matcher(newpath);
+			if (match.find()) {
+				String version = match.group(2);
+				String token = match.group(1);
+				String zkversion = match.group(4);
+
+				ViewRequest viewRequest = new ViewRequest(directly ? Type.Direct : Type.View);
+				viewRequest.setToken(token);
+				viewRequest.setTokenVersion(version);
+				viewRequest.setZkversion(zkversion);
+				return viewRequest;
 			}
 		} else if (path.startsWith("/sample/")) {
 			Matcher match = code.matcher(path);
@@ -163,24 +209,13 @@ public class FiddleViewFilter implements Filter {
 				String version = match.group(2);
 				String token = match.group(1);
 
-				ICase $case = getCase(token, version);
-				if ($case == null) {
-					((HttpServletResponse) response).sendRedirect("/");
-					return;
-				}
-				setPageTitle(request, $case);
-				request.setAttribute("caseUrl", FiddleConfig.getHostName()  + "/sample/" + $case.getCaseUrl());
-				request.setAttribute("__case", $case);
-				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
-				return;
-			} else {
-				((HttpServletResponse) response).sendRedirect("/");
-				return;
+				ViewRequest viewRequest = new ViewRequest(Type.Sample);
+				viewRequest.setToken(token);
+				viewRequest.setTokenVersion(version);
+				return viewRequest;
 			}
 		}
-
-		chain.doFilter(request2, response);
-
+		return null;
 	}
 
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -189,10 +224,11 @@ public class FiddleViewFilter implements Filter {
 
 	public void destroy() {
 	}
-
+
 	public void setCaseDao(ICaseDao caseDao) {
 		this.caseDao = caseDao;
-	}
+	}
+
 	public void setSandboxManager(FiddleSandboxManager sandboxManager) {
 		this.sandboxManager = sandboxManager;
 	}

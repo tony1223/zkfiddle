@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
 import org.zkoss.fiddle.composer.event.FiddleEventListener;
 import org.zkoss.fiddle.composer.event.FiddleEventQueues;
@@ -95,8 +96,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		//TODO: move "__case" to constant
-		ICase $case = (ICase) requestScope.get("__case");
+		ICase $case = (ICase) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE);
 
 		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
 		caseModel = new CaseModel($case);
@@ -151,7 +151,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		initSEOHandler(caseModel,desktop);
 
 		// @see FiddleDispatcherFilter for those use this directly
-		viewRequestParam = (ViewRequest) requestScope.get("runview");
+		viewRequestParam = (ViewRequest) requestScope.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
 		if (viewRequestParam != null) {
 			runDirectlyView(viewRequestParam);
 		}
