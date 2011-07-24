@@ -27,7 +27,7 @@ import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
-import org.zkoss.fiddle.visualmodel.ViewRequest;
+import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.social.facebook.event.LikeEvent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
@@ -91,7 +91,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Checkbox cbSaveTag;
 
-	private ViewRequest viewRequestParam;
+	private CaseRequest viewRequestParam;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -151,7 +151,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		initSEOHandler(caseModel,desktop);
 
 		// @see FiddleDispatcherFilter for those use this directly
-		viewRequestParam = (ViewRequest) requestScope.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
+		viewRequestParam = (CaseRequest) requestScope.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
 		if (viewRequestParam != null) {
 			runDirectlyView(viewRequestParam);
 		}
@@ -239,9 +239,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 	}
 
-	private void runDirectlyView(ViewRequest viewRequestParam) {
+	private void runDirectlyView(CaseRequest viewRequestParam) {
 
-		FiddleSandbox inst = viewRequestParam.getFiddleInstance();
+		FiddleSandbox inst = viewRequestParam.getFiddleSandbox();
 		if (inst != null) { // inst can't be null
 			// use echo event to find a good timing
 			Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, null));
@@ -269,7 +269,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	public void onShowResult(Event e) {
 		if(viewRequestParam != null){
 			FiddleSourceEventQueue.lookup().fireShowResult(caseModel.getCurrentCase(),
-				viewRequestParam.getFiddleInstance());
+				viewRequestParam.getFiddleSandbox());
 		}
 	}
 

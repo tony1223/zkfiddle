@@ -1,13 +1,13 @@
 package org.zkoss.fiddle.visualmodel;
 
-public class ViewRequest {
+public class CaseRequest {
 
 	public enum Type{
 		Direct,
 		View,
 		Sample
 	}
-	private FiddleSandbox inst;
+	private FiddleSandbox sandbox;
 
 	private String token;
 
@@ -22,21 +22,21 @@ public class ViewRequest {
 		return getType() == Type.Direct || getType() == Type.View;
 	}
 	
-	public ViewRequest(Type type){
+	public CaseRequest(Type type){
 		this.type = type;
 	}
 	
 	
 	public String getFiddleDirectURL(){
-		return inst.getSrc(getToken(), Integer.parseInt(getTokenVersion()));
+		return sandbox.getSrc(getToken(), Integer.parseInt(getTokenVersion()));
 	}
 
-	public FiddleSandbox getFiddleInstance() {
-		return inst;
+	public FiddleSandbox getFiddleSandbox() {
+		return sandbox;
 	}
 
 	public void setFiddleSandbox(FiddleSandbox inst) {
-		this.inst = inst;
+		this.sandbox = inst;
 	}
 
 	public String getToken() {

@@ -21,9 +21,9 @@ import org.zkoss.fiddle.exception.SandboxNotFoundException;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.FiddleConfig;
+import org.zkoss.fiddle.visualmodel.CaseRequest;
+import org.zkoss.fiddle.visualmodel.CaseRequest.Type;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
-import org.zkoss.fiddle.visualmodel.ViewRequest;
-import org.zkoss.fiddle.visualmodel.ViewRequest.Type;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleViewFilter implements Filter {
@@ -54,7 +54,7 @@ public class FiddleViewFilter implements Filter {
 			return;
 		}
 
-		ViewRequest viewRequest = getAttributeFromURL(path);
+		CaseRequest viewRequest = getAttributeFromURL(path);
 		if (viewRequest != null) {
 			ICase $case = handleCaseInRequest(request, viewRequest);
 			if ($case == null) {
@@ -83,7 +83,7 @@ public class FiddleViewFilter implements Filter {
 
 	/* ------------ internal implemenation ------------- */
 
-	protected void initSandbox(HttpServletResponse response, HttpServletRequest request, ViewRequest viewRequest)
+	protected void initSandbox(HttpServletResponse response, HttpServletRequest request, CaseRequest viewRequest)
 			throws IOException {
 		try {
 			String instHash = ((String) request.getParameter("run"));
@@ -124,7 +124,7 @@ public class FiddleViewFilter implements Filter {
 		return $case;
 	}
 
-	protected ICase handleCaseInRequest(HttpServletRequest request, ViewRequest viewRequest) throws IOException,
+	protected ICase handleCaseInRequest(HttpServletRequest request, CaseRequest viewRequest) throws IOException,
 			ServletException {
 
 		// same path between the two
@@ -140,7 +140,7 @@ public class FiddleViewFilter implements Filter {
 		return $case;
 	}
 
-	protected String getURL(ViewRequest viewRequest, SandboxNotFoundException.Type type) {
+	protected String getURL(CaseRequest viewRequest, SandboxNotFoundException.Type type) {
 
 		String tokenLink = viewRequest.getToken() + "/" + viewRequest.getTokenVersion();
 		String zkVer = "/v" + viewRequest.getZkversion();
@@ -186,7 +186,7 @@ public class FiddleViewFilter implements Filter {
 		request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_TITLE, " - " + title);
 	}
 
-	protected ViewRequest getAttributeFromURL(String path) {
+	protected CaseRequest getAttributeFromURL(String path) {
 		if (path.startsWith("/view/") || path.startsWith("/direct/")) {
 			boolean directly = path.startsWith("/direct");
 			String newpath = directly ? path.substring(7) : path.substring(5);
@@ -196,7 +196,7 @@ public class FiddleViewFilter implements Filter {
 				String token = match.group(1);
 				String zkversion = match.group(4);
 
-				ViewRequest viewRequest = new ViewRequest(directly ? Type.Direct : Type.View);
+				CaseRequest viewRequest = new CaseRequest(directly ? Type.Direct : Type.View);
 				viewRequest.setToken(token);
 				viewRequest.setTokenVersion(version);
 				viewRequest.setZkversion(zkversion);
@@ -209,7 +209,7 @@ public class FiddleViewFilter implements Filter {
 				String version = match.group(2);
 				String token = match.group(1);
 
-				ViewRequest viewRequest = new ViewRequest(Type.Sample);
+				CaseRequest viewRequest = new CaseRequest(Type.Sample);
 				viewRequest.setToken(token);
 				viewRequest.setTokenVersion(version);
 				return viewRequest;
