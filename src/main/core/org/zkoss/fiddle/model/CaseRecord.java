@@ -147,6 +147,12 @@ public class CaseRecord implements Serializable,IRenderCase{
 		return getToken() + "/" + getVersion() + getURLFriendlyTitle();
 	}
 
+	@Transient
+	public String getCaseUrl(String ver) {
+		if(ver == null) return getCaseUrl();
+		return getToken() + "/" + getVersion() + "/v" + ver + getURLFriendlyTitle();
+	}
+	
 	public boolean equals(final Object other) {
 		if (!(other instanceof CaseRecord))
 			return false;

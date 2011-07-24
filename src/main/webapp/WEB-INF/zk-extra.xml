@@ -4,7 +4,7 @@
 	<!-- this one is for specific site configs , like production only settings -->
     <library-property>
         <name>org.zkoss.fiddle.hostname</name>
-        <value>http://localhost:9999/datahandler/</value>
+        <value>http://localhost:9999/datahandler</value>
     </library-property>
 
     <!--

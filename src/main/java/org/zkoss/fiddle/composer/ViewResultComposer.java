@@ -43,8 +43,8 @@ public class ViewResultComposer extends GenericForwardComposer {
 
 				if(evt.getCase().getVersion() != 0){
 					String tokenpath = evt.getCase().getCaseUrl( inst.getZKVersion());
-					directUrl.setText( FiddleConfig.getHostName() + "direct/" + tokenpath	+ "?run=" + inst.getHash());
-					openNewWindow.setHref( FiddleConfig.getHostName() + "direct/" + tokenpath	+ "?run=" + inst.getHash());
+					directUrl.setText( FiddleConfig.getHostName() + "/direct/" + tokenpath	+ "?run=" + inst.getHash());
+					openNewWindow.setHref( FiddleConfig.getHostName() + "/direct/" + tokenpath	+ "?run=" + inst.getHash());
 					setDirectVisible(true);
 				}else{
 					setDirectVisible(false);

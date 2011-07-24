@@ -1,0 +1,24 @@
+<?page title="ZK Fiddle Widget ${_pgtitle}" contentType="text/html;charset=UTF-8"?>
+<?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
+<?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax OpenSource Framework) sameples right now!" ?>
+<?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
+<?script type="text/javascript" src="/js/fiddle.widget.js.dsp"?>
+<zk xmlns:w="client" xmlns:n="native">
+
+	<window apply="org.zkoss.fiddle.composer.WidgetViewComposer"
+		border="normal">
+		<caption>
+			<div>
+				<button id="runBtn" target="_blank" image="/img/resultset_next.png" />
+				<button id="goBtn" target="_blank" src="/img/viewresult-newwindow.png" />
+			</div>
+		</caption>
+		<tabbox id="resources" >
+			<tabs id="resourceTabs">
+			</tabs>
+			<tabpanels id="resourceTabpanels">
+			</tabpanels>
+		</tabbox>
+	</window>
+	<include src="footer.zul" />
+</zk>

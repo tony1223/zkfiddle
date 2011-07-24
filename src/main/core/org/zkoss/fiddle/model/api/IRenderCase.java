@@ -21,6 +21,8 @@ public interface IRenderCase {
 	
 	public String getCaseUrl();
 	
+	public String getCaseUrl(String ver);
+	
 	public Date getCreateDate();
 	
 }

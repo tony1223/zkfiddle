@@ -18,6 +18,7 @@ import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.exception.SandboxNotFoundException;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.CaseRequest.Type;
@@ -65,8 +66,8 @@ public class FiddleViewFilter implements Filter {
 
 			if (viewRequest.getType() == Type.Direct) {
 				response.sendRedirect(viewRequest.getFiddleDirectURL());
-//			} else if(viewRequest.getType() == Type.Widget){
-//				Servlets.forward(ctx, request, response, "/WEB-INF/_include/widget.zul");
+			} else if(viewRequest.getType() == Type.Widget){
+				Servlets.forward(ctx, request, response, "/WEB-INF/_include/widget.zul");
 			} else {
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			}
@@ -144,13 +145,13 @@ public class FiddleViewFilter implements Filter {
 		// means we can't find any sandbox for it , then go back to sample view
 		// directly.
 		if ((type == SandboxNotFoundException.Type.DEFAULT)) {
-			return FiddleConfig.getHostName() + "sample/" + tokenLink;
+			return FiddleConfig.getHostName() + "/sample/" + tokenLink;
 		}
 		
-		String prefix = viewRequest.getType().getPrefixNotStartWithSlash();
+		String prefix = viewRequest.getType().getPrefix();
 		
 		boolean showVer = (type == SandboxNotFoundException.Type.HASH);
-		return FiddleConfig.getHostName() + prefix + "/" + tokenLink + (showVer ? zkVer : "");
+		return FiddleConfig.getHostName() + prefix + tokenLink + (showVer ? zkVer : "");
 	}
 
 	protected FiddleSandbox getSandbox(String instHash, String zkver) throws SandboxNotFoundException {
@@ -173,8 +174,7 @@ public class FiddleViewFilter implements Filter {
 	}
 
 	protected void setPageTitle(HttpServletRequest request, ICase $case) {
-		boolean emptytitle = ($case.getTitle() == null || "".equals(($case.getTitle().trim())));
-		String title = emptytitle ? "Untitled" : $case.getTitle();
+		String title = CaseUtil.getPublicTitle($case);
 		request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_TITLE, " - " + title);
 	}
 

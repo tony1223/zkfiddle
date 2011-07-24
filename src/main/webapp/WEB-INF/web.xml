@@ -230,16 +230,20 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
+        <url-pattern>/sample/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ViewFilter</filter-name>
         <url-pattern>/view/*</url-pattern>
     </filter-mapping>	
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/direct/*</url-pattern>
-    </filter-mapping>		
+    </filter-mapping>
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
-        <url-pattern>/sample/*</url-pattern>
-    </filter-mapping>
+        <url-pattern>/widget/*</url-pattern>
+    </filter-mapping>	
 	<!--view mapping end-->
 	
     <filter-mapping>

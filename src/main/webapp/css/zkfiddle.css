@@ -234,6 +234,9 @@ span.c-like-string {
 pre.CodeMirror-cursor {
 	margin-top: 1px;
 }
+.CodeMirror-scroll {
+	overflow: auto;	
+}
 
 /* Left */
 /** West **/

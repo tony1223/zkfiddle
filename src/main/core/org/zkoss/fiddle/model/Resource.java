@@ -225,6 +225,16 @@ public class Resource implements  Cloneable, Serializable {
 		this.finalContent = buildFinalConetnt(c.getToken(), c.getVersion());
 	}
 
+	@Transient
+	public String getFullContent(){
+		if (type == TYPE_JAVA) {
+			return "package " + Resource.PACKAGE_PREFIX + Resource.PACKAGE_TOKEN + pkg + 
+				";\n\n"	+ this.content;
+		} else {
+			return this.content;
+		}
+	}
+	
 	public String buildFinalConetnt(String replacedPackage) {
 
 		if (replacedPackage == null) {

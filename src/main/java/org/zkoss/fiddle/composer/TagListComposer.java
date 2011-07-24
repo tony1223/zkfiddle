@@ -5,6 +5,7 @@ import java.net.URLEncoder;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Tag;
+import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.visualmodel.TagCaseListVO;
 import org.zkoss.fiddle.visualmodel.TagCloudVO;
 import org.zkoss.spring.SpringUtil;
@@ -77,9 +78,7 @@ public class TagListComposer extends GenericForwardComposer {
 
 				{
 					Div titlecont = new Div();
-					String title = tclvo.getCaseRecord().getTitle();
-					title = ((title == null || "".equals(title.trim())) ? "Untitled" : title);
-					A titlelink = new A(title);
+					A titlelink = new A(CaseUtil.getPublicTitle(tclvo.getCaseRecord()));
 					titlelink.setHref("/sample/" + tclvo.getCaseRecord().getCaseUrl());
 					titlecont.appendChild(titlelink);
 

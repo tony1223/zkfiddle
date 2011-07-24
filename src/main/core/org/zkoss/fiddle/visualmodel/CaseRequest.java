@@ -10,8 +10,8 @@ public class CaseRequest {
 	public enum Type{
 		Direct("/direct/",true),
 		View("/view/",true),
-		Sample("/sample/",true);
-//		,Widget("/widget/",true);
+		Sample("/sample/",true),
+		Widget("/widget/",true);
 		
 		private String prefix ;
 		private boolean needInitSandbox;
@@ -34,10 +34,6 @@ public class CaseRequest {
 		
 		public String getPrefix() {
 			return prefix;
-		}
-		
-		public String getPrefixNotStartWithSlash() {
-			return prefix.substring(1);
 		}
 		
 	}

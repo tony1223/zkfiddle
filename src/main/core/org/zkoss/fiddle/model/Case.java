@@ -143,6 +143,7 @@ public class Case implements ICase, Serializable {
 
 	@Transient
 	public String getCaseUrl(String ver) {
+		if(ver == null) return getCaseUrl();
 		return getToken() + "/" + getVersion() + "/v" + ver + getURLFriendlyTitle();
 	}
 
