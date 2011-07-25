@@ -5,10 +5,11 @@
 <?script type="text/javascript" src="/js/fiddle.widget.js.dsp"?>
 <zk xmlns:w="client" xmlns:n="native">
 
-	<window apply="org.zkoss.fiddle.composer.WidgetViewComposer"
+	<window sclass="widgetWindow" apply="org.zkoss.fiddle.composer.WidgetViewComposer"
 		border="normal">
 		<caption>
-			<div>
+			<div sclass="operations">
+				<button id="downloadBtn" target="_blank" image="/img/download.png" />
 				<button id="runBtn" target="_blank" image="/img/resultset_next.png" />
 				<button id="goBtn" target="_blank" src="/img/viewresult-newwindow.png" />
 			</div>

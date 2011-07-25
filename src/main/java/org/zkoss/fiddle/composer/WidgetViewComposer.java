@@ -43,6 +43,8 @@ public class WidgetViewComposer extends GenericForwardComposer {
 	private Button goBtn;
 
 	private Button runBtn;
+	
+	private Button downloadBtn;
 
 	public void doAfterCompose(final Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -68,9 +70,8 @@ public class WidgetViewComposer extends GenericForwardComposer {
 		
 		String zkVer = (String) Executions.getCurrent().getParameter("zkVersion");
 		runBtn.setHref(hostName + CaseUtil.getViewURL($case, zkVer));
-		
 		goBtn.setHref(hostName + CaseUtil.getSampleURL($case));
-
+		downloadBtn.setHref(hostName + CaseUtil.getDownloadURL($case));
 	}
 
 	private void renderTabAndTabpanels(List<Resource> list, int height) {

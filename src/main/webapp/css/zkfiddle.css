@@ -311,6 +311,12 @@ pre.CodeMirror-cursor {
 	padding: 10px;
 }
 
+/** Widget View **/
+.widgetWindow .operations img{
+	width:16px;
+	height:16px;
+}
+
 /** temp fix background ,zk 5071 issue , @see ZK theme SVN commit 61/64 */
 div.z-listbox-header tr.z-listhead, div.z-listbox-header tr.z-auxhead {
 	background: transparent repeat-x 0 0;

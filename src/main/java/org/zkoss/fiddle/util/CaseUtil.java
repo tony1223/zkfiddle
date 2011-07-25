@@ -4,31 +4,35 @@ import org.zkoss.fiddle.model.api.IRenderCase;
 
 public class CaseUtil {
 
-	public static String getViewURL(IRenderCase saved) {
-		return getURL(saved, "/view/");
+	public static String getDownloadURL(IRenderCase pCase){
+		return "/download/" + pCase.getToken() + "/" + pCase.getVersion();
+	}
+	
+	public static String getViewURL(IRenderCase pCase) {
+		return getURL(pCase, "/view/");
 	}
 
-	public static String getViewURL(IRenderCase saved, String zkver) {
-		return getURL(saved, "/view/", zkver);
+	public static String getViewURL(IRenderCase pCase, String zkver) {
+		return getURL(pCase, "/view/", zkver);
 	}
 
-	public static String getSampleURL(IRenderCase saved) {
-		return getURL(saved, "/sample/");
+	public static String getSampleURL(IRenderCase pCase) {
+		return getURL(pCase, "/sample/");
 	}
 
-	private static String getURL(IRenderCase saved, String prefix) {
-		return prefix + saved.getCaseUrl();
+	private static String getURL(IRenderCase pCase, String prefix) {
+		return prefix + pCase.getCaseUrl();
 	}
 
-	private static String getURL(IRenderCase saved, String prefix, String zkver) {
-		return prefix + saved.getCaseUrl(zkver);
+	private static String getURL(IRenderCase pCase, String prefix, String zkver) {
+		return prefix + pCase.getCaseUrl(zkver);
 	}
 
-	public static String getPublicTitle(IRenderCase pcase) {
-		if (pcase == null) {
+	public static String getPublicTitle(IRenderCase pCase) {
+		if (pCase == null) {
 			throw new IllegalArgumentException("case shouldn't be null");
 		}
-		boolean emptytitle = (pcase.getTitle() == null || "".equals((pcase.getTitle().trim())));
-		return emptytitle ? "Untitled" : pcase.getTitle();
+		boolean emptytitle = (pCase.getTitle() == null || "".equals((pCase.getTitle().trim())));
+		return emptytitle ? "Untitled" : pCase.getTitle();
 	}
 }

@@ -22,6 +22,7 @@ import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.fiddle.visualmodel.VirtualCase;
 import org.zkoss.zkplus.spring.SpringUtil;
@@ -92,8 +93,7 @@ public class CaseModel {
 	
 
 	public String getDownloadLink(){
-		ICase _case = getCurrentCase();
-		return "/download/" + _case.getToken() + "/" + _case.getVersion();
+		return CaseUtil.getDownloadURL(getCurrentCase());
 	}
 	
 	public void removeResource(Resource ir) {
