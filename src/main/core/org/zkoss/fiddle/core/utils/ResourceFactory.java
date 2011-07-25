@@ -28,15 +28,6 @@ public class ResourceFactory {
 
 			String template = readThenReaplce("/WEB-INF/_templates/TestComposer.java", "\\$\\{class-name\\}", clsName);
 			return new Resource(Resource.TYPE_JAVA, name, template);
-		} else if (Resource.TYPE_MEDIA == type) {
-			String mediaName = name;
-			
-			if (mediaName != null){
-				int idx = mediaName.lastIndexOf(".");
-				if(idx>=0)
-					mediaName = mediaName.substring(0, idx);
-			}
-			return new Resource(Resource.TYPE_MEDIA, name, "-1");
 		}  else
 			return null;
 	}

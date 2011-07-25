@@ -36,9 +36,6 @@ public class Resource implements  Cloneable, Serializable {
 
 	public static final int TYPE_CSS = 4;
 	
-	public static final int TYPE_MEDIA = 5;
-	
-
 	public static final String PACKAGE_TOKEN = "pkg$";
 
 	public static final String PACKAGE_TOKEN_ESCAPE = "pkg\\$";
@@ -146,8 +143,6 @@ public class Resource implements  Cloneable, Serializable {
 			return "html";
 		case TYPE_CSS:
 			return "css";
-		case TYPE_MEDIA:
-			return "media";
 		default:
 			return "unknown";
 		}
