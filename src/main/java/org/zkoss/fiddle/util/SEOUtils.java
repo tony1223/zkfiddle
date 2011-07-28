@@ -37,10 +37,10 @@ public class SEOUtils {
 					appendTagStart(out, "div", "case");
 					appendTitle(out, 2, item.getTitle());
 					appendText(out, "version", item.getVersion());
-					appendText(out, "token", item.getToken());
+					appendText(out, "sample", item.getToken());
 					
 					if(item.getCreateDate() != null){
-						appendText(out, "create date", item.getCreateDate());
+						appendText(out, "create-date", item.getCreateDate());
 					}
 					
 					appendLink(out, CaseUtil.getSampleURL(item), "link");
@@ -60,11 +60,10 @@ public class SEOUtils {
 					appendTagStart(out, "div", "resoruces");
 					appendTitle(out, 3, "resources");
 
-					for (Resource r : model) {
-						appendText(out, "fileName", r.getName());
-						appendText(out, "fileType", r.getTypeName());
-						appendText(out, "fileContent",
-								r.getFinalContent() == null ? r.getContent() : r.getFinalContent());
+					for (Resource resource : model) {
+						appendText(out, "file-name", resource.getName());
+						appendText(out, "file-type", ResourceUtil.getTypeName(resource));
+						appendText(out, "file-content", ResourceUtil.getFinalContent(resource));
 					}
 					appendTagEnd(out, "div");
 				}

@@ -6,6 +6,7 @@ import org.zkoss.fiddle.composer.event.FiddleEventListener;
 import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.model.Resource;
+import org.zkoss.fiddle.util.ResourceUtil;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -20,7 +21,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 
 	protected CodeEditor prepareCodeEditor(final Resource resource) {
 		CodeEditor ce = new CodeEditor();
-		ce.setMode(resource.getTypeMode());
+		ce.setMode(ResourceUtil.getTypeMode(resource));
 		ce.setValue(resource.getContent());
 		ce.setHeight("400px");
 		ce.setWidth("auto");
@@ -44,7 +45,9 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 	}
 
 	protected Tab renderTab(final Resource resource) {
-		final Texttab texttab = new Texttab(resource.getTypeName());
+		
+		String type = ResourceUtil.getTypeName(resource);
+		final Texttab texttab = new Texttab(null,"/img/types/"+type+".png");
 		texttab.setAttribute("model", resource);
 
 		final Textbox box = new Textbox(resource.getName());
@@ -64,7 +67,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 
 			public void onFiddleEvent(ResourceChangedEvent event) throws Exception {
 				if (((ResourceChangedEvent) event).getResource() == resource) {
-					texttab.setLabel("*" + resource.getTypeName());
+					texttab.setLabel("*");
 				}
 			}
 		});

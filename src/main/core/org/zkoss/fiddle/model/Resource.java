@@ -130,24 +130,6 @@ public class Resource implements  Cloneable, Serializable {
 		this.caseId = caseId;
 	}
 
-	@Transient
-	public String getTypeName() {
-		switch (type) {
-		case TYPE_ZUL:
-			return "zul";
-		case TYPE_JAVA:
-			return "java";
-		case TYPE_JS:
-			return "javascript";
-		case TYPE_HTML:
-			return "html";
-		case TYPE_CSS:
-			return "css";
-		default:
-			return "unknown";
-		}
-	}
-
 	@Lob
 	@Column
 	public String getFinalContent() {
@@ -174,24 +156,6 @@ public class Resource implements  Cloneable, Serializable {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
-	}
-	
-	@Transient
-	public String getTypeMode() {
-		switch (type) {
-		case TYPE_ZUL:
-			return "xml";
-		case TYPE_JAVA:
-			return "java";
-		case TYPE_JS:
-			return "javascript";
-		case TYPE_HTML:
-			return "html";
-		case TYPE_CSS:
-			return "css";
-		default:
-			return "unknown";
-		}
 	}
 
 	@Transient

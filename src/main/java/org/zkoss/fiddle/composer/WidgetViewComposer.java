@@ -10,6 +10,7 @@ import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
+import org.zkoss.fiddle.util.ResourceUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -77,13 +78,14 @@ public class WidgetViewComposer extends GenericForwardComposer {
 	private void renderTabAndTabpanels(List<Resource> list, int height) {
 		for (Resource resource : list) {
 			{
-				String tabTitle = resource.getTypeName() + " " + resource.getName();
-				resourceTabs.appendChild(new Tab(tabTitle));
+				String type = ResourceUtil.getTypeName(resource);
+				String tabTitle =  " " + resource.getName();
+				resourceTabs.appendChild(new Tab(tabTitle,"/img/types/"+type+".png"));
 			}
 			{
 				Tabpanel tabpanel = new Tabpanel();
 				{
-					CodeEditor editor = new CodeEditor(resource.getTypeMode());
+					CodeEditor editor = new CodeEditor(ResourceUtil.getTypeMode(resource));
 					editor.setReadOnly(true);
 					editor.setValue(resource.getFullContent());
 
