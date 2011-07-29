@@ -88,8 +88,8 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 				Query qu = session.createQuery("select t from Tag t,CaseTag tc "
 						+ " where t.id = tc.tagId and tc.caseId = :caseId ");
 				qu.setLong("caseId", c.getId());
-				qu.setMaxResults(pageSize);
-				qu.setFirstResult((pageIndex - 1) * pageSize);
+				
+				setPage(qu,pageIndex,pageSize);
 				return qu.list();
 			}
 		});
@@ -154,8 +154,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 								return collection;
 							}
 						});
-						query.setMaxResults(pageSize);
-						query.setFirstResult((pageIndex - 1) * pageSize);
+						setPage(query,pageIndex,pageSize);
 						return query.list();
 					}
 				});

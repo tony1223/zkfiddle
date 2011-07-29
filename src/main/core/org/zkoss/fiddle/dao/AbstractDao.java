@@ -3,6 +3,7 @@ package org.zkoss.fiddle.dao;
 import java.sql.SQLException;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -30,5 +31,11 @@ public class AbstractDao extends HibernateDaoSupport {
 				return null;
 			}
 		});
+	}
+	
+	protected static void setPage(Query qu,int pageIndex,int pageSize){
+		qu.setMaxResults(pageSize);
+		qu.setFirstResult((pageIndex - 1) * pageSize);
+		
 	}
 }

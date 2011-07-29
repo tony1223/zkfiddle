@@ -135,4 +135,27 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 
 	}
 
+	public List<Case> list(final int pageIndex,final  int pageSize) {
+		return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
+
+			@SuppressWarnings("unchecked")
+			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("from Case order by id desc");
+				setPage(query,pageIndex,pageSize);
+				return query.list();
+			}
+		});
+	}
+
+	public Integer size() {
+		return ((Long) getHibernateTemplate().execute(new HibernateCallback<Long>() {
+
+			@SuppressWarnings("unchecked")
+			public Long doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("select count(id) from Case");
+				return (Long) query.uniqueResult();
+			}
+		})).intValue();
+	}
+
 }
