@@ -53,7 +53,12 @@ public class FiddleViewFilter implements Filter {
 		if (viewRequest != null) {
 			ICase $case = handleCaseInRequest(request, viewRequest);
 			if ($case == null) {
-				((HttpServletResponse) response).sendRedirect("/");
+				if(viewRequest.getType() == Type.Widget){
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					Servlets.forward(ctx, request, response, "/WEB-INF/_include/widgetnotfound.zul");
+				}else{
+					((HttpServletResponse) response).sendRedirect("/");
+				}
 				return;
 			}
 			if (viewRequest.needInitSandbox()) {

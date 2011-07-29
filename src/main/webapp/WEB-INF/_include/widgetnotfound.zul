@@ -1,0 +1,7 @@
+<zk xmlns:w="client" xmlns:n="native">
+	<n:pre>
+		Sample not found!
+		Please double check your link.
+	</n:pre>
+	Back to <a href="http://zkfiddle.org" target="_blank">ZKFiddle</a> .
+</zk>
