@@ -1,7 +1,9 @@
 package org.zkoss.fiddle.dao;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
@@ -19,7 +22,12 @@ import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Tag;
 
 @SuppressWarnings("unchecked")
-public class TagDaoImpl extends AbstractDao implements ITagDao{
+public class TagDaoImpl extends AbstractDao implements ITagDao {
+
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = Logger.getLogger(TagDaoImpl.class);
 
 	public List<Tag> list() {
 		return getHibernateTemplate().find("from Tag");
@@ -48,23 +56,29 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 		});
 	}
 
-
 	public Tag getTag(final String name) {
 		return getHibernateTemplate().execute(new HibernateCallback<Tag>() {
 
 			public Tag doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("from Tag where name = :name");
 				query.setString("name", name);
-				return (Tag) query.uniqueResult();
+				query.setMaxResults(2);
+				List<Tag> result = query.list();
+				if (result.size() > 1) {
+					if (logger.isEnabledFor(Level.ERROR)) {
+						logger.error("TagDaoImpl::getTag([" + name + "]) duplicated.");
+					}
+				}
+				return result.get(0);
 			}
 		});
 	}
 
-	public List<Tag> searchTag(final String name,final int amount) {
+	public List<Tag> searchTag(final String name, final int amount) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
-				Query query = session.createQuery("from Tag where lower(name) like lower(:name)" );
+				Query query = session.createQuery("from Tag where lower(name) like lower(:name)");
 				query.setString("name", name + "%");
 				query.setMaxResults(amount);
 				return (List<Tag>) query.list();
@@ -72,7 +86,6 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 		});
 	}
 
-	
 	public List<Tag> searchTag(final String name) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 
@@ -85,8 +98,8 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 	}
 
 	/**
-	 * 2011/6/26 TonyQ:
-	 * This is a time consuming method , please don't count on this too much.lol
+	 * 2011/6/26 TonyQ: This is a time consuming method , please don't count on
+	 * this too much.lol
 	 */
 	public List<Tag> prepareTags(final String[] tags) {
 
@@ -94,7 +107,16 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("from Tag where name in (:list) ");
-				Set<String> tagSet = new HashSet<String>(Arrays.asList(tags));
+				Set<String> tagSet = new HashSet<String>(tags.length);
+
+				if (tags != null) {
+					for (String tag : tags) {
+						if (tag != null) {
+							tagSet.add(tag.trim());
+						}
+					}
+				}
+
 				query.setParameterList("list", tagSet);
 				List<Tag> result = query.list();
 
@@ -104,25 +126,24 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 				}
 				Map<String, Tag> map = new HashMap<String, Tag>();
 				for (Tag t : result) {
-					map.put(t.getName(), t);
+					map.put(t.getName().toLowerCase(), t);
 				}
 
-				List<Tag> list = new ArrayList<Tag>();
-
+				Set<Tag> list = new HashSet<Tag>();
 				for (String token : tagSet) {
-
-					if (!map.containsKey(token)) {
+					String tokenKey = token.toLowerCase();
+					if (!map.containsKey(tokenKey)) {
 						Tag t = new Tag();
 						t.setName(token);
 						t.setAmount(0L);
 						session.save(t);
 						list.add(t);
 					} else {
-						list.add(map.get(token));
+						list.add(map.get(tokenKey));
 					}
 				}
 
-				return list;
+				return Arrays.asList(list.toArray(new Tag[0]));
 
 			}
 		});
@@ -130,8 +151,9 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 
 	public List<Tag> findPopularTags(final int amount) {
 		return (List<Tag>) FiddleCache.CaseTag.execute(new CacheHandler<List<Tag>>() {
+
 			protected List<Tag> execute() {
-				return  _findPopularTags(amount);
+				return _findPopularTags(amount);
 			}
 
 			protected String getKey() {
@@ -143,6 +165,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 
 	private List<Tag> _findPopularTags(final int amount) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
+
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("from Tag where amount > 0 order by amount desc ");
 				query.setMaxResults(amount);
@@ -150,6 +173,5 @@ public class TagDaoImpl extends AbstractDao implements ITagDao{
 			}
 		});
 	}
-
 
 }
