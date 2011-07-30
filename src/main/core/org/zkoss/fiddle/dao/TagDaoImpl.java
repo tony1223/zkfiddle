@@ -66,7 +66,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao {
 				List<Tag> result = query.list();
 				if (result.size() > 1) {
 					if (logger.isEnabledFor(Level.ERROR)) {
-						logger.error("TagDaoImpl::getTag([" + name + "]) duplicated.");
+						logger.error("[TagDaoImpl::getTag]:[" + name + "] tag name duplicated.");
 					}
 				}
 				return result.get(0);

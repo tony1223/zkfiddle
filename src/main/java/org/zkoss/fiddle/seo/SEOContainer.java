@@ -51,7 +51,7 @@ public class SEOContainer {
 				token.process(out);
 			} catch (IOException e) {
 				if (logger.isEnabledFor(Level.ERROR))
-					logger.error(e);
+					logger.error("SEO processing ERROR:",e);
 			}
 		}
 

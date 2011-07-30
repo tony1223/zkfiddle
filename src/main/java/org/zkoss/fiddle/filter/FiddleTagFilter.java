@@ -45,8 +45,8 @@ public class FiddleTagFilter implements Filter {
 				return ;
 			}
 			request.setAttribute("tag",mtag);
-			if (logger.isInfoEnabled()) {
-				logger.info("doFilter(ServletRequest, ServletResponse, FilterChain) - Tag Name=" + m.group(1));
+			if (logger.isDebugEnabled()) {
+				logger.debug("[FiddleTagFilter::doFilter]Tag Name=" + m.group(1));
 			}
 
 			Servlets.forward(ctx, request, response, "/WEB-INF/_include/tag.zul" );

@@ -39,10 +39,6 @@ public class FiddleSiteMapFilter implements Filter {
 
 		String sitemapString = FiddleCache.SiteMap.execute(new CacheHandler<String>() {
 			protected String execute() {
-
-				if (logger.isInfoEnabled()) {
-					logger.info("doFilter(ServletRequest, ServletResponse, FilterChain) - Rendered SiteMap ");
-				}
 				return renderSiteMap(caseDao.list());
 			}
 			protected String getKey() {
@@ -54,6 +50,10 @@ public class FiddleSiteMapFilter implements Filter {
 	}
 
 	private String renderSiteMap(List<Case> list){
+		if (logger.isInfoEnabled()) {
+			logger.info("Loading SiteMap From DB, total items :"+list.size());
+		}
+		
 		String domain = FiddleConfig.getHostName();
 		StringBuffer sb= new StringBuffer();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -77,7 +77,6 @@ public class FiddleSiteMapFilter implements Filter {
 	}
 
 	public void destroy() {
-
 	}
 
 

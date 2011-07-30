@@ -97,9 +97,8 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 	public boolean increase(final CaseRecord.Type type, final ICase _case) {
 		if (logger.isInfoEnabled()) {
-			logger.info("increase(CaseRecord.Type, ICase) - start :" + type+":"+_case.getCaseUrl());
+			logger.info("increase caserecord:"+type + ":" + _case.getCaseUrl());
 		}
-
 
 		if (type == CaseRecord.Type.Like) {
 			if (logger.isDebugEnabled()) {
