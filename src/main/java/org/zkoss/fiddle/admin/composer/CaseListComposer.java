@@ -8,6 +8,7 @@ import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Grid;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
@@ -39,9 +40,13 @@ public class CaseListComposer extends GenericForwardComposer {
 				
 				int rowIndex = row.getParent().getChildren().indexOf(row);
 				row.appendChild(new Label(String.valueOf(rowIndex)));
-				row.appendChild(new Label(CaseUtil.getPublicTitle(aCase)));
+				
+				A link = new A(CaseUtil.getPublicTitle(aCase));
+				link.setHref(CaseUtil.getSampleURL(aCase));
+				row.appendChild(link);
 				row.appendChild(new Label(String.valueOf(aCase.getVersion())));
 				
+				row.appendChild(new Label(aCase.getCreateDate().toString()));
 			}
 		});
 		
