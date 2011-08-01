@@ -40,11 +40,6 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 	private Button saveBtn;
 
-
-	public String getHostName(){
-		return FiddleConfig.getHostName();
-	}
-
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
@@ -142,7 +137,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			inst = (FiddleSandbox) sandboxes.getItemAtIndex(0).getValue();
 		else
 			inst = (FiddleSandbox) sandboxes.getSelectedItem().getValue();
-		
+
 		FiddleSourceEventQueue.lookup().firePreparingShowResult(inst);
 	}
 

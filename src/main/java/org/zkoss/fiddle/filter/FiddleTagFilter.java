@@ -1,7 +1,5 @@
 package org.zkoss.fiddle.filter;
 
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,6 +14,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleTagFilter implements Filter {
@@ -28,7 +28,7 @@ public class FiddleTagFilter implements Filter {
 	private Pattern tag = Pattern.compile("^/tag/(.*?)(;jsessionid=.*)?$");
 
 	private ServletContext ctx;
-	
+
 	public void doFilter(ServletRequest request2, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest request = ((HttpServletRequest) request2);
@@ -45,12 +45,15 @@ public class FiddleTagFilter implements Filter {
 				return ;
 			}
 			request.setAttribute("tag",mtag);
+
+			request.setAttribute("fiddleHostName", FiddleConfig.getHostName());
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("[FiddleTagFilter::doFilter]Tag Name=" + m.group(1));
 			}
 
 			Servlets.forward(ctx, request, response, "/WEB-INF/_include/tag.zul" );
-			
+
 		}else
 			chain.doFilter(request2, response);
 
@@ -63,5 +66,5 @@ public class FiddleTagFilter implements Filter {
 	public void destroy() {
 	}
 
-	
+
 }
