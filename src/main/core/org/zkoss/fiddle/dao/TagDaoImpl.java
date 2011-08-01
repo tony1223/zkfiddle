@@ -1,8 +1,5 @@
 package org.zkoss.fiddle.dao;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,8 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.NonUniqueResultException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
@@ -61,14 +59,21 @@ public class TagDaoImpl extends AbstractDao implements ITagDao {
 
 			public Tag doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("from Tag where name = :name");
+				System.out.println(name);
 				query.setString("name", name);
 				query.setMaxResults(2);
 				List<Tag> result = query.list();
+
+				if(result.size() == 0 ) {
+					return null;
+				}
+
 				if (result.size() > 1) {
 					if (logger.isEnabledFor(Level.ERROR)) {
 						logger.error("[TagDaoImpl::getTag]:[" + name + "] tag name duplicated.");
 					}
 				}
+
 				return result.get(0);
 			}
 		});
