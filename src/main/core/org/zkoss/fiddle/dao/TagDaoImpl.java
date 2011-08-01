@@ -79,11 +79,18 @@ public class TagDaoImpl extends AbstractDao implements ITagDao {
 		});
 	}
 
-	public List<Tag> searchTag(final String name, final int amount) {
+	public List<Tag> searchTag(final String name,final boolean includeEmpty, final int amount) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {
-				Query query = session.createQuery("from Tag where lower(name) like lower(:name)");
+
+				Query query = null;
+				if(includeEmpty){
+					query = session.createQuery("from Tag where lower(name) like lower(:name) ");
+				}else{
+					query = session.createQuery("from Tag where amount <> 0 and lower(name) like lower(:name) ");
+				}
+
 				query.setString("name", name + "%");
 				query.setMaxResults(amount);
 				return (List<Tag>) query.list();
@@ -91,7 +98,7 @@ public class TagDaoImpl extends AbstractDao implements ITagDao {
 		});
 	}
 
-	public List<Tag> searchTag(final String name) {
+	public List<Tag> searchTag(final String name,final boolean includeEmpty) {
 		return getHibernateTemplate().execute(new HibernateCallback<List<Tag>>() {
 
 			public List<Tag> doInHibernate(Session session) throws HibernateException, SQLException {

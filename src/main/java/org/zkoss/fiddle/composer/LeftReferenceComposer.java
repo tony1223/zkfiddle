@@ -45,7 +45,8 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	/**
 	 * Logger for this class
 	 */
-	private static final Logger logger = Logger.getLogger(LeftReferenceComposer.class);
+	private static final Logger logger = Logger
+			.getLogger(LeftReferenceComposer.class);
 
 	private Listbox likes;
 
@@ -57,9 +58,8 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	private Textbox tagFilter;
 
-	
 	private String currentTag;
-	
+
 	// TODO move this to specific queue
 	private EventQueue tag = EventQueues.lookup(FiddleEventQueues.Tag, true);
 
@@ -68,17 +68,21 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 		// TODO move the key to constant
 		currentTag = (String) requestScope.get("tag");
-		List<CaseRecord> list = (List<CaseRecord>) FiddleCache.Top10liked.execute(new CacheHandler<List<CaseRecord>>() {
+		List<CaseRecord> list = (List<CaseRecord>) FiddleCache.Top10liked
+				.execute(new CacheHandler<List<CaseRecord>>() {
 
-			protected List<CaseRecord> execute() {
-				ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-				return caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
-			}
+					protected List<CaseRecord> execute() {
+						ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil
+								.getBean("caseRecordDao");
+						return caseRecordDao.listByType(CaseRecord.Type.Like,
+								true, 1, 50);
+					}
 
-			protected String getKey() {
-				return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
-			}
-		});
+					protected String getKey() {
+						return CaseRecord.Type.Like + ":" + true + ":" + 1
+								+ ":" + 50;
+					}
+				});
 
 		if (list.size() != 0) {
 			SEOUtils.render(desktop, "Top 10 Favorites :", list);
@@ -101,9 +105,11 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			public void render(Listitem item, Object data) throws Exception {
 				if (data instanceof CaseRecord) {
 					CaseRecord cr = (CaseRecord) data;
-					String title = (cr.getTitle() == null || "".equals(cr.getTitle().trim())) ? cr.getToken() : cr
+					String title = (cr.getTitle() == null || "".equals(cr
+							.getTitle().trim())) ? cr.getToken() : cr
 							.getTitle();
-					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
+					item.appendChild(new Listcell(String.valueOf((item
+							.getIndex() + 1))));
 					item.appendChild(new Listcell(String.valueOf(title)));
 
 					Listcell list = new Listcell(String.valueOf(cr.getAmount()));
@@ -111,7 +117,8 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 					item.appendChild(list);
 					item.setValue(cr);
 				} else {
-					throw new IllegalArgumentException("data should be CaseRecord!" + data);
+					throw new IllegalArgumentException(
+							"data should be CaseRecord!" + data);
 				}
 
 			}
@@ -129,16 +136,20 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			public void render(Listitem item, Object data) throws Exception {
 				if (data instanceof Case) {
 					Case cr = (Case) data;
-					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getTitle();
-					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
+					String title = (cr.getTitle() == null || "".equals(cr
+							.getTitle())) ? cr.getToken() : cr.getTitle();
+					item.appendChild(new Listcell(String.valueOf((item
+							.getIndex() + 1))));
 					item.appendChild(new Listcell(String.valueOf(title)));
 
-					Listcell list = new Listcell(String.valueOf(cr.getVersion()));
+					Listcell list = new Listcell(
+							String.valueOf(cr.getVersion()));
 					list.setSclass("version");
 					item.appendChild(list);
 					item.setValue(cr);
 				} else {
-					throw new IllegalArgumentException("data should be Case!" + data);
+					throw new IllegalArgumentException("data should be Case!"
+							+ data);
 				}
 
 			}
@@ -158,9 +169,9 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	private void searchTags(String keyword) {
 		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
-		List<Tag> list = tagDao.searchTag(keyword.trim(),30);
+		List<Tag> list = tagDao.searchTag(keyword.trim(), false, 30);
 		tagContainer.setTags(list, currentTag);
-		logger.info("LeftReferenceComposer:search TAG["+keyword+"]");
+		logger.info("LeftReferenceComposer:search TAG[" + keyword + "]");
 	}
 
 	public void onChanging$tagFilter(InputEvent e) {
@@ -182,7 +193,8 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 			popupContent.setTitle("Maintenance Log");
 			popupContent.doOverlapped();
-			((Include) popupContent.getFellow("popupInclude")).setSrc("/html/maintain.html");
+			((Include) popupContent.getFellow("popupInclude"))
+					.setSrc("/html/maintain.html");
 		} catch (SuspendNotAllowedException e1) {
 			if (logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$newsContent(Event)", e1);
@@ -193,7 +205,8 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		try {
 			popupContent.setTitle("About");
 			popupContent.doOverlapped();
-			((Include) popupContent.getFellow("popupInclude")).setSrc("/html/about.html");
+			((Include) popupContent.getFellow("popupInclude"))
+					.setSrc("/html/about.html");
 		} catch (SuspendNotAllowedException e1) {
 			if (logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$whyfiddle(Event)", e1);
