@@ -102,8 +102,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
 
 		Boolean tryCase = (Boolean) requestScope.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
+		tryCase = tryCase!=null && tryCase ;
 		String zulData = (String) Executions.getCurrent().getParameter("zulData");
-		caseModel = new CaseModel($case, tryCase!=null && tryCase ,zulData);
+		caseModel = new CaseModel($case, tryCase ,zulData);
 
 		if(tryCase){
 			Events.echoEvent(new Event("onShowTryCase",self, null));

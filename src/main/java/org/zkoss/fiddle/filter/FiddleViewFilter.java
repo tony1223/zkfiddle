@@ -44,8 +44,8 @@ public class FiddleViewFilter implements Filter {
 		String context = request.getContextPath();
 		String path = uri.replaceFirst(context, "");
 
-		if (path == null || path.equals("/") || path.equals("/try/")) {
-			Boolean tryCase = path.equals("/try/");
+		if (path == null || path.equals("/") || path.equals("/service/try")) {
+			Boolean tryCase = path.equals("/service/try");
 			if(tryCase){
 				request.setAttribute(FiddleConstant.REQUEST_ATTR_TRY_CASE, tryCase);
 			}

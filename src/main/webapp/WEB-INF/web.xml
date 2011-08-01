@@ -213,7 +213,7 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>hibernateFilter</filter-name>
-		<url-pattern>/try/</url-pattern>
+		<url-pattern>/service/try</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>hibernateFilter</filter-name>
@@ -254,7 +254,7 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
-        <url-pattern>/try/</url-pattern>
+        <url-pattern>/service/try</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
