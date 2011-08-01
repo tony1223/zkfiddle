@@ -15,12 +15,17 @@ public class ResourceFactory {
 					Resource.PACKAGE_TOKEN_ESCAPE);
 			return new Resource(Resource.TYPE_ZUL, name, template);
 		} else if (Resource.TYPE_JS == type) {
-			return new Resource(Resource.TYPE_JS, name, "function hello(){alert('hello');}");
+			if(name != null && name.endsWith("dsp"))
+				return new Resource(Resource.TYPE_JS, name, readTemplate("/WEB-INF/_templates/test.js.dsp"));
+			else
+				return new Resource(Resource.TYPE_JS, name, readTemplate("/WEB-INF/_templates/test.js"));
 		} else if (Resource.TYPE_CSS == type) {
-			return new Resource(Resource.TYPE_CSS, name, ".hello{ \n color:red; \n }");
+			if(name != null && name.endsWith("dsp"))
+				return new Resource(Resource.TYPE_JS, name, readTemplate("/WEB-INF/_templates/test.css.dsp"));
+			else
+				return new Resource(Resource.TYPE_JS, name, readTemplate("/WEB-INF/_templates/test.css"));
 		} else if (Resource.TYPE_HTML == type) {
-			return (new Resource(Resource.TYPE_HTML, name,
-					"<html>\n  <head>\n    <title>Hello</title>\n  </head>\n\n<body>\n    hello\n  </body>\n</html>"));
+			return (new Resource(Resource.TYPE_HTML, name,readTemplate("/WEB-INF/_templates/test.html")));
 		} else if (Resource.TYPE_JAVA == type) {
 			String clsName = name;
 			if (clsName != null)
@@ -47,6 +52,12 @@ public class ResourceFactory {
 			return getDefaultResource(type, "TestComposer.java");
 		else
 			return null;
+	}
+	private static String readTemplate(String filePath) {
+
+		ServletContext req = (ServletContext) Executions.getCurrent().getDesktop().getWebApp().getNativeContext();
+
+		return FileUtil.readIfExist(req.getRealPath(filePath));
 	}
 
 	private static String readThenReaplce(String filePath, String token, String replaced) {
