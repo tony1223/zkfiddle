@@ -20,14 +20,15 @@ import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.fiddletabs.Fiddletabs;
 import org.zkoss.fiddle.manager.CaseManager;
+import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.SEOUtils;
-import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
+import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.social.facebook.event.LikeEvent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
@@ -99,7 +100,15 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		ICase $case = (ICase) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE);
 
 		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
-		caseModel = new CaseModel($case);
+
+		Boolean tryCase = (Boolean) requestScope.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
+		String zulData = (String) Executions.getCurrent().getParameter("zulData");
+		caseModel = new CaseModel($case, tryCase!=null && tryCase ,zulData);
+
+		if(tryCase){
+			Events.echoEvent(new Event("onShowTryCase",self, null));
+		}
+
 		boolean newCase = caseModel.isStartWithNewCase();
 
 		if (!newCase) {
@@ -128,7 +137,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			public void onFiddleEvent(SaveCaseEvent event) throws Exception {
 				SaveCaseEvent saveEvt = (SaveCaseEvent) event;
 				CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
-				
+
 				String title = caseTitle.getValue().trim();
 				String ip = Executions.getCurrent().getRemoteAddr();
 				ICase saved = caseManager.saveCase(caseModel.getCurrentCase(), caseModel.getResources(),
@@ -241,8 +250,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private void runDirectlyView(CaseRequest viewRequestParam) {
 
-		FiddleSandbox inst = viewRequestParam.getFiddleSandbox();
-		if (inst != null) { // inst can't be null
+		FiddleSandbox sandbox = viewRequestParam.getFiddleSandbox();
+		if (sandbox != null) { // inst can't be null
 			// use echo event to find a good timing
 			Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, null));
 		} else {
@@ -271,6 +280,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			FiddleSourceEventQueue.lookup().fireShowResult(caseModel.getCurrentCase(),
 				viewRequestParam.getFiddleSandbox());
 		}
+	}
+
+	public void onShowTryCase(Event e){
+		FiddleSandboxManager manager = (FiddleSandboxManager) SpringUtil.getBean("sandboxManager");
+
+		FiddleSandbox sandbox = manager.getFiddleSandboxForLastestVersion();
+		if(sandbox == null){
+			alert("Currently no any avaiable sandbox.");
+			return ;
+		}
+
+		caseModel.ShowResult(sandbox);
 	}
 
 	public void onAdd$sourcetabs(Event e) {

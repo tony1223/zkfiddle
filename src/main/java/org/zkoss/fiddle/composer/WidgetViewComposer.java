@@ -44,7 +44,7 @@ public class WidgetViewComposer extends GenericForwardComposer {
 	private Button goBtn;
 
 	private Button runBtn;
-	
+
 	private Button downloadBtn;
 
 	public void doAfterCompose(final Component comp) throws Exception {
@@ -61,14 +61,14 @@ public class WidgetViewComposer extends GenericForwardComposer {
 
 
 		ICase $case = ((ICase) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE));
-		caseModel = new CaseModel($case);
+		caseModel = new CaseModel($case, false, null);
 		self.setTitle("Sample Code:" + CaseUtil.getPublicTitle(caseModel.getCurrentCase()));
 
 		renderTabAndTabpanels(caseModel.getResources(), height);
 
-		
+
 		String hostName = FiddleConfig.getHostName();
-		
+
 		String zkVer = (String) Executions.getCurrent().getParameter("zkVersion");
 		runBtn.setHref(hostName + CaseUtil.getViewURL($case, zkVer));
 		goBtn.setHref(hostName + CaseUtil.getSampleURL($case));

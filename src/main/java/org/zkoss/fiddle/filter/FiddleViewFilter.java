@@ -44,7 +44,12 @@ public class FiddleViewFilter implements Filter {
 		String context = request.getContextPath();
 		String path = uri.replaceFirst(context, "");
 
-		if (path == null || path.equals("/")) {
+		if (path == null || path.equals("/") || path.equals("/try/")) {
+			Boolean tryCase = path.equals("/try/");
+			if(tryCase){
+				request.setAttribute(FiddleConstant.REQUEST_ATTR_TRY_CASE, tryCase);
+			}
+
 			request.setAttribute("fiddleHostName", FiddleConfig.getHostName());
 			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			return;

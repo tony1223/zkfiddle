@@ -209,6 +209,14 @@
 	<!-- we open session for those url need. -->
 	<filter-mapping>
 		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/try/</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
 		<url-pattern>/sandbox/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
@@ -222,10 +230,6 @@
 	<filter-mapping>
 		<filter-name>hibernateFilter</filter-name>
 		<url-pattern>/sample/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>hibernateFilter</filter-name>
-		<url-pattern>/</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>hibernateFilter</filter-name>
@@ -247,6 +251,10 @@
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ViewFilter</filter-name>
+        <url-pattern>/try/</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
