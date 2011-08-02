@@ -3,7 +3,7 @@
 <zk xmlns:n="native" xmlns:w="client" xmlns:fb="facebook">
 	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" 
 		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" 
-		sclass="sourceCodeEditor" vflex="1">
+		sclass="sourceCodeEditor" >
 		
 		<vlayout sclass="source-vlayout">
 			<div>
