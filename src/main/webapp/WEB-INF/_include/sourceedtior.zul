@@ -1,20 +1,20 @@
 <?page title="ZK Fiddle" contentType="text/html;charset=UTF-8"?>
 
 <zk xmlns:n="native" xmlns:w="client" xmlns:fb="facebook">
-	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv" 
-		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer" 
-		sclass="sourceCodeEditor" >
-		
+	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv"
+		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer"
+		sclass="sourceCodeEditor" vflex="1">
+
 		<vlayout sclass="source-vlayout">
 			<div>
 				<label value="Fiddle Name : " sclass="name" />
-				<textbox id="caseTitle" maxlength="60" cols="62" 
+				<textbox id="caseTitle" maxlength="60" cols="62"
 					tooltiptext="Describe your case here! (allowed only 60 chars)" >
 					<attribute w:name="onChange" >
 						var val = this.$n().value.replace(/[^a-zA-Z0-9]+/gi,'-');
 						if(val[0] == '-') val = val.substring(1);
 						jq('$previewUrl').hide().html(val).fadeIn();
-					</attribute>	
+					</attribute>
 				</textbox>
 				<label id="previewUrl" stubonly="true" style="margin-left:15px;" />
 			</div>
@@ -31,7 +31,7 @@
 					}
 				});
 			</script>
-			
+
 			<div id="contentDesc">
 				<div id="caseToolbar" visible="false">
 					<hlayout id="viewTag" style="height:30px;">
@@ -47,7 +47,7 @@
 							<hlayout id="tagContainer" style="float:left;" />
 							<label id="tagEmpty" visible="false" value="currently no available tag on this sample" />
 						</div>
-					
+
 					</hlayout>
 					<hlayout id="editTag" visible="false" style="height:30px;">
 						<attribute w:name="doDoubleClick_">
@@ -60,13 +60,13 @@
 						<textbox id="tagInput" cols="50" maxlength="46" />
 						(separate with comma, ex. "grid,listbox,test" )
 					</hlayout>
-					
+
 					<a id="download" label="Download this sample" />
 				</div>
 			</div>
 		</vlayout>
 		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
-			title=" Insert New File" width="380px" height="105px" border="normal" position="center, center">
+			title=" Insert New File" width="420px" height="105px" border="normal" position="center, center">
 			<!-- TODO use selectbox instead. -->
 			<n:table>
 				<n:tr>
@@ -74,7 +74,7 @@
 						<label value="File Type" />
 					</n:td>
 					<n:td>
-						<combobox id="type" readonly="true"  width="200px">
+						<combobox id="type" readonly="true"  width="240px">
 							<attribute w:name="slideDown_">
 								function (pp) {
 									jq(pp).show();  //remove slidedown effect -_-#

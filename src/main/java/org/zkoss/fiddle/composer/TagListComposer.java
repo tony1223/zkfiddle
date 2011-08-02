@@ -1,5 +1,6 @@
 package org.zkoss.fiddle.composer;
 
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
@@ -10,6 +11,7 @@ import org.zkoss.fiddle.visualmodel.TagCaseListVO;
 import org.zkoss.fiddle.visualmodel.TagCloudVO;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -48,7 +50,14 @@ public class TagListComposer extends GenericForwardComposer {
 		super.doAfterCompose(comp);
 
 		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
-		final Tag t = tagDao.getTag((String) requestScope.get("tag"));
+
+		//TODO move to filter.
+		String tagName = URLDecoder.decode((String) requestScope.get("tag"), "UTF-8");
+		final Tag t = tagDao.getTag(tagName);
+		if( t == null ){
+			Executions.getCurrent().sendRedirect("/");
+			return ;
+		}
 
 		final int pageIndex = 1, pageSize = 20;
 

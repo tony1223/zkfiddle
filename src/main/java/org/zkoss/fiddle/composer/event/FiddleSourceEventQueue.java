@@ -1,6 +1,5 @@
 package org.zkoss.fiddle.composer.event;
 
-import org.zkoss.fiddle.core.utils.ResourceFactory;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
@@ -27,8 +26,8 @@ public class FiddleSourceEventQueue {
 		queue.subscribe(evtListener);
 	}
 
-	public void fireResourceInsert(String fileName, int type) {
-		queue.publish(new InsertResourceEvent(ResourceFactory.getDefaultResource(type, fileName)));
+	public void fireResourceInsert(String fileName, int type,Resource resource) {
+		queue.publish(new InsertResourceEvent(resource));
 	}
 
 	// TODO review if we need Resource remove trigger.

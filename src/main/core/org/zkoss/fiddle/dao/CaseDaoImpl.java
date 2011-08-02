@@ -150,7 +150,6 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	public Integer size() {
 		return ((Long) getHibernateTemplate().execute(new HibernateCallback<Long>() {
 
-			@SuppressWarnings("unchecked")
 			public Long doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("select count(id) from Case");
 				return (Long) query.uniqueResult();

@@ -1,6 +1,6 @@
 /**WorkbenchContext.java
  * 2011/7/16
- * 
+ *
  */
 package org.zkoss.fiddle.composer.viewmodel;
 
@@ -29,7 +29,7 @@ import org.zkoss.zkplus.spring.SpringUtil;
 
 /**
  * @author Ian YT Tsai(Zanyking)
- * 
+ *
  */
 public class CaseModel {
 
@@ -37,7 +37,7 @@ public class CaseModel {
 
 	/**
 	 * a state for if content is changed.
-	 * 
+	 *
 	 * Note: For implementation , If user modify the content and then modify it
 	 * back , we think that's a source changed state ,too.
 	 */
@@ -49,13 +49,18 @@ public class CaseModel {
 
 	private List<Resource> resources;
 
-	public CaseModel(ICase pCase) {
+	public CaseModel(ICase pCase, boolean tryCase,String zulData) {
 		resources = new ArrayList<Resource>();
 
 		_case = pCase;
 		newCase = (_case == null || _case.getId() == null);
 		if (newCase) { // new case!
-			resources.addAll(getDefaultResources());
+			sourceChange = true;
+			if(tryCase){
+				resources.add(getIndexZulWithZulData(zulData));
+			}else{
+				resources.addAll(getDefaultResources());
+			}
 		} else {
 			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 			manager.increase(CaseRecord.Type.View, _case);
@@ -83,19 +88,27 @@ public class CaseModel {
 		});
 	}
 
+	public boolean isSourceChange() {
+		return sourceChange;
+	}
+
+	public void setSourceChange(boolean sourceChange) {
+		this.sourceChange = sourceChange;
+	}
+
 	public void addResource(int type, String fileName) {
 		resources.add(ResourceFactory.getDefaultResource(type, fileName));
 	}
-	
+
 	public void addResource(Resource resource) {
 		resources.add(resource);
 	}
-	
+
 
 	public String getDownloadLink(){
 		return CaseUtil.getDownloadURL(getCurrentCase());
 	}
-	
+
 	public void removeResource(Resource ir) {
 		if (ir == null) {
 			throw new IllegalStateException("removing null resource ");
@@ -127,10 +140,10 @@ public class CaseModel {
 		return _case;
 	}
 
-	public void ShowResult(FiddleSandbox inst) {
-		ShowResultEvent result = new ShowResultEvent(null, inst);
+	public void ShowResult(FiddleSandbox sandbox) {
+		ShowResultEvent result = new ShowResultEvent(null, sandbox);
 
-		ICase rcase = null; 
+		ICase rcase = null;
 		if (sourceChange) {
 			rcase = prepareVirtualCase();
 		} else {
@@ -142,8 +155,8 @@ public class CaseModel {
 			}
 			rcase = _case;
 		}
-		FiddleSourceEventQueue.lookup().fireShowResult(rcase, inst);
-		
+		FiddleSourceEventQueue.lookup().fireShowResult(rcase, sandbox);
+
 	}
 
 	private ICase prepareVirtualCase(){
@@ -170,7 +183,7 @@ public class CaseModel {
 		VirtualCaseManager.getInstance().save(virtualCase);
 		return tmpcase;
 	}
-	
+
 	private static List<Resource> getDefaultResources() {
 		List<Resource> resources = new ArrayList<Resource>();
 		resources.add(ResourceFactory.getDefaultResource(Resource.TYPE_ZUL));
@@ -180,6 +193,11 @@ public class CaseModel {
 		resources.add(ResourceFactory.getDefaultResource(Resource.TYPE_JAVA));
 
 		return resources;
+	}
+	private static Resource getIndexZulWithZulData(String zulData) {
+		Resource res = ResourceFactory.getDefaultResource(Resource.TYPE_ZUL);
+		res.setContent(zulData);
+		return res;
 	}
 
 

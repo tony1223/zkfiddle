@@ -9,7 +9,6 @@ import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.util.CookieUtil;
-import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
@@ -39,11 +38,6 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	private Button forkBtn;
 
 	private Button saveBtn;
-
-
-	public String getHostName(){
-		return FiddleConfig.getHostName();
-	}
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -91,8 +85,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		sandboxes.addEventListener(ZulEvents.ON_AFTER_RENDER, new EventListener() {
 
 			public void onEvent(Event event) throws Exception {
-				String inst = CookieUtil.getCookie("inst");
-				if (inst != null) {
+				String sandboxHash = CookieUtil.getCookie("snd");
+				if (sandboxHash != null) {
 					ListModel lm = sandboxes.getModel();
 					//when no instance
 					if(lm.getSize() > 0 && lm.getElementAt(0) instanceof String){
@@ -100,12 +94,12 @@ public class TopNavigationComposer extends GenericForwardComposer {
 						return;
 					}
 					{// check last index first to speed it up
-						String indstr = CookieUtil.getCookie("ind");
+						String indstr = CookieUtil.getCookie("sndInd");
 						int ind = indstr == null ? -1 : Integer.parseInt(indstr);
 						if (ind != -1) {
 							if(ind < lm.getSize() ){
 								FiddleSandbox sandbox = (FiddleSandbox) lm.getElementAt(ind);
-								if (inst.equals(sandbox.getHash())) {
+								if (sandboxHash.equals(sandbox.getHash())) {
 									sandboxes.setSelectedIndex(ind);
 									return;
 								}
@@ -115,9 +109,9 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 					for (int i = 0; i < lm.getSize(); ++i) {
 						FiddleSandbox sandbox = (FiddleSandbox) lm.getElementAt(i);
-						if (inst.equals(sandbox.getHash())) {
+						if (sandboxHash.equals(sandbox.getHash())) {
 							// update index
-							CookieUtil.setCookie("ind", String.valueOf(i), CookieUtil.AGE_ONE_YEAR);
+							CookieUtil.setCookie("sndInd", String.valueOf(i), CookieUtil.AGE_ONE_YEAR);
 							sandboxes.setSelectedIndex(i);
 							return;
 						}
@@ -132,8 +126,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 	public void onChange$instances(){
 		FiddleSandbox inst = (FiddleSandbox) sandboxes.getSelectedItem().getValue();
-		CookieUtil.setCookie("inst",inst.getHash(),CookieUtil.AGE_ONE_YEAR);
-		CookieUtil.setCookie("ind",String.valueOf(sandboxes.getSelectedIndex()),CookieUtil.AGE_ONE_YEAR);
+		CookieUtil.setCookie("snd",inst.getHash(),CookieUtil.AGE_ONE_YEAR);
+		CookieUtil.setCookie("sndInd",String.valueOf(sandboxes.getSelectedIndex()),CookieUtil.AGE_ONE_YEAR);
 	}
 
 	public void onClick$viewBtn() {
@@ -142,7 +136,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			inst = (FiddleSandbox) sandboxes.getItemAtIndex(0).getValue();
 		else
 			inst = (FiddleSandbox) sandboxes.getSelectedItem().getValue();
-		
+
 		FiddleSourceEventQueue.lookup().firePreparingShowResult(inst);
 	}
 

@@ -2,8 +2,8 @@
 
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"> 
- 
+ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
   <display-name>ZK Fiddle data handler</display-name>
 	<!-- ZK -->
 	<listener>
@@ -20,7 +20,7 @@
 		<display-name>ZK Session Cleaner</display-name>
 		<listener-class>org.zkoss.zk.ui.http.HttpSessionListener</listener-class>
 	</listener>
-	
+
 	<servlet>
 		<description>ZK loader for ZUML pages</description>
 		<servlet-name>zkLoader</servlet-name>
@@ -60,7 +60,7 @@
 	<servlet-mapping>
 		<servlet-name>zkLoader</servlet-name>
 		<url-pattern>*.zhtml</url-pattern>
-	</servlet-mapping>  
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>zkLoader</servlet-name>
 		<url-pattern>/zk/*</url-pattern>
@@ -70,12 +70,12 @@
 		<description>The asynchronous update engine for ZK</description>
 		<servlet-name>auEngine</servlet-name>
 		<servlet-class>org.zkoss.zk.au.http.DHtmlUpdateServlet</servlet-class>
-	
+
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>auEngine</servlet-name>
 		<url-pattern>/zkau/*</url-pattern>
-	</servlet-mapping>	
+	</servlet-mapping>
 	<servlet>
 		<servlet-name>dspLoader</servlet-name>
 		<servlet-class>org.zkoss.web.servlet.dsp.InterpreterServlet</servlet-class>
@@ -89,15 +89,15 @@
 		<url-pattern>*.dsp</url-pattern>
 	</servlet-mapping>
 
-	<filter>   
-		<filter-name>hibernateFilter</filter-name>   
-		<filter-class> org.springframework.orm.hibernate3.support.OpenSessionInViewFilter </filter-class>   
-		<init-param>   
-			<param-name>singleSession</param-name>   
-			<param-value>true</param-value>   
-		</init-param>   
-	</filter>  
-		
+	<filter>
+		<filter-name>hibernateFilter</filter-name>
+		<filter-class> org.springframework.orm.hibernate3.support.OpenSessionInViewFilter </filter-class>
+		<init-param>
+			<param-name>singleSession</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+
 	<filter>
 	  <description>sandbox filter</description>
 	  <display-name>SandboxFilter</display-name>
@@ -136,7 +136,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>	  
+	  </init-param>
 	 </filter>
 
 	<filter>
@@ -153,7 +153,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>	  	  
+	  </init-param>
 	 </filter>
 
 	<filter>
@@ -170,7 +170,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>	  	  
+	  </init-param>
 	 </filter>
 
 	<filter>
@@ -185,48 +185,76 @@
 	   <param-value>tagFilter</param-value>
 	  </init-param>
 	 </filter>
+
+	<filter>
+	  <description>status filter</description>
+	  <display-name>StatusFilter</display-name>
+	  <filter-name>StatusFilter</filter-name>
+	  <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	  <init-param>
+	   <description>
+	   </description>
+	   <param-name>targetBeanName</param-name>
+	   <param-value>statusFilter</param-value>
+	  </init-param>
+	 </filter>
+
+
+ 	<filter-mapping>
+		<filter-name>StatusFilter</filter-name>
+		<url-pattern>/status/</url-pattern>
+	</filter-mapping>
+
 	<!-- open session in View start -->
 	<!-- we open session for those url need. -->
-	<filter-mapping>   
-		<filter-name>hibernateFilter</filter-name>   
-		<url-pattern>/sandbox/*</url-pattern>   
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/</url-pattern>
 	</filter-mapping>
-	<filter-mapping>   
-		<filter-name>hibernateFilter</filter-name>   
-		<url-pattern>/data/*</url-pattern>   
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/service/try</url-pattern>
 	</filter-mapping>
-	<filter-mapping>   
-		<filter-name>hibernateFilter</filter-name>   
-		<url-pattern>/download/*</url-pattern>   
-	</filter-mapping>	
-	<filter-mapping>   
-		<filter-name>hibernateFilter</filter-name>   
-		<url-pattern>/sample/*</url-pattern>   
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/sandbox/*</url-pattern>
 	</filter-mapping>
-	<filter-mapping>   
-		<filter-name>hibernateFilter</filter-name>   
-		<url-pattern>/</url-pattern>   
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/data/*</url-pattern>
 	</filter-mapping>
-	<filter-mapping>   
-		<filter-name>hibernateFilter</filter-name>   
-		<url-pattern>/sitemap.xml</url-pattern>   
-	</filter-mapping>	
-	<filter-mapping>   
-		<filter-name>hibernateFilter</filter-name>   
-		<url-pattern>/tag/*</url-pattern>   
-	</filter-mapping>	
-	
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/download/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/sample/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/sitemap.xml</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/tag/*</url-pattern>
+	</filter-mapping>
+
 	<!-- open session in View end -->
-	
+
     <filter-mapping>
         <filter-name>SandboxFilter</filter-name>
         <url-pattern>/sandbox/*</url-pattern>
-    </filter-mapping>	
-	
-	<!-- view mapping start -->		
+    </filter-mapping>
+
+	<!-- view mapping start -->
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ViewFilter</filter-name>
+        <url-pattern>/service/try</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
@@ -235,7 +263,7 @@
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/view/*</url-pattern>
-    </filter-mapping>	
+    </filter-mapping>
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/direct/*</url-pattern>
@@ -243,9 +271,8 @@
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
         <url-pattern>/widget/*</url-pattern>
-    </filter-mapping>	
+    </filter-mapping>
 	<!--view mapping end-->
-	
     <filter-mapping>
         <filter-name>TagFilter</filter-name>
         <url-pattern>/tag/*</url-pattern>
@@ -266,8 +293,8 @@
         <filter-name>AuthFilter</filter-name>
         <url-pattern>/admin/*</url-pattern>
     </filter-mapping>
-	
-	
+
+
 	<!-- Miscellaneous -->
 	<session-config>
 		<session-timeout>60</session-timeout>

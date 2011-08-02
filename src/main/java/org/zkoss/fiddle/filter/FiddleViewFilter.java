@@ -44,13 +44,20 @@ public class FiddleViewFilter implements Filter {
 		String context = request.getContextPath();
 		String path = uri.replaceFirst(context, "");
 
-		if (path == null || path.equals("/")) {
+		if (path == null || path.equals("/") || path.equals("/service/try")) {
+			Boolean tryCase = path.equals("/service/try");
+			if(tryCase){
+				request.setAttribute(FiddleConstant.REQUEST_ATTR_TRY_CASE, tryCase);
+			}
+
+			request.setAttribute("fiddleHostName", FiddleConfig.getHostName());
 			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			return;
 		}
 
 		CaseRequest viewRequest = getAttributeFromURL(path);
 		if (viewRequest != null) {
+			request.setAttribute("fiddleHostName", FiddleConfig.getHostName());
 			ICase $case = handleCaseInRequest(request, viewRequest);
 			if ($case == null) {
 				if(viewRequest.getType() == Type.Widget){
@@ -152,9 +159,9 @@ public class FiddleViewFilter implements Filter {
 		if ((type == SandboxNotFoundException.Type.DEFAULT)) {
 			return FiddleConfig.getHostName() + "/sample/" + tokenLink;
 		}
-		
+
 		String prefix = viewRequest.getType().getPrefix();
-		
+
 		boolean showVer = (type == SandboxNotFoundException.Type.HASH);
 		return FiddleConfig.getHostName() + prefix + tokenLink + (showVer ? zkVer : "");
 	}
@@ -183,7 +190,7 @@ public class FiddleViewFilter implements Filter {
 		request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_TITLE, " - " + title);
 	}
 
-	
+
 	protected CaseRequest getAttributeFromURL(String path) {
 		return CaseRequest.getCaseRequest(path);
 	}
