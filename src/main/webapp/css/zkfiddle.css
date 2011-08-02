@@ -328,3 +328,7 @@ div.z-listbox-header tr.z-listhead, div.z-listbox-header tr.z-auxhead {
 	*width:100% !important;
 	*height:100% !important;
 }
+
+.CodeMirror-scroll{
+	position:relative;
+}

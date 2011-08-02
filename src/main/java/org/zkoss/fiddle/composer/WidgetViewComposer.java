@@ -87,6 +87,7 @@ public class WidgetViewComposer extends GenericForwardComposer {
 				{
 					CodeEditor editor = new CodeEditor(ResourceUtil.getTypeMode(resource));
 					editor.setReadOnly(true);
+					editor.setTheme("eclipse");
 					editor.setValue(resource.getFullContent());
 
 					if (height != -1) {
