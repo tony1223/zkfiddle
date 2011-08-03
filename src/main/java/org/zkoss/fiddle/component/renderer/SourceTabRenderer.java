@@ -45,7 +45,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 	}
 
 	protected Tab renderTab(final Resource resource) {
-		
+
 		String type = ResourceUtil.getTypeName(resource);
 		final Texttab texttab = new Texttab(null,"/img/types/"+type+".png");
 		texttab.setAttribute("model", resource);
@@ -63,7 +63,8 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		texttab.setClosable(resource.isCanDelete());
 
 		final FiddleSourceEventQueue queue = FiddleSourceEventQueue.lookup();
-		queue.subscribeResourceChanged(new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class) {
+		queue.subscribeResourceChanged(
+			new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class, texttab) {
 
 			public void onFiddleEvent(ResourceChangedEvent event) throws Exception {
 				if (((ResourceChangedEvent) event).getResource() == resource) {
@@ -99,7 +100,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.zkoss.fiddle.component.renderer.ISourceTabRenderer#appendSourceTab
 	 * (org.zkoss.zul.api.Tabs, org.zkoss.zul.api.Tabpanels,

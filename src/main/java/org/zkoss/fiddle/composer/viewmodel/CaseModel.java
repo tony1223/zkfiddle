@@ -11,7 +11,9 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.zkoss.fiddle.composer.event.FiddleEventListener;
 import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.event.PreparingShowResultEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
 import org.zkoss.fiddle.core.utils.ResourceFactory;
@@ -81,9 +83,20 @@ public class CaseModel {
 			}
 		}
 
-		FiddleSourceEventQueue.lookup().subscribeResourceChanged(new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class) {
+		FiddleSourceEventQueue.lookup().subscribeResourceChanged(
+				new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class) {
 			public void onFiddleEvent(ResourceChangedEvent event) throws Exception {
+				if(event.getType() == Type.Removed){
+					removeResource(event.getResource());
+				}
 				sourceChange = true;
+			}
+		});
+		FiddleSourceEventQueue.lookup().subscribeShowResult(new FiddleEventListener<PreparingShowResultEvent>(
+				PreparingShowResultEvent.class) {
+
+			public void onFiddleEvent(PreparingShowResultEvent evt) throws Exception {
+				ShowResult(evt.getSandbox());
 			}
 		});
 	}

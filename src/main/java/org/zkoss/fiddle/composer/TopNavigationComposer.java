@@ -53,7 +53,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		initSandbox();
 
 		FiddleSourceEventQueue.lookup().subscribeResourceChanged(
-			new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class) {
+			new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class,viewBtn) {
 				public void onFiddleEvent(ResourceChangedEvent evt) {
 					viewBtn.setLabel("*Run");
 				};

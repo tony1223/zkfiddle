@@ -16,6 +16,7 @@ public class FiddleEventQueue {
 	}
 
 	public void subscribe(FiddleEventListener<? extends Event> evtListener) {
+		evtListener.setQueue(sourceQueue);
 		sourceQueue.subscribe(evtListener);
 	}
 

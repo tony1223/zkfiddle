@@ -11,7 +11,6 @@ import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.InsertResourceEvent;
-import org.zkoss.fiddle.composer.event.PreparingShowResultEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
 import org.zkoss.fiddle.composer.event.SaveCaseEvent;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
@@ -122,19 +121,13 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			initTagEditor($case);
 		}
 
-		sourceQueue.subscribeShowResult(new FiddleEventListener<PreparingShowResultEvent>(
-				PreparingShowResultEvent.class) {
-
-			public void onFiddleEvent(PreparingShowResultEvent evt) throws Exception {
-				caseModel.ShowResult(evt.getSandbox());
-			}
-		});
 		sourceQueue.subscribeResourceCreated(new FiddleEventListener<InsertResourceEvent>(InsertResourceEvent.class) {
-
 			public void onFiddleEvent(InsertResourceEvent event) throws Exception {
 				InsertResourceEvent insertEvent = (InsertResourceEvent) event;
-				Resource ir = insertEvent.getResource();
-				SourceTabRendererFactory.getRenderer(ir.getType()).appendSourceTab(sourcetabs, sourcetabpanels, ir);
+				Resource resource = insertEvent.getResource();
+
+				caseModel.addResource(resource);
+				SourceTabRendererFactory.getRenderer(resource.getType()).appendSourceTab(sourcetabs, sourcetabpanels, resource);
 			}
 		});
 		sourceQueue.subscribeResourceSaved(new FiddleEventListener<SaveCaseEvent>(SaveCaseEvent.class) {
