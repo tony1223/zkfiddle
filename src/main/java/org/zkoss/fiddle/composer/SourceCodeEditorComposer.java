@@ -102,12 +102,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
 
 		Boolean tryCase = (Boolean) requestScope.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
-		tryCase = tryCase!=null && tryCase ;
-		String zulData = (String) Executions.getCurrent().getParameter("zulData");
-		caseModel = new CaseModel($case, tryCase ,zulData);
-
-		if(tryCase){
-			Events.echoEvent(new Event("onShowTryCase",self, null));
+		tryCase = tryCase != null && tryCase;
+		if (!tryCase) {
+			caseModel = new CaseModel($case, false, null);
+		} else {
+			String zulData = (String) Executions.getCurrent().getParameter("zulData");
+			String version = (String) Executions.getCurrent().getParameter("zkver");
+			caseModel = new CaseModel($case, tryCase, zulData);
+			Events.echoEvent(new Event("onShowTryCase", self, version));
 		}
 
 		boolean newCase = caseModel.isStartWithNewCase();
@@ -120,7 +122,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			initTagEditor($case);
 		}
 
-		sourceQueue.subscribeShowResult(new FiddleEventListener<PreparingShowResultEvent>(PreparingShowResultEvent.class) {
+		sourceQueue.subscribeShowResult(new FiddleEventListener<PreparingShowResultEvent>(
+				PreparingShowResultEvent.class) {
+
 			public void onFiddleEvent(PreparingShowResultEvent evt) throws Exception {
 				caseModel.ShowResult(evt.getSandbox());
 			}
@@ -141,8 +145,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 				String title = caseTitle.getValue().trim();
 				String ip = Executions.getCurrent().getRemoteAddr();
-				ICase saved = caseManager.saveCase(caseModel.getCurrentCase(), caseModel.getResources(),
-						title, saveEvt.isFork(), ip, cbSaveTag.isChecked());
+				ICase saved = caseManager.saveCase(caseModel.getCurrentCase(), caseModel.getResources(), title,
+						saveEvt.isFork(), ip, cbSaveTag.isChecked());
 				if (saved != null) {
 					Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
 				}
@@ -158,7 +162,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				sourceQueue.fireResourceChanged(resource, Type.Created);
 			}
 		}
-		initSEOHandler(caseModel,desktop);
+		initSEOHandler(caseModel, desktop);
 
 		// @see FiddleDispatcherFilter for those use this directly
 		viewRequestParam = (CaseRequest) requestScope.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
@@ -169,7 +173,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private void initTagEditor(final ICase pCase) {
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		//TODO check if we need to cache this.
+		// TODO check if we need to cache this.
 		updateTags(caseTagDao.findTagsBy(pCase));
 
 		EventListener handler = new EventListener() {
@@ -181,6 +185,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		tagInput.addEventListener("onOK", handler);
 		tagInput.addEventListener("onCancel", new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
 				tagInput.setValue(lastVal);
 				setTagEditable(false);
@@ -277,19 +282,31 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 
 	public void onShowResult(Event e) {
-		if(viewRequestParam != null){
+		if (viewRequestParam != null) {
 			FiddleSourceEventQueue.lookup().fireShowResult(caseModel.getCurrentCase(),
-				viewRequestParam.getFiddleSandbox());
+					viewRequestParam.getFiddleSandbox());
 		}
 	}
 
-	public void onShowTryCase(Event e){
+	public void onShowTryCase(Event e) {
+
 		FiddleSandboxManager manager = (FiddleSandboxManager) SpringUtil.getBean("sandboxManager");
 
-		FiddleSandbox sandbox = manager.getFiddleSandboxForLastestVersion();
-		if(sandbox == null){
-			alert("Currently no any avaiable sandbox.");
-			return ;
+		FiddleSandbox sandbox = null;
+		String version = (String) e.getData();
+		if (version != null) {
+			sandbox = manager.getFiddleSandboxByVersion(version);
+		} else {
+			sandbox = manager.getFiddleSandboxForLastestVersion();
+		}
+
+		if (sandbox == null) {
+			if (version == null) {
+				alert("Currently no any available sandbox.");
+			} else {
+				alert("Currently no any available sandbox for ZK version[" + version + "].");
+			}
+			return;
 		}
 
 		caseModel.ShowResult(sandbox);
@@ -305,6 +322,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private static void initSEOHandler(CaseModel model, Desktop desktop) {
 		SEOUtils.render(desktop, model.getCurrentCase());
-		SEOUtils.render(desktop,  model.getResources());
+		SEOUtils.render(desktop, model.getResources());
 	}
 }

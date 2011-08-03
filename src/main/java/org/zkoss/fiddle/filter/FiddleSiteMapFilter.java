@@ -18,6 +18,7 @@ import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
+import org.zkoss.fiddle.util.SpringUtilz;
 
 
 public class FiddleSiteMapFilter implements Filter {
@@ -27,10 +28,7 @@ public class FiddleSiteMapFilter implements Filter {
 	 */
 	private static final Logger logger = Logger.getLogger(FiddleSiteMapFilter.class);
 
-	@SuppressWarnings("unused")
 	private ServletContext ctx;
-
-	private ICaseDao caseDao;
 
 
 	public static long latestUpdate = -1;
@@ -39,13 +37,16 @@ public class FiddleSiteMapFilter implements Filter {
 
 		String sitemapString = FiddleCache.SiteMap.execute(new CacheHandler<String>() {
 			protected String execute() {
+				ICaseDao caseDao = (ICaseDao) SpringUtilz.getBean(ctx, "caseDao");
 				return renderSiteMap(caseDao.list());
 			}
 			protected String getKey() {
 				return "sitemap";
 			}
 		});
-
+		if (logger.isInfoEnabled()) {
+			logger.info("Print SiteMap.");
+		}
 		response.getWriter().write(sitemapString);
 	}
 
@@ -77,11 +78,6 @@ public class FiddleSiteMapFilter implements Filter {
 	}
 
 	public void destroy() {
-	}
-
-
-	public void setCaseDao(ICaseDao caseDao) {
-		this.caseDao = caseDao;
 	}
 
 }

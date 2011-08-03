@@ -197,12 +197,21 @@
 	   <param-name>targetBeanName</param-name>
 	   <param-value>statusFilter</param-value>
 	  </init-param>
+	  <init-param>
+	   <param-name>targetFilterLifecycle</param-name>
+	   <param-value>true</param-value>
+	  </init-param>	  
 	 </filter>
 
 
  	<filter-mapping>
 		<filter-name>StatusFilter</filter-name>
 		<url-pattern>/status/</url-pattern>
+	</filter-mapping>
+
+ 	<filter-mapping>
+		<filter-name>StatusFilter</filter-name>
+		<url-pattern>/status/versions</url-pattern>
 	</filter-mapping>
 
 	<!-- open session in View start -->

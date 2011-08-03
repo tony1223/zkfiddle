@@ -40,8 +40,6 @@
 
 	<bean id="statusFilter" class="org.zkoss.fiddle.filter.FiddleStatusFilter" scope="singleton" />
 
-	<bean id="sitemapFilter" class="org.zkoss.fiddle.filter.FiddleSiteMapFilter" >
-	    <property name="caseDao" ref="caseDao" />
-	</bean>
+	<bean id="sitemapFilter" class="org.zkoss.fiddle.filter.FiddleSiteMapFilter" />
 
 </beans>
