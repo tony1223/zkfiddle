@@ -20,6 +20,7 @@ import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
+import org.zkoss.fiddle.util.FilterUtil;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.CaseRequest.Type;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
@@ -40,9 +41,7 @@ public class FiddleViewFilter implements Filter {
 		HttpServletRequest request = ((HttpServletRequest) request2);
 		HttpServletResponse response = ((HttpServletResponse) response2);
 
-		String uri = request.getRequestURI();
-		String context = request.getContextPath();
-		String path = uri.replaceFirst(context, "");
+		String path = FilterUtil.getPath(request2);
 
 		if (path == null || path.equals("/") || path.equals("/service/try")) {
 			Boolean tryCase = path.equals("/service/try");

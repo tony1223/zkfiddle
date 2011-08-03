@@ -14,7 +14,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -30,6 +29,7 @@ import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.util.FilterUtil;
 import org.zkoss.fiddle.visualmodel.VirtualCase;
 import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
@@ -55,13 +55,7 @@ public class FiddleDataFilter implements Filter {
 			logger.debug("doFilter(ServletRequest, ServletResponse, FilterChain) - start");
 		}
 
-
-		HttpServletRequest httprequest = ((HttpServletRequest) request);
-
-		String uri = httprequest.getRequestURI();
-		String context = httprequest.getContextPath();
-
-		String path = uri.replaceFirst(context, "");
+		String path = FilterUtil.getPath( request );
 
 		Matcher match = null;
 
