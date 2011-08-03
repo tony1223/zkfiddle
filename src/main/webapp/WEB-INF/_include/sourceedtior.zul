@@ -57,7 +57,7 @@
 							}
 						</attribute>
 						<label value="Tags:" stubonly="true" />
-						<textbox id="tagInput" cols="50" maxlength="46" />
+						<textbox id="tagInput" cols="100" maxlength="96" />
 						(separate with comma, ex. "grid,listbox,test" )
 					</hlayout>
 
