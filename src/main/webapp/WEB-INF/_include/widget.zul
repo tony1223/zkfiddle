@@ -3,8 +3,8 @@
 <?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax OpenSource Framework) sameples right now!" ?>
 <?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
 <?script type="text/javascript" src="/js/fiddle.widget.js.dsp"?>
+<?script type="text/javascript" src="/js/jquery.mousewheel.min.js"?>
 <zk xmlns:w="client" xmlns:n="native">
-
 	<window sclass="widgetWindow" apply="org.zkoss.fiddle.composer.WidgetViewComposer"
 		border="normal">
 		<caption>
@@ -22,4 +22,15 @@
 		</tabbox>
 	</window>
 	<include src="footer.zul" />
+	<script><![CDATA[
+		jq(document).mousewheel(function(event, delta) {
+			if(delta == 0 ) return false;
+		    var currentEditor = jq(".z-tabpanel:visible .z-codeeditor");
+		    if(currentEditor[0]){
+		    	currentEditor[0].scrollTop += (delta < 0) ? 45 : -45;
+		    }
+		    return false;
+		});
+
+	]]></script>
 </zk>
