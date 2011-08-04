@@ -152,6 +152,14 @@ span.text-bold {
 .sourcetabs .z-tabs-cnt {
 	padding-left: 3px;
 }
+.sourcetabs .z-tab-seld .z-tab-text,
+.sourcetabs .z-tab .z-tab-text {
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+.sourcetabs .z-tab-seld .z-tab-text {
+	padding-bottom: 3px;
+}
 .sourcetabs .tab-textbox {
 	margin-left: 5px;
 	width: 200px;
@@ -160,15 +168,13 @@ span.text-bold {
 	font-size: 18px;
 	height: 25px;
 }
-.sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr,.sourcetabs .z-tab-hm {
-	height: 29px;
+.sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr,.sourcetabs .z-tab-hm {	
 	*height:auto; /* Tony: fix IE7 sourcetabs tab fly away */
 }
-.source-vlayout .z-tabpanel {
+.sourcetabs .z-tabpanel {
 	padding: 0;
 }
-.sourcetabs .z-tab-hl,
-.sourcetabs .z-tab-hr {
+.sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr {
 	background-image: url("../img/comp/tab-corner.png");
 }
 .sourcetabs .z-tab-hm {
