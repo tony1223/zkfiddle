@@ -45,6 +45,7 @@ import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
 public class SourceCodeEditorComposer extends GenericForwardComposer {
@@ -74,7 +75,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Div caseToolbar;
 
-	private A download;
+	private Toolbarbutton download;
 
 	/* for tags */
 	private Hlayout tagContainer;

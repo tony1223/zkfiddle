@@ -14,7 +14,7 @@
 				<button id="goBtn" target="_blank" src="/img/viewresult-newwindow.png" />
 			</div>
 		</caption>
-		<tabbox id="resources" >
+		<tabbox id="resources" sclass="sourcetabs">
 			<tabs id="resourceTabs">
 			</tabs>
 			<tabpanels id="resourceTabpanels">

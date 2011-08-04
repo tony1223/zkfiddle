@@ -52,7 +52,7 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 				typeVal, resource);
 
 		type.setSelectedIndex(0);
-		fileName.setText("");
+		fileName.setText("test");
 		self.setVisible(false);
 	}
 

@@ -9,7 +9,7 @@
 			<div>
 				<label value="Fiddle Name : " sclass="name" />
 				<textbox id="caseTitle" maxlength="60" cols="62"
-					tooltiptext="Describe your case here! (allowed only 60 chars)" >
+					tooltiptext="Describe your case here! (allowed only 60 chars)" value="Another new ZK fiddle">
 					<attribute w:name="onChange" >
 						var val = this.$n().value.replace(/[^a-zA-Z0-9]+/gi,'-');
 						if(val[0] == '-') val = val.substring(1);
@@ -19,8 +19,8 @@
 				<label id="previewUrl" stubonly="true" style="margin-left:15px;" />
 			</div>
 			<separator bar="true" spacing="5px" />
-			<tabbox height="100%" hflex="1">
-				<fiddletabs id="sourcetabs" addable="true" sclass="sourcetabs"/>
+			<tabbox height="100%" hflex="1" sclass="sourcetabs">
+				<fiddletabs id="sourcetabs" addable="true" />
 				<tabpanels id="sourcetabpanels" />
 			</tabbox>
 			<script>
@@ -60,8 +60,7 @@
 						<textbox id="tagInput" cols="100" maxlength="96" />
 						(separate with comma, ex. "grid,listbox,test" )
 					</hlayout>
-
-					<a id="download" label="Download this sample" />
+					<toolbarbutton id="download" label="Download Sample Archive" src="/img/archive.png"/>
 				</div>
 			</div>
 		</vlayout>
@@ -92,7 +91,7 @@
 						<label value="File Name" />
 					</n:td>
 					<n:td>
-						<textbox id="fileName" maxlength="60" width="160px" forward="onOK=insert.onClick" />
+						<textbox id="fileName" maxlength="60" width="160px" forward="onOK=insert.onClick" value="test"/>
 						<label id="extension" value=".zul" />
 					</n:td>
 				</n:tr>
