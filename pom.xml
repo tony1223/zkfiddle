@@ -18,8 +18,8 @@
 		<zuljsp.version>1.4.1</zuljsp.version>
 		<spring.version>3.0.5.RELEASE</spring.version>
 		<hibernate.version>3.6.4.Final</hibernate.version>
-	</properties>  
-  <version>1.1.0</version>
+	</properties>
+  <version>1.2.0</version>
   <name>ZK Fiddle Data handler</name>
   <url>Http://www.zkoss.org</url>
 	<licenses>
@@ -61,7 +61,7 @@
 			<name>Maven Plugin Repository</name>
 			<url>http://repo1.maven.org/maven2</url>
 		</pluginRepository>
-	</pluginRepositories>  
+	</pluginRepositories>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -75,7 +75,7 @@
 		<version>${servlet.version}</version>
 		<scope>provided</scope>
 	</dependency>
-	
+
 	<!-- Spring start -->
 	<dependency>
 	    <groupId>org.springframework</groupId>
@@ -96,14 +96,14 @@
 	    <groupId>org.springframework</groupId>
 	    <artifactId>spring-web</artifactId>
 	    <version>${spring.version}</version>
-	</dependency>	
+	</dependency>
 	<dependency>
 	    <groupId>com.google.collections</groupId>
 	    <artifactId>google-collections</artifactId>
 	    <version>1.0</version>
-	</dependency>	
-	<!-- Spring end -->	
-	
+	</dependency>
+	<!-- Spring end -->
+
 	<dependency>
 		<groupId>com.jhlabs</groupId>
 		<artifactId>filters</artifactId>
@@ -138,7 +138,7 @@
 		<groupId>org.zkoss.zk</groupId>
 		<artifactId>zul</artifactId>
 		<version>${zk.version}</version>
-	</dependency>	
+	</dependency>
 	<dependency>
 		<groupId>org.zkoss.common</groupId>
 		<artifactId>zweb</artifactId>
@@ -200,7 +200,7 @@
 		<version>${bsh.version}</version>
 		<scope>runtime</scope>
 	</dependency>
-	
+
 	<!-- custom components
 	<dependency>
 		<groupId>org.zkoss.fiddle</groupId>
@@ -213,7 +213,7 @@
 		<artifactId>texttab</artifactId>
 		<version>0.8.0</version>
 		<optional>true</optional>
-	</dependency>		
+	</dependency>
 	<dependency>
 		<groupId>org.zkoss.external</groupId>
 		<artifactId>codeeditor</artifactId>
@@ -230,13 +230,13 @@
 	    <version>1.8.0.10</version>
 	</dependency>
 	<!-- mysql -->
-	<!-- 
+	<!--
 	<dependency>
 	    <groupId>mysql</groupId>
 	    <artifactId>mysql-connector-java</artifactId>
 	    <version>5.1.16</version>
 	</dependency>
-	-->	
+	-->
 
 	<!-- hibernate -->
 	<dependency>
@@ -253,15 +253,15 @@
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-c3p0</artifactId>
 	    <version>${hibernate.version}</version>
-	</dependency>	
+	</dependency>
 	 <dependency>
 	    <groupId>commons-collections</groupId>
 	    <artifactId>commons-collections</artifactId>
 	    <version>3.2.1</version>
 	</dependency>
 	<!-- Hibernate end -->
-	
-	
+
+
 	<!-- cache start -->
 	<dependency>
         <groupId>net.sf.ehcache</groupId>
@@ -269,23 +269,63 @@
         <version>2.4.2</version>
     </dependency>
     <!-- cache end -->
-    
+
     <!--  logging start -->
 	<dependency>
 	    <groupId>log4j</groupId>
 	    <artifactId>log4j</artifactId>
 	    <version>1.2.16</version>
-	</dependency>	
+	</dependency>
 
     <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-log4j12</artifactId>
         <version>1.6.1</version>
     </dependency>
-    
+
     <!--  logging end -->
   </dependencies>
   <build>
-    <finalName>datahandler-${project.version}</finalName>
+    <finalName>datahandler</finalName>
+    <plugins>
+      <plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-compiler-plugin</artifactId>
+	  <configuration>
+	    <includes>
+	      <include implementation="java.lang.String">src/main/java/**/*.java</include>
+	      <include implementation="java.lang.String">src/main/core/**/*.java</include>
+	    </includes>
+	  </configuration>
+	</plugin>    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>model</classifier>
+              <includes>
+                <include>org/**/*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>      
+    </plugins>    
   </build>
 </project>

@@ -33,11 +33,12 @@
 				</tabpanel>
 			</tabpanels>
 		</tabbox>
-		<groupbox sclass="leftabout" mold="3d" closable="false" >
-			<caption label="Tags" />
-			<div id="tagContainer" sclass="tag-container" width="280px" >
-				
-			</div>
+		<groupbox sclass="leftabout left-tag" mold="3d" closable="false" >
+			<caption label="Tags">
+				<textbox id="tagFilter" />
+			</caption>
+			<div id="tagContainer" use="org.zkoss.fiddle.component.TagContainerDiv" 
+				sclass="tag-container" width="280px" />
 		</groupbox>		
 		<groupbox sclass="leftabout grouptop" mold="3d" closable="false" height="150px">
 			<caption label="About ZK Fiddle" />

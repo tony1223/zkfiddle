@@ -6,88 +6,89 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 
 /**
- * We store this data in system wild and not persisting,
- * this should be used as a singleton
+ * We store this data in system wild and not persisting, this should be used as
+ * a singleton
  * 
  * @author tony
  * 
  */
 public class FiddleSandboxManager {
 
-	private Map<String, FiddleSandbox> instancesByHash = new HashMap<String, FiddleSandbox>();
+	private Map<String, FiddleSandbox> sandboxesByHash = new HashMap<String, FiddleSandbox>();
 
-	private Map<String, List<FiddleSandbox>> instancesByVersion = new HashMap<String, List<FiddleSandbox>>();
+	private Map<String, List<FiddleSandbox>> sandboxesByVersion = new TreeMap<String, List<FiddleSandbox>>();
 
 	private String latest = "5.0.7.1";
 
 	private long checkTime = 1000 * 60 * 5;
-	
-	public FiddleSandboxManager(){
-		
+
+	public FiddleSandboxManager() {
+
 		boolean debugMode = Boolean.getBoolean("fiddle.debug");
-		if(debugMode){				
-			FiddleSandbox instance = new FiddleSandbox(){
+		if (debugMode) {
+			FiddleSandbox sandbox = new FiddleSandbox() {
+
 				public String getSrc(String token, Integer ver) {
 					return "http://www.google.com";
 				}
 			};
-			instance.setLastUpdate(new Date());
-			instance.setName("localtest");
-			instance.setVersion("5.0.7.1");
-			instance.setPath("http://localhost/test1");
-			this.addFiddleInstance(instance);
-			
-			//open two sandboxes to help designer finetune the features.
-			instance = new FiddleSandbox(){
+			sandbox.setLastUpdate(new Date());
+			sandbox.setName("localtest");
+			sandbox.setVersion("5.0.7.1");
+			sandbox.setPath("http://localhost/test1");
+			this.addFiddleSandbox(sandbox);
+
+			// open two sandboxes to help designer finetune the features.
+			sandbox = new FiddleSandbox() {
+
 				public String getSrc(String token, Integer ver) {
 					return "http://www.google.com";
 				}
 			};
-			instance.setLastUpdate(new Date());
-			instance.setName("localtest2");
-			instance.setVersion("5.0.6");
-			instance.setPath("http://localhost/test2");
-			this.addFiddleInstance(instance);
+			sandbox.setLastUpdate(new Date());
+			sandbox.setName("localtest2");
+			sandbox.setVersion("5.0.6");
+			sandbox.setPath("http://localhost/test2");
+			this.addFiddleSandbox(sandbox);
 		}
 	}
-	
-	/**
-	 * @throws IllegalArgumentException
-	 *             instance and instance path can't be null
-	 * @param instance
-	 */
 
-	public FiddleSandbox getFiddleInstance(String hash) {
-		return checkDate(instancesByHash.get(hash));
+	public FiddleSandbox getFiddleSandbox(String hash) {
+		return checkDate(sandboxesByHash.get(hash));
 
 	}
 
-	public FiddleSandbox getFiddleInstanceForLastestVersion() {
-		return getFiddleInstanceByVersion(latest);
+	public FiddleSandbox getFiddleSandboxForLastestVersion() {
+		return getFiddleSandboxByVersion(latest);
 	}
-	
-	public FiddleSandbox getFiddleInstanceByVersion(String version) {
 
+	public FiddleSandbox getFiddleSandboxByVersion(String version) {
+		
+		if(version == null)
+			return null;
+		
+		version = version.trim();
+		
 		for (FiddleSandbox fi : getVersionList(version)) {
-			FiddleSandbox inst = checkDate(fi);
-			if (inst != null)
-				return inst;
+			FiddleSandbox sandbox = checkDate(fi);
+			if (sandbox != null)
+				return sandbox;
 		}
 		return null;
 
 	}
 
-
 	private List<FiddleSandbox> getVersionList(String ver) {
-		if (instancesByVersion.containsKey(ver)) {
-			return instancesByVersion.get(ver);
+		if (sandboxesByVersion.containsKey(ver)) {
+			return sandboxesByVersion.get(ver);
 		} else {
 			List<FiddleSandbox> list = new ArrayList<FiddleSandbox>();
-			instancesByVersion.put(ver, list);
+			sandboxesByVersion.put(ver, list);
 			return list;
 		}
 	}
@@ -99,38 +100,38 @@ public class FiddleSandboxManager {
 		Date d = new Date();
 		long diff = os.getLastUpdate().getTime() - d.getTime();
 		if (diff > checkTime) {
-			removeInstacne(os.getHash());
+			removeSandbox(os.getHash());
 			return null;
 		}
 		return os;
 	}
 
-	private void removeInstacne(String hash){
-		
-		FiddleSandbox ins = instancesByHash.get(hash);
-		instancesByHash.remove(hash);
-		
+	private void removeSandbox(String hash) {
+
+		FiddleSandbox ins = sandboxesByHash.get(hash);
+		sandboxesByHash.remove(hash);
+
 		getVersionList(ins.getZKVersion()).remove(ins);
-		
+
 	}
 
-	public void addFiddleInstance(FiddleSandbox instance) {
-		if (instance == null || instance.getPath() == null) {
-			throw new IllegalArgumentException("instance and instance path can't be null ");
+	public void addFiddleSandbox(FiddleSandbox sandbox) {
+		if (sandbox == null || sandbox.getPath() == null) {
+			throw new IllegalArgumentException("sandbox and sandbox path can't be null ");
 		}
 
-		instancesByHash.put(instance.getHash(), instance);
+		sandboxesByHash.put(sandbox.getHash(), sandbox);
 
-		getVersionList(instance.getZKVersion()).add(instance);
+		getVersionList(sandbox.getZKVersion()).add(sandbox);
 
 		Date d = new Date();
 		long checkTime = 1000 * 60 * 5;
 
-		for (String hash : instancesByHash.keySet()) {
+		for (String hash : sandboxesByHash.keySet()) {
 
-			long diff = instancesByHash.get(hash).getLastUpdate().getTime() - d.getTime();
+			long diff = sandboxesByHash.get(hash).getLastUpdate().getTime() - d.getTime();
 			if (diff > checkTime) {
-				removeInstacne(hash);
+				removeSandbox(hash);
 			}
 		}
 
@@ -140,8 +141,19 @@ public class FiddleSandboxManager {
 	 * @return
 	 */
 	public Map<String, FiddleSandbox> listFiddleInstances() {
-		return Collections.unmodifiableMap(instancesByHash);
+		return Collections.unmodifiableMap(sandboxesByHash);
 	}
 
+	public List<String> getAvailableVersions() {
+		List<String> array = new ArrayList<String>();
+		synchronized (sandboxesByVersion) {
+			for (String key : sandboxesByVersion.keySet()) {
+				if (sandboxesByVersion.get(key).size() != 0) {
+					array.add(key);
+				}
+			}
+		}
+		return array;
+	}
 
 }

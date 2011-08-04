@@ -2,15 +2,13 @@ package org.zkoss.fiddle.component.renderer;
 
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
-import org.zkoss.fiddle.composer.event.FiddleEvents;
+import org.zkoss.fiddle.composer.event.FiddleEventListener;
+import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
-import org.zkoss.fiddle.composer.event.SourceRemoveEvent;
-import org.zkoss.fiddle.model.api.IResource;
+import org.zkoss.fiddle.model.Resource;
+import org.zkoss.fiddle.util.ResourceUtil;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zul.Tabpanel;
@@ -21,38 +19,42 @@ import org.zkoss.zul.api.Tabs;
 
 public class SourceTabRenderer implements ISourceTabRenderer {
 
-	protected CodeEditor prepareCodeEditor(final IResource resource) {
+	protected CodeEditor prepareCodeEditor(final Resource resource) {
 		CodeEditor ce = new CodeEditor();
-		ce.setMode(resource.getTypeMode());
+		ce.setMode(ResourceUtil.getTypeMode(resource));
 		ce.setValue(resource.getContent());
 		ce.setHeight("400px");
 		ce.setWidth("auto");
 
-		//we use desktop scope , so it's ok to lookup every time.
-		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
-		
+		// we use desktop scope , so it's ok to lookup every time.
+		// final EventQueue sourceQueue =
+		// EventQueues.lookup(FiddleEventQueues.SOURCE);
+		ce.setTheme("eclipse");
 		ce.addEventListener(Events.ON_CHANGE, new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
 
-				if(event instanceof InputEvent){
+				if (event instanceof InputEvent) {
 					InputEvent inpEvt = (InputEvent) event;
 					resource.setContent(inpEvt.getValue());
-					sourceQueue.publish(new ResourceChangedEvent(null,resource));
+					FiddleSourceEventQueue.lookup().fireResourceChanged(resource, ResourceChangedEvent.Type.Modified);
 				}
 			}
 		});
 		return ce;
 	}
 
-	protected Tab renderTab(final IResource resource) {
-		final Texttab texttab = new Texttab(resource.getTypeName());
+	protected Tab renderTab(final Resource resource) {
+
+		String type = ResourceUtil.getTypeName(resource);
+		final Texttab texttab = new Texttab(null,"/img/types/"+type+".png");
 		texttab.setAttribute("model", resource);
 
 		final Textbox box = new Textbox(resource.getName());
 		box.setSclass("tab-textbox");
 		box.setConstraint("no empty");
 		box.setInplace(true);
-		if(!resource.isCanDelete()){
+		if (!resource.isCanDelete()) {
 			box.setReadonly(true);
 			box.setTooltiptext("you can't edit this file name since it's a must have.");
 		}
@@ -60,37 +62,36 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 		texttab.appendChild(box);
 		texttab.setClosable(resource.isCanDelete());
 
-		final EventQueue eventQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
-		
-		eventQueue.subscribe(new EventListener() {
+		final FiddleSourceEventQueue queue = FiddleSourceEventQueue.lookup();
+		queue.subscribeResourceChanged(
+			new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class, texttab) {
 
-			public void onEvent(Event event) throws Exception {
-				if (event instanceof ResourceChangedEvent) {
-					if (((ResourceChangedEvent) event).getResource() == resource) {
-						texttab.setLabel("*" + resource.getTypeName());
-					}
+			public void onFiddleEvent(ResourceChangedEvent event) throws Exception {
+				if (((ResourceChangedEvent) event).getResource() == resource) {
+					texttab.setLabel("*");
 				}
 			}
 		});
-		
+
 		box.addEventListener(Events.ON_CHANGE, new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
 				resource.setName(box.getValue());
-				eventQueue.publish(new ResourceChangedEvent(null,resource));
+				queue.fireResourceChanged(resource, ResourceChangedEvent.Type.Modified);
 			}
 		});
-		
+
 		texttab.addEventListener(Events.ON_CLOSE, new EventListener() {
+
 			public void onEvent(Event event) throws Exception {
-				eventQueue.publish(new ResourceChangedEvent(null,resource));
-				eventQueue.publish(new SourceRemoveEvent(FiddleEvents.ON_RESOURCE_REMOVE, null,resource ));
+				queue.fireResourceChanged(resource, ResourceChangedEvent.Type.Removed);
 			}
 		});
 
 		return texttab;
 	}
 
-	protected Tabpanel renderTabpanel(IResource resource) {
+	protected Tabpanel renderTabpanel(Resource resource) {
 		/* creating Tabpanel */
 		Tabpanel sourcepanel = new Tabpanel();
 		sourcepanel.appendChild(prepareCodeEditor(resource));
@@ -99,13 +100,13 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.zkoss.fiddle.component.renderer.ISourceTabRenderer#appendSourceTab
 	 * (org.zkoss.zul.api.Tabs, org.zkoss.zul.api.Tabpanels,
 	 * org.zkoss.fiddle.model.api.IResource)
 	 */
-	public void appendSourceTab(Tabs sourcetabs, Tabpanels sourcetabpanels, final IResource resource) {
+	public void appendSourceTab(Tabs sourcetabs, Tabpanels sourcetabpanels, final Resource resource) {
 		if (sourcetabs == null || sourcetabpanels == null) {
 			throw new IllegalStateException("sourcetabpanels/sourcetabs is not ready !!\n"
 					+ " do you call this after doAfterCompose "

@@ -53,7 +53,7 @@ span.text-bold {
 }
 
 .zkfiddle-header .logo {
-	background: url("/img/top_zk_logo.png") no-repeat scroll 0 7px
+	background: url("../img/top_zk_logo.png") no-repeat scroll 0 7px
 		transparent;
 	margin-left: 18px;
 	float: left;
@@ -162,16 +162,17 @@ span.text-bold {
 }
 .sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr,.sourcetabs .z-tab-hm {
 	height: 29px;
+	*height:auto; /* Tony: fix IE7 sourcetabs tab fly away */
 }
 .source-vlayout .z-tabpanel {
 	padding: 0;
 }
 .sourcetabs .z-tab-hl,
 .sourcetabs .z-tab-hr {
-	background-image: url("/img/comp/tab-corner.png");
+	background-image: url("../img/comp/tab-corner.png");
 }
 .sourcetabs .z-tab-hm {
-	background-image: url("/img/comp/tab-hm.png");
+	background-image: url("../img/comp/tab-hm.png");
 }
 
 .zkfiddle-source-tag-container a{
@@ -193,13 +194,27 @@ span.text-bold {
 }
 
 /***Tag cloud ***/
-.leftabout .tag-container{
+.left-tag .z-caption-r,.left-tag .z-caption-l{
+	text-align:left;
+}
+.left-tag .z-caption-r input{
+    width:65%;
+}
+
+.left-tag .tag-container{
 	padding-top:3px;
 	padding-bottom:5px;	
 	line-height:23px;
 }
+
 .tag-cloud{
 	padding:5px;
+	z-index:1;
+	position: relative;	
+}
+.tag-cloud-sel{
+	background:#DDDDDD;
+	z-index:0;
 }
 .tag-cloud0 {font-size: 100%;}  
 .tag-cloud1 {font-size: 120%;}  
@@ -219,6 +234,9 @@ span.c-like-string {
 }
 pre.CodeMirror-cursor {
 	margin-top: 1px;
+}
+.CodeMirror-scroll {
+	overflow: auto;	
 }
 
 /* Left */
@@ -294,8 +312,24 @@ pre.CodeMirror-cursor {
 	padding: 10px;
 }
 
+/** Widget View **/
+.widgetWindow .operations img{
+	width:16px;
+	height:16px;
+}
+
 /** temp fix background ,zk 5071 issue , @see ZK theme SVN commit 61/64 */
 div.z-listbox-header tr.z-listhead, div.z-listbox-header tr.z-auxhead {
 	background: transparent repeat-x 0 0;
 	background-image: url(${c:encodeURL('~./zul/img/breeze/grid/column-bg.png')});
+}
+
+/** Tony: Fix IE7 view result iframe is not 100% issue */
+.preview{
+	*width:100% !important;
+	*height:100% !important;
+}
+
+.CodeMirror-scroll{
+	position:relative;
 }

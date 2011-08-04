@@ -18,11 +18,11 @@ public class ZipFileUtil {
 
 	public static List<IResourceFile> getFiles(File f, String basePath) throws IOException {
 		ZipFile zf = new ZipFile(f);
-		Enumeration entries = zf.entries();
+		Enumeration<? extends ZipEntry> entries = zf.entries();
 		ArrayList<IResourceFile> ret = new ArrayList<IResourceFile>();
 
 		while (entries.hasMoreElements()) {
-			ZipEntry ze = (ZipEntry) entries.nextElement();
+			ZipEntry ze = entries.nextElement();
 
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			InputStream is = zf.getInputStream(ze);

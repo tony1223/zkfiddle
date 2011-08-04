@@ -17,13 +17,18 @@ import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
  * currently we are designing this with Admin
- * 
+ *
  * @author tony
- * 
+ *
  */
 @Entity
 @Table(name = "users")
 public class User implements Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 7758063965784902553L;
 
 	private Long id;
 

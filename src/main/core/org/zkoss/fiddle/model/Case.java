@@ -23,6 +23,11 @@ import org.zkoss.fiddle.model.api.ICase;
 @Table(name = "cases")
 public class Case implements ICase, Serializable {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 8589837203581484371L;
+
 	private Long id;
 
 	/**
@@ -43,7 +48,7 @@ public class Case implements ICase, Serializable {
 	private Integer version;
 
 	private Date createDate;
-	
+
 	private String posterIP;
 
 	/**
@@ -116,12 +121,12 @@ public class Case implements ICase, Serializable {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	
+
 	@Column
 	public String getPosterIP() {
 		return posterIP;
 	}
-	
+
 	public void setPosterIP(String posterIP) {
 		this.posterIP = posterIP;
 	}
@@ -138,6 +143,7 @@ public class Case implements ICase, Serializable {
 
 	@Transient
 	public String getCaseUrl(String ver) {
+		if(ver == null) return getCaseUrl();
 		return getToken() + "/" + getVersion() + "/v" + ver + getURLFriendlyTitle();
 	}
 

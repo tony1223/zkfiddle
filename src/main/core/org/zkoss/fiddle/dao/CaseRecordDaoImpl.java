@@ -25,6 +25,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			logger.debug("list() - start");
 		}
 
+		@SuppressWarnings("unchecked")
 		List<CaseRecord> returnList = getHibernateTemplate().find("from CaseRecord");
 		if (logger.isDebugEnabled()) {
 			logger.debug("list() - end");
@@ -96,9 +97,8 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 	public boolean increase(final CaseRecord.Type type, final ICase _case) {
 		if (logger.isInfoEnabled()) {
-			logger.info("increase(CaseRecord.Type, ICase) - start :" + type+":"+_case.getCaseUrl());
+			logger.info("increase caserecord:"+type + ":" + _case.getCaseUrl());
 		}
-
 
 		if (type == CaseRecord.Type.Like) {
 			if (logger.isDebugEnabled()) {
@@ -201,6 +201,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 				query.setFirstResult((pageIndex - 1) * pageSize);
 				query.setMaxResults(pageSize);
+				@SuppressWarnings("unchecked")
 				List<CaseRecord> returnList2 = query.list();
 				if (logger.isDebugEnabled()) {
 					logger.debug("doInHibernate(Session) - end");

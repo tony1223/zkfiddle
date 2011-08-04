@@ -14,11 +14,11 @@
 				</div>
 				<n:h1 class="title">ZK Fiddle - Open Source ZK Example Platform</n:h1>
 				<div id="views" style="margin-left:100px;width:500px;">
-			<!-- TODO review this , 
+			<!-- TODO review this ,
 				 this is related to [Issue #79 survey sitemesh to build a template engine if possible]
 					<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png" />
 					<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png" />
-					<combobox id="instances" readonly="true" width="180px" >
+					<combobox id="sandboxes" readonly="true" width="180px" >
 						<attribute w:name="slideDown_">
 							function (pp) {
 								jq(pp).show();  //remove slidedown effect -_-#
@@ -31,7 +31,7 @@
 				</div>
 				<div sclass="social">
 					<n:iframe
-						src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${hostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35"
+						src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${fiddleHostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35"
 						scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:35px;" allowTransparency="true">
 					</n:iframe>
 				</div>
@@ -51,7 +51,7 @@
 						<columns>
 							<column label="#" width="2%" sclass="zkfiddle-index" />
 							<column label="Title" width="40%" />
-							<column label="Tags" />	
+							<column label="Tags" />
 						</columns>
 					</grid>
 					<paging id="tagCasePaging" />
@@ -60,6 +60,6 @@
 		</borderlayout>
 	</div>
 	<include src="viewresult.zul" />
-	
+
 	<include src="footer.zul" />
 </zk>

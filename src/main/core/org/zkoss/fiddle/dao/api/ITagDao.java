@@ -4,20 +4,21 @@ import java.util.List;
 
 import org.zkoss.fiddle.model.Tag;
 
-
 public interface ITagDao extends IDao<Tag> {
 
 	public Tag getTag(String name);
-	
-	
-	public List<Tag> searchTag(String name);
-	
+
+	public List<Tag> searchTag(String name, boolean includeEmpty);
+
+	public List<Tag> searchTag(String name, boolean includeEmpty, int amount);
+
 	/**
 	 * return the tag list that in given tag array
+	 *
 	 * @param tags
 	 * @return
 	 */
 	public List<Tag> prepareTags(String[] tags);
-	
+
 	public List<Tag> findPopularTags(int amount);
 }

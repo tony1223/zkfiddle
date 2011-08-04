@@ -16,12 +16,32 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.zkoss.fiddle.model.api.IResource;
 
 @Entity
 @Table(name = "resources")
-public class Resource implements IResource, Cloneable, Serializable {
+public class Resource implements  Cloneable, Serializable {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -4759386406027188251L;
+
+	public static final int TYPE_ZUL = 0;
+
+	public static final int TYPE_JAVA = 1; // actually it's beanshell
+
+	public static final int TYPE_JS = 2;
+
+	public static final int TYPE_HTML = 3;
+
+	public static final int TYPE_CSS = 4;
+	
+	public static final String PACKAGE_TOKEN = "pkg$";
+
+	public static final String PACKAGE_TOKEN_ESCAPE = "pkg\\$";
+
+	public static final String PACKAGE_PREFIX = "";
+	
 	private Long id;
 
 	private String name;
@@ -110,24 +130,6 @@ public class Resource implements IResource, Cloneable, Serializable {
 		this.caseId = caseId;
 	}
 
-	@Transient
-	public String getTypeName() {
-		switch (type) {
-		case TYPE_ZUL:
-			return "zul";
-		case TYPE_JAVA:
-			return "java";
-		case TYPE_JS:
-			return "javascript";
-		case TYPE_HTML:
-			return "html";
-		case TYPE_CSS:
-			return "css";
-		default:
-			return "unknown";
-		}
-	}
-
 	@Lob
 	@Column
 	public String getFinalContent() {
@@ -157,33 +159,14 @@ public class Resource implements IResource, Cloneable, Serializable {
 	}
 
 	@Transient
-	public String getTypeMode() {
-		switch (type) {
-		case TYPE_ZUL:
-			return "xml";
-		case TYPE_JAVA:
-			return "java";
-		case TYPE_JS:
-			return "javascript";
-		case TYPE_HTML:
-			return "html";
-		case TYPE_CSS:
-			return "css";
-		default:
-			return "unknown";
-		}
+	public String getFullPackage(){
+		return Resource.PACKAGE_PREFIX + Resource.PACKAGE_TOKEN + this.getPkg();
 	}
 
-	@Transient
-	public String getFullPackage(){
-		return IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + this.getPkg();
-	}
-	
 	public Resource clone() {
 		Resource resource = new Resource();
 		resource.setCaseId(this.caseId);
 		resource.setContent(this.content);
-		resource.setCanDelete(this.canDelete);
 		resource.setName(this.name);
 		resource.setType(this.type);
 		resource.setId(this.id);
@@ -201,6 +184,16 @@ public class Resource implements IResource, Cloneable, Serializable {
 		this.finalContent = buildFinalConetnt(c.getToken(), c.getVersion());
 	}
 
+	@Transient
+	public String getFullContent(){
+		if (type == TYPE_JAVA) {
+			return "package " + Resource.PACKAGE_PREFIX + Resource.PACKAGE_TOKEN + pkg + 
+				";\n\n"	+ this.content;
+		} else {
+			return this.content;
+		}
+	}
+	
 	public String buildFinalConetnt(String replacedPackage) {
 
 		if (replacedPackage == null) {
@@ -213,19 +206,19 @@ public class Resource implements IResource, Cloneable, Serializable {
 		String finalcontent;
 
 		if (type == TYPE_JAVA) {
-			finalcontent = "package " + IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + pkg + ";\n\n"
+			finalcontent = "package " + Resource.PACKAGE_PREFIX + Resource.PACKAGE_TOKEN + pkg + ";\n\n"
 					+ this.content;
-			return finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedPackage);
+			return finalcontent.replaceAll(Resource.PACKAGE_TOKEN_ESCAPE, replacedPackage);
 		} else if (type == TYPE_ZUL) {
 			finalcontent = this.content;
-			return finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedPackage);
+			return finalcontent.replaceAll(Resource.PACKAGE_TOKEN_ESCAPE, replacedPackage);
 
 		} else {
 			return this.content;
 		}
 
 	}
-	
+
 	public String buildFinalConetnt(String token, int version) {
 
 		if (token == null) {
@@ -240,12 +233,12 @@ public class Resource implements IResource, Cloneable, Serializable {
 		String replacedtoken = "j" + token + "\\$v" + version;
 
 		if (type == TYPE_JAVA) {
-			finalcontent = "package " + IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + pkg + ";\n\n"
+			finalcontent = "package " + Resource.PACKAGE_PREFIX + Resource.PACKAGE_TOKEN + pkg + ";\n\n"
 					+ this.content;
-			return finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
+			return finalcontent.replaceAll(Resource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
 		} else if (type == TYPE_ZUL) {
 			finalcontent = this.content;
-			return finalcontent.replaceAll(IResource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
+			return finalcontent.replaceAll(Resource.PACKAGE_TOKEN_ESCAPE, replacedtoken);
 
 		} else {
 			return this.content;

@@ -11,7 +11,9 @@ public interface ICaseDao extends IDao<Case> {
 	
 	public Integer getLastVersionByToken(String token);
 	
-	
 	public List<Case> getRecentlyCase(Integer amount);
 	
+	public List<Case> list(int pageIndex,int pageSize);
+
+	public Integer size();
 }

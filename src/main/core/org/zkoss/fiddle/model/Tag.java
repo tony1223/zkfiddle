@@ -14,25 +14,31 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.CompareToBuilder;
 
+@SuppressWarnings("rawtypes")
 @Entity
 @Table(name = "tags")
 public class Tag implements Comparable, Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -4082360764952895125L;
 
 	private Long id;
 
 	/**
 	 * 2011/6/26 TonyQ:
-	 * 
+	 *
 	 * Note that I decide tag name is case-senstive, it make more sense in
 	 * generic way .
-	 * 
+	 *
 	 * Although in some case it didn't make all sense ,like "grid" vs "Grid" ,
 	 * but comparing to make it all lower-case or upper-case, we have to live
 	 * with it .
-	 * 
+	 *
 	 * Yes , we could do some "smart" things , but do we really need that? ;) I
 	 * don't think so.
-	 * 
+	 *
 	 */
 	private String name;
 
@@ -56,7 +62,7 @@ public class Tag implements Comparable, Serializable {
 
 	/**
 	 * Don't enter the word that more then 25 chars.
-	 * 
+	 *
 	 * @param name
 	 */
 	public void setName(String name) {

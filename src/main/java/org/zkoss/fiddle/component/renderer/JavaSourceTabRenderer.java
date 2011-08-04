@@ -2,15 +2,13 @@ package org.zkoss.fiddle.component.renderer;
 
 import java.util.regex.Pattern;
 
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
-import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
-import org.zkoss.fiddle.model.api.IResource;
+import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
+import org.zkoss.fiddle.model.Resource;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
-import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zul.A;
@@ -24,7 +22,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 
 	private Pattern packageRule = Pattern.compile("^[a-zA-Z_\\$][\\w\\$]*(?:\\.[a-zA-Z_\\$][\\w\\$]*)*$");
 
-	protected Tabpanel renderTabpanel(final IResource resource) {
+	protected Tabpanel renderTabpanel(final Resource resource) {
 
 		Tabpanel sourcepanel = new Tabpanel();
 
@@ -35,13 +33,13 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 		 
 		
 		//we use desktop scope , so it's ok to lookup every time.
-		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
+//		final EventQueue sourceQueue = EventQueues.lookup(FiddleEventQueues.SOURCE);
 
 		
 		{
 			final Label label2 = new Label(resource.getFullPackage());
 			label2.setTooltiptext("since we have to prevent package conflict for every version ," + " so we use "
-					+ IResource.PACKAGE_TOKEN + " as your class package by default.");
+					+ Resource.PACKAGE_TOKEN + " as your class package by default.");
 			hlayout.appendChild(label2);
 
 			label2.setVisible(false);
@@ -55,7 +53,7 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 	
 			txtPkg.setConstraint(new Constraint() {
 				public void validate(Component comp, Object value) throws WrongValueException {
-					String fullval = IResource.PACKAGE_PREFIX + IResource.PACKAGE_TOKEN + (String) value;
+					String fullval = Resource.PACKAGE_PREFIX + Resource.PACKAGE_TOKEN + (String) value;
 					boolean accepted =".".equals(value) || packageRule.matcher( fullval).matches();
 					
 					if (!accepted) {
@@ -99,7 +97,8 @@ public class JavaSourceTabRenderer extends SourceTabRenderer {
 								value = "";
 							}
 							resource.setPkg(value);
-							sourceQueue.publish(new ResourceChangedEvent(null,resource));
+							FiddleSourceEventQueue.lookup().
+								fireResourceChanged(resource,Type.Modified);
 							a.setLabel(resource.getFullPackage());
 						}
 					}

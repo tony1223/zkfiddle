@@ -22,19 +22,20 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(CaseDaoImpl.class);
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.zkoss.usergroup.dao.ICaseDao#list()
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Case> list() {
 		return getHibernateTemplate().find("from Case");
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.zkoss.usergroup.dao.ICaseDao#saveOrUdate(org.zkoss.usergroup.model
 	 * .Case)
@@ -50,7 +51,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.zkoss.usergroup.dao.ICaseDao#get(java.lang.Long)
 	 */
 	public Case get(Long id) {
@@ -59,7 +60,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.zkoss.usergroup.dao.ICaseDao#remove(org.zkoss.usergroup.model.
 	 * Case)
 	 */
@@ -69,7 +70,7 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.zkoss.usergroup.dao.ICaseDao#remove(java.lang.Long)
 	 */
 	public void remove(final Long id) {
@@ -82,10 +83,10 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 				return getHibernateTemplate().execute(new HibernateCallback<Case>() {
 					public Case doInHibernate(Session session) throws HibernateException, SQLException {
 						Criteria crit = session.createCriteria(Case.class);
-						
+
 						crit.add(Restrictions.eq("token", token));
 						crit.add(Restrictions.eq("version", version == null ? 1 : version));
-						return (Case) crit.uniqueResult();		
+						return (Case) crit.uniqueResult();
 					}
 
 				});
@@ -109,15 +110,16 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 
 	/**
 	 * We cache this and update it when save a new case,
-	 * yes , it's a often updated field , but it's on the index page , so it's worth to cache it here. 
+	 * yes , it's a often updated field , but it's on the index page , so it's worth to cache it here.
 	 */
 	public List<Case> getRecentlyCase(final Integer amount) {
-		
+		//TODO review , I think we should remove out the cache code to app.
 		return (List<Case>) FiddleCache.RecentlyCases.execute(new CacheHandler<List<Case>>() {
 
 			protected List<Case> execute() {
 				return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
 
+					@SuppressWarnings("unchecked")
 					public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
 						Query query = session.createQuery("from Case order by id desc");
 						query.setMaxResults(amount);
@@ -131,6 +133,28 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 			}
 		});
 
+	}
+
+	public List<Case> list(final int pageIndex,final  int pageSize) {
+		return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
+
+			@SuppressWarnings("unchecked")
+			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("from Case order by id desc");
+				setPage(query,pageIndex,pageSize);
+				return query.list();
+			}
+		});
+	}
+
+	public Integer size() {
+		return ((Long) getHibernateTemplate().execute(new HibernateCallback<Long>() {
+
+			public Long doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("select count(id) from Case");
+				return (Long) query.uniqueResult();
+			}
+		})).intValue();
 	}
 
 }

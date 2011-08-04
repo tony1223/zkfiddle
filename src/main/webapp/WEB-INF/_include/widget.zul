@@ -1,0 +1,36 @@
+<?page title="ZK Fiddle Widget ${_pgtitle}" contentType="text/html;charset=UTF-8"?>
+<?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
+<?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax OpenSource Framework) sameples right now!" ?>
+<?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
+<?script type="text/javascript" src="/js/fiddle.widget.js.dsp"?>
+<?script type="text/javascript" src="/js/jquery.mousewheel.min.js"?>
+<zk xmlns:w="client" xmlns:n="native">
+	<window sclass="widgetWindow" apply="org.zkoss.fiddle.composer.WidgetViewComposer"
+		border="normal">
+		<caption>
+			<div sclass="operations">
+				<button id="downloadBtn" target="_blank" image="/img/download.png" />
+				<button id="runBtn" target="_blank" image="/img/resultset_next.png" />
+				<button id="goBtn" target="_blank" src="/img/viewresult-newwindow.png" />
+			</div>
+		</caption>
+		<tabbox id="resources" >
+			<tabs id="resourceTabs">
+			</tabs>
+			<tabpanels id="resourceTabpanels">
+			</tabpanels>
+		</tabbox>
+	</window>
+	<include src="footer.zul" />
+	<script><![CDATA[
+		jq(document).mousewheel(function(event, delta) {
+			if(delta == 0 ) return false;
+		    var currentEditor = jq(".z-tabpanel:visible .z-codeeditor");
+		    if(currentEditor[0]){
+		    	currentEditor[0].scrollTop += (delta < 0) ? 45 : -45;
+		    }
+		    return false;
+		});
+
+	]]></script>
+</zk>

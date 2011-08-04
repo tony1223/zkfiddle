@@ -1,14 +1,17 @@
 package org.zkoss.fiddle.composer;
 
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Tag;
+import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.visualmodel.TagCaseListVO;
 import org.zkoss.fiddle.visualmodel.TagCloudVO;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -26,6 +29,11 @@ import org.zkoss.zul.event.ZulEvents;
 
 public class TagListComposer extends GenericForwardComposer {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 8763856551822579585L;
+
 	private Grid tagCaseList;
 
 	private Paging tagCasePaging;
@@ -42,7 +50,14 @@ public class TagListComposer extends GenericForwardComposer {
 		super.doAfterCompose(comp);
 
 		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
-		final Tag t = tagDao.getTag((String) requestScope.get("tag"));
+
+		//TODO move to filter.
+		String tagName = URLDecoder.decode((String) requestScope.get("tag"), "UTF-8");
+		final Tag t = tagDao.getTag(tagName);
+		if( t == null ){
+			Executions.getCurrent().sendRedirect("/");
+			return ;
+		}
 
 		final int pageIndex = 1, pageSize = 20;
 
@@ -72,9 +87,7 @@ public class TagListComposer extends GenericForwardComposer {
 
 				{
 					Div titlecont = new Div();
-					String title = tclvo.getCaseRecord().getTitle();
-					title = (title == null || "".equals(title.trim()) ? "Untitled" : title);
-					A titlelink = new A(title);
+					A titlelink = new A(CaseUtil.getPublicTitle(tclvo.getCaseRecord()));
 					titlelink.setHref("/sample/" + tclvo.getCaseRecord().getCaseUrl());
 					titlecont.appendChild(titlelink);
 
@@ -93,13 +106,14 @@ public class TagListComposer extends GenericForwardComposer {
 
 					for (int i = 0, size = tclvo.getTags().size(); i < size; ++i) {
 						Tag tag = tclvo.getTags().get(i);
-						A taglink = new A(tag.getName() + "(" + tag.getAmount() + ")");
+						A taglink = new A(tag.getName() +
+								(tag.getAmount() > 1 ? "(" + tag.getAmount() + ")" :"") );
 						if(t.equals(tag)){
-							taglink.setSclass("tag-cloud tag-cloud-sel tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));	
+							taglink.setSclass("tag-cloud tag-cloud-sel tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));
 						}else{
 							taglink.setSclass("tag-cloud tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));
 						}
-						
+
 						taglink.setHref("/tag/" + URLEncoder.encode(tag.getName(), "UTF-8"));
 						tagcont.appendChild(taglink);
 					}

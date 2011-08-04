@@ -57,6 +57,7 @@
 		<mapping class="org.zkoss.fiddle.model.CaseRecord" />
 		<mapping class="org.zkoss.fiddle.model.User" />
 		<mapping class="org.zkoss.fiddle.model.Tag" />
+		<mapping class="org.zkoss.fiddle.model.Media" />
 		<mapping class="org.zkoss.fiddle.model.CaseTag" />		
 		
     </session-factory>

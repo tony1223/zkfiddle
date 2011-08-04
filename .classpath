@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/main/core"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry excluding="**" kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/social-widget-0.8.0.fiddle.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/codeeditor-0.8.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/reflections-0.9.5-RC2.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/social-widget-0.8.0.fiddle.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/texttab-0.8.0.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/zk-fiddletabs-0.8.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/codeeditor-0.9.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

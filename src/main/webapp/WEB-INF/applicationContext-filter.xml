@@ -7,35 +7,39 @@
  xmlns:p="http://www.springframework.org/schema/p"
  xmlns:tx="http://www.springframework.org/schema/tx"
  xmlns:ehcache="http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring"
- xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ xsi:schemaLocation="http://www.springframework.org/schema/beans
   http://www.springframework.org/schema/beans/spring-beans.xsd
-  http://www.springframework.org/schema/aop 
+  http://www.springframework.org/schema/aop
   http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-  http://www.springframework.org/schema/context 
+  http://www.springframework.org/schema/context
   http://www.springframework.org/schema/context/spring-context-3.0.xsd
-  http://www.springframework.org/schema/tx 
+  http://www.springframework.org/schema/tx
   http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-  http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring   
+  http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring
   http://ehcache-spring-annotations.googlecode.com/svn/schema/ehcache-spring/ehcache-spring-1.1.xsd">
 
 
     <bean id="sandboxFilter" class="org.zkoss.fiddle.filter.FiddleSandboxFilter">
 	    <property name="sandboxManager" ref="sandboxManager" />
     </bean>
-	
+
 	<bean id="dataFilter" class="org.zkoss.fiddle.filter.FiddleDataFilter">
 	    <property name="caseDao" ref="caseDao" />
 		<property name="resourceDao" ref="resourceDao" />
 		<property name="caseRecordDao" ref="caseRecordDao" />
     </bean>
-	
+
 	<bean id="viewFilter" class="org.zkoss.fiddle.filter.FiddleViewFilter">
 		<property name="caseDao" ref="caseDao" />
 		<property name="sandboxManager"  ref="sandboxManager" />
     </bean>
-	
+
 	<bean id="tagFilter" class="org.zkoss.fiddle.filter.FiddleTagFilter" />
-	
+
 	<bean id="authFilter" class="org.zkoss.fiddle.filter.FiddleAuthFilter" />
-	
+
+	<bean id="statusFilter" class="org.zkoss.fiddle.filter.FiddleStatusFilter" scope="singleton" />
+
+	<bean id="sitemapFilter" class="org.zkoss.fiddle.filter.FiddleSiteMapFilter" />
+
 </beans>

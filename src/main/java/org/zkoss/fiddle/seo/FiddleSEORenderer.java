@@ -6,15 +6,12 @@ import java.io.Writer;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.sys.SEORenderer;
 
+public class FiddleSEORenderer implements SEORenderer {
 
+	public void render(Page page, Writer out) throws IOException {
 
-public class FiddleSEORenderer  implements SEORenderer {
-		public void render(Page page, Writer out) throws IOException {
+		SEOContainer.getInstance(page.getDesktop()).process(out);
 
-		SEOContainer soc = SEOContainer.getInstance(page.getDesktop());
-		soc.getTokens();
-		soc.process(out);
-		
 	}
 
 }
