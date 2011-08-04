@@ -21,9 +21,9 @@ public class ResourceFactory {
 				return new Resource(Resource.TYPE_JS, name, readTemplate("/WEB-INF/_templates/test.js"));
 		} else if (Resource.TYPE_CSS == type) {
 			if(name != null && name.endsWith("dsp"))
-				return new Resource(Resource.TYPE_JS, name, readTemplate("/WEB-INF/_templates/test.css.dsp"));
+				return new Resource(Resource.TYPE_CSS, name, readTemplate("/WEB-INF/_templates/test.css.dsp"));
 			else
-				return new Resource(Resource.TYPE_JS, name, readTemplate("/WEB-INF/_templates/test.css"));
+				return new Resource(Resource.TYPE_CSS, name, readTemplate("/WEB-INF/_templates/test.css"));
 		} else if (Resource.TYPE_HTML == type) {
 			return (new Resource(Resource.TYPE_HTML, name,readTemplate("/WEB-INF/_templates/test.html")));
 		} else if (Resource.TYPE_JAVA == type) {
