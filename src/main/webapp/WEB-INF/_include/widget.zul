@@ -24,9 +24,12 @@
 	<include src="footer.zul" />
 	<script><![CDATA[
 		jq(document).mousewheel(function(event, delta) {
-			if(delta == 0 ) return false;
 		    var currentEditor = jq(".z-tabpanel:visible .z-codeeditor");
 		    if(currentEditor[0]){
+		    	if(currentEditor[0].offsetHeight == currentEditor[0].scrollHeight ){
+		    		return true;
+		    	}
+		    	
 		    	currentEditor[0].scrollTop += (delta < 0) ? 45 : -45;
 		    }
 		    return false;
