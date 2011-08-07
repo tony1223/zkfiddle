@@ -6,11 +6,14 @@ import org.apache.log4j.Logger;
 import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
+import org.zkoss.fiddle.dao.api.ICaseRecordDao;
+import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.util.ResourceUtil;
+import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -64,6 +67,12 @@ public class WidgetViewComposer extends GenericForwardComposer {
 		caseModel = new CaseModel($case, false, null);
 		self.setTitle("Sample Code:" + CaseUtil.getPublicTitle(caseModel.getCurrentCase()));
 
+		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+		if (logger.isDebugEnabled()) {
+			logger.debug($case.getToken() + ":" + $case.getVersion() + ":view");
+		}
+		manager.increase(CaseRecord.Type.Widget, $case);
+		
 		renderTabAndTabpanels(caseModel.getResources(), height);
 
 

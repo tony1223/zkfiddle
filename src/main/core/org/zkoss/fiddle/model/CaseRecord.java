@@ -30,7 +30,7 @@ public class CaseRecord implements Serializable,IRenderCase{
 	private static final long serialVersionUID = -2427044850941659111L;
 
 	public enum Type {
-		View(0), Like(1), RunTemp(2), Run(3), Download(4);
+		View(0), Like(1), RunTemp(2), Run(3), Download(4),Widget(5);
 		private Integer type;
 		Type(int type) {
 			this.type = type;
@@ -39,9 +39,6 @@ public class CaseRecord implements Serializable,IRenderCase{
 			return type;
 		}
 
-		public static boolean contains(int i){
-			return ( i >= 0 && i < 4 );
-		}
 	}
 
 	private Long id;
