@@ -8,6 +8,8 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Resource;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 /**
  * a virtual case object used for visual case.
@@ -71,5 +73,10 @@ public class VirtualCase implements Comparable<Object> {
 	public Date getCreateDate() {
 		return createDate;
 	}
+
+	public String toString() {
+			return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("$case", $case)
+					.append("resources", resources).append("createDate", createDate).toString();
+		}
 
 }

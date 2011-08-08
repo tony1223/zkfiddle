@@ -1,5 +1,7 @@
 package org.zkoss.fiddle.manager;
 
+import org.apache.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -21,6 +23,11 @@ import org.zkoss.fiddle.visualmodel.VirtualCase;
  *
  */
 public class VirtualCaseManager {
+
+	/**
+	 * Logger for this class
+	 */
+	private static final Logger logger = Logger.getLogger(VirtualCaseManager.class);
 
 	/* Test function
 	public static void main(String[] args) {
@@ -96,6 +103,9 @@ public class VirtualCaseManager {
 	}
 
 	public void save(VirtualCase m) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("save(VirtualCase) - Running Sample - m=" + m);
+		}
 
 		casemap.put(m.getCase().getToken(), m);
 		if (casemap.size() > 100) {
