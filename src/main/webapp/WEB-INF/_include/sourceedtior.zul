@@ -45,7 +45,7 @@
 						<label value="Tags:" stubonly="true" />
 						<div sclass="zkfiddle-source-tag-container" >
 							<hlayout id="tagContainer" style="float:left;" />
-							<label id="tagEmpty" visible="false" value="currently no available tag on this sample" />
+							<label id="tagEmpty" visible="false" style="font-decoration:underline;color:green;" value="Double click here to add tag" />
 						</div>
 
 					</hlayout>
@@ -58,7 +58,7 @@
 						</attribute>
 						<label value="Tags:" stubonly="true" />
 						<textbox id="tagInput" cols="100" maxlength="96" />
-						(separate with comma, ex. "grid,listbox,test" )
+						(separate with comma ,ex. "grid,listbox,test" )
 					</hlayout>
 					<toolbarbutton id="download" label="Download Sample Archive" src="/img/archive.png"/>
 				</div>
