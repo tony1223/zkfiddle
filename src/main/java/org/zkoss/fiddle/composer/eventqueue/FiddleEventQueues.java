@@ -1,4 +1,4 @@
-package org.zkoss.fiddle.composer.event;
+package org.zkoss.fiddle.composer.eventqueue;
 
 
 public class FiddleEventQueues {

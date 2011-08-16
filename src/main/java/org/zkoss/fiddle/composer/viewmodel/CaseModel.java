@@ -9,11 +9,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.zkoss.fiddle.composer.event.FiddleEventListener;
-import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.PreparingShowResultEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
+import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
+import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
 import org.zkoss.fiddle.core.utils.ResourceFactory;
