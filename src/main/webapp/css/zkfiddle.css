@@ -113,7 +113,7 @@ span.text-bold {
 	height: 24px;
 	border: 1px solid #CCCCCC;
 	background-color: transparent;
-	background-image: url(/img/comp/combobtn.gif);
+	background-image: url(../img/comp/combobtn.gif);
 }
 .zkfiddle-header .z-combobox-focus .z-combobox-btn,
 .zkfiddle-header .z-combobox-btn-over,
