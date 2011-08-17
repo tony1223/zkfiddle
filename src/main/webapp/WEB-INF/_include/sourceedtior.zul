@@ -64,38 +64,40 @@
 				</div>
 			</div>
 		</vlayout>
-		<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
-			title=" Insert New File" width="420px" height="105px" border="normal" position="center, center">
-			<!-- TODO use selectbox instead. -->
-			<n:table>
-				<n:tr>
-					<n:td class="insertTd" width="80px">
-						<label value="File Type" />
-					</n:td>
-					<n:td>
-						<combobox id="type" readonly="true"  width="240px">
-							<attribute w:name="slideDown_">
-								function (pp) {
-									jq(pp).show();  //remove slidedown effect -_-#
-									this._afterSlideDown();
-								}
-							</attribute>
-						</combobox>
-					</n:td>
-					<n:td rowspan="2" >
-						<button id="insert" style="margin-left:5px" label="Insert" height="50px"/>
-					</n:td>
-				</n:tr>
-				<n:tr>
-					<n:td class="insertTd">
-						<label value="File Name" />
-					</n:td>
-					<n:td>
-						<textbox id="fileName" maxlength="60" width="160px" forward="onOK=insert.onClick" value="test"/>
-						<label id="extension" value=".zul" />
-					</n:td>
-				</n:tr>
-			</n:table>
-		</window>
+		<div fulfill="sourcetabs.onAdd" >
+			<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
+				title=" Insert New File" width="420px" height="105px" border="normal" position="center, center">
+				<!-- TODO use selectbox instead. -->
+				<n:table>
+					<n:tr>
+						<n:td class="insertTd" width="80px">
+							<label value="File Type" />
+						</n:td>
+						<n:td>
+							<combobox id="type" readonly="true"  width="240px">
+								<attribute w:name="slideDown_">
+									function (pp) {
+										jq(pp).show();  //remove slidedown effect -_-#
+										this._afterSlideDown();
+									}
+								</attribute>
+							</combobox>
+						</n:td>
+						<n:td rowspan="2" >
+							<button id="insert" style="margin-left:5px" label="Insert" height="50px"/>
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td class="insertTd">
+							<label value="File Name" />
+						</n:td>
+						<n:td>
+							<textbox id="fileName" maxlength="60" width="160px" forward="onOK=insert.onClick" value="test"/>
+							<label id="extension" value=".zul" />
+						</n:td>
+					</n:tr>
+				</n:table>
+			</window>
+		</div>
 	</div>
 </zk>

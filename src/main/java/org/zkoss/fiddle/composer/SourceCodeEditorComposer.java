@@ -47,6 +47,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
@@ -74,8 +75,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Tabpanels sourcetabpanels;
 
 	private Textbox caseTitle;
-
-	private Window insertWin;
 
 	private Div caseToolbar;
 
@@ -122,8 +121,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				Resource resource = insertEvent.getResource();
 
 				caseModel.addResource(resource);
-				SourceTabRendererFactory.getRenderer(resource.getType()).appendSourceTab(sourcetabs, sourcetabpanels,
-						resource);
+				ISourceTabRenderer render = SourceTabRendererFactory.getRenderer(resource.getType());
+				render.appendSourceTab(sourcetabs, sourcetabpanels,	resource);
+				
+				((Tab)sourcetabs.getLastChild()).setSelected(true);
 			}
 		});
 		sourceQueue.subscribeResourceSaved(new FiddleEventListener<SaveCaseEvent>(SaveCaseEvent.class) {
@@ -342,7 +343,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public void onAdd$sourcetabs(Event e) {
 		try {
-			insertWin.doOverlapped();
+			//the reason for not using auto wire is that the insertWin is included when fulfill.
+			((Window)self.getFellow("insertWin")).doOverlapped();
 		} catch (Exception e1) {
 			logger.error("onAdd$sourcetabs(Event) - e=" + e, e1);
 		}
