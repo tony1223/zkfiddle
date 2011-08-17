@@ -4,8 +4,8 @@
 	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv"
 		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer"
 		sclass="sourceCodeEditor" vflex="1">
-
-		<vlayout sclass="source-vlayout">
+		<vlayout id="notifications" />
+		<vlayout>
 			<div>
 				<label value="Fiddle Name : " sclass="name" />
 				<textbox id="caseTitle" maxlength="60" cols="62"
@@ -63,7 +63,7 @@
 					<toolbarbutton id="download" label="Download Sample Archive" src="/img/archive.png"/>
 					<div style="float:right;">
 						Posted from <label id="poserIp" />.
-					</div>					
+					</div>
 				</div>
 			</div>
 		</vlayout>

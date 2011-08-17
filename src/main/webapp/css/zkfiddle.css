@@ -18,6 +18,35 @@ h1 {
 span.text-bold {
 	font-weight: bold;
 }
+
+
+/* Notifications */
+
+.notification {
+    -moz-box-shadow: 0 0 6px #000000;
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.8);
+    -moz-border-radius: 8px 8px 8px 8px;
+    padding: 10px;
+}
+.notification .notification-message{
+	color:#FFFFFF;
+    line-height: 18px;
+    margin: 3px 0;
+    padding: 0;
+    font: 12px Helvetica,Arial,sans-serif;
+}
+.notification .notification-close{
+	color:#FFFFFF;
+    cursor: pointer;
+    float: right;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: -4px;
+    padding: 2px;
+    text-decoration: none;
+    text-shadow: 0 1px 1px #FFFFFF;
+}
+
 /* Header */
 .zkfiddle-header {
 	height: 70px;

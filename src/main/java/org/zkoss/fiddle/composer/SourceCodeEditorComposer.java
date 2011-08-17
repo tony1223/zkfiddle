@@ -29,6 +29,7 @@ import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
+import org.zkoss.fiddle.util.NotificationUtil;
 import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
@@ -36,6 +37,7 @@ import org.zkoss.social.facebook.event.LikeEvent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
@@ -51,6 +53,7 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
+import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.Window;
 
 public class SourceCodeEditorComposer extends GenericForwardComposer {
@@ -63,7 +66,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	/**
 	 * Logger for this class
 	 */
-	private static final Logger logger = Logger.getLogger(SourceCodeEditorComposer.class);
+	private static final Logger logger = Logger
+			.getLogger(SourceCodeEditorComposer.class);
 
 	/**
 	 * case management model.
@@ -97,10 +101,15 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Checkbox cbSaveTag;
 
+	/* for notifications */
+	private Vlayout notifications;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		ICase _case = (ICase) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE);
+		ICase _case = (ICase) requestScope
+				.get(FiddleConstant.REQUEST_ATTR_CASE);
+
+		updateNotifications();
 
 		caseModel = prepareCaseModel(_case);
 		updateCaseView(caseModel);
@@ -109,59 +118,129 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		initSEOHandler(caseModel, desktop);
 
-		//if direct view , we handle it here.
+		// if direct view , we handle it here.
 		initDirectlyView();
 	}
 
-	private CaseModel prepareCaseModel(ICase _case){
+	/**
+	 *
+	 */
+	private void updateNotifications() {
+		List<String> list = NotificationUtil.getNotifications(Sessions
+				.getCurrent());
+
+		for (String message : list) {
+			final Div container = new Div();
+			container.setSclass("notification");
+			{
+				A close = new A("X");
+				close.setSclass("notification-close");
+				close.addEventListener("onClick", new EventListener() {
+					public void onEvent(Event event) throws Exception {
+						container.detach();
+					}
+				});
+				container.appendChild(close);
+			}
+			{
+				Label lbl = new Label(message);
+				lbl.setSclass("notification-message");
+				container.appendChild(lbl);
+			}
+
+			notifications.appendChild(container);
+		}
+
+		NotificationUtil.clearNotifications(Sessions.getCurrent());
+	}
+
+	private CaseModel prepareCaseModel(ICase _case) {
 		if (!isTryCase()) {
 			return new CaseModel(_case, false, null);
 		} else {
-			String zulData = (String) Executions.getCurrent().getParameter("zulData");
-			String version = (String) Executions.getCurrent().getParameter("zkver");
+			String zulData = (String) Executions.getCurrent().getParameter(
+					"zulData");
+			String version = (String) Executions.getCurrent().getParameter(
+					"zkver");
 			Events.echoEvent(new Event("onShowTryCase", self, version));
 			return new CaseModel(_case, true, zulData);
 		}
 	}
 
-	private void initEventQueue(){
+	private void initEventQueue() {
 
-		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
-		sourceQueue.subscribeResourceCreated(new FiddleEventListener<InsertResourceEvent>(InsertResourceEvent.class) {
+		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue
+				.lookup();
+		sourceQueue
+				.subscribeResourceCreated(new FiddleEventListener<InsertResourceEvent>(
+						InsertResourceEvent.class) {
 
-			public void onFiddleEvent(InsertResourceEvent event) throws Exception {
-				InsertResourceEvent insertEvent = (InsertResourceEvent) event;
-				Resource resource = insertEvent.getResource();
+					public void onFiddleEvent(InsertResourceEvent event)
+							throws Exception {
+						InsertResourceEvent insertEvent = (InsertResourceEvent) event;
+						Resource resource = insertEvent.getResource();
 
-				caseModel.addResource(resource);
-				ISourceTabRenderer render = SourceTabRendererFactory.getRenderer(resource.getType());
-				render.appendSourceTab(sourcetabs, sourcetabpanels,	resource);
+						caseModel.addResource(resource);
+						ISourceTabRenderer render = SourceTabRendererFactory
+								.getRenderer(resource.getType());
+						render.appendSourceTab(sourcetabs, sourcetabpanels,
+								resource);
 
-				((Tab)sourcetabs.getLastChild()).setSelected(true);
-			}
-		});
-		sourceQueue.subscribeResourceSaved(new FiddleEventListener<SaveCaseEvent>(SaveCaseEvent.class) {
+						((Tab) sourcetabs.getLastChild()).setSelected(true);
+					}
+				});
+		sourceQueue
+				.subscribeResourceSaved(new FiddleEventListener<SaveCaseEvent>(
+						SaveCaseEvent.class) {
 
-			public void onFiddleEvent(SaveCaseEvent event) throws Exception {
-				SaveCaseEvent saveEvt = (SaveCaseEvent) event;
-				CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
+					public void onFiddleEvent(SaveCaseEvent event)
+							throws Exception {
+						SaveCaseEvent saveEvt = (SaveCaseEvent) event;
+						CaseManager caseManager = (CaseManager) SpringUtil
+								.getBean("caseManager");
 
-				String title = caseTitle.getValue().trim();
-				String ip = Executions.getCurrent().getRemoteAddr();
-				ICase saved = caseManager.saveCase(caseModel.getCurrentCase(), caseModel.getResources(), title,
-						saveEvt.isFork(), ip, cbSaveTag.isChecked());
-				if (saved != null) {
-					BrowserState.go(CaseUtil.getSampleURL(saved), "ZK Fiddle - " + CaseUtil.getPublicTitle(saved),true, saved);
-//					Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
-				}
-			}
-		});
+						String title = caseTitle.getValue().trim();
+						String ip = Executions.getCurrent().getRemoteAddr();
+						ICase saved = caseManager.saveCase(
+								caseModel.getCurrentCase(),
+								caseModel.getResources(), title,
+								saveEvt.isFork(), ip, cbSaveTag.isChecked());
+						if (saved != null) {
+							List<String> notifications = NotificationUtil
+									.getNotifications(Sessions.getCurrent());
+
+							if (caseModel.isStartWithNewCase()) {
+								notifications
+										.add("You have saved a new samples ");
+							} else if (saveEvt.isFork()) {
+								notifications.add("You have forked a new samples from "
+										+ CaseUtil.getPublicTitle(caseModel
+												.getCurrentCase()));
+							} else {
+								notifications.add("You have updated a new samples from "
+										+ CaseUtil.getPublicTitle(caseModel
+												.getCurrentCase()));
+							}
+							NotificationUtil.updateNotifications(
+									Sessions.getCurrent(), notifications);
+
+							BrowserState.go(
+									CaseUtil.getSampleURL(saved),
+									"ZK Fiddle - "
+											+ CaseUtil.getPublicTitle(saved),
+									true, saved);
+							// Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
+						}
+					}
+				});
 
 		/**
 		 * browser state , for chrome and firefox only
 		 */
-		FiddleBrowserStateEventQueue queue = FiddleBrowserStateEventQueue.lookup();
-		queue.subscribe(new FiddleEventListener<URLChangeEvent>(URLChangeEvent.class) {
+		FiddleBrowserStateEventQueue queue = FiddleBrowserStateEventQueue
+				.lookup();
+		queue.subscribe(new FiddleEventListener<URLChangeEvent>(
+				URLChangeEvent.class) {
 
 			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
 				// only work when updated to a case view.
@@ -169,25 +248,30 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					ICase _case = (ICase) evt.getData();
 					caseModel.setCase(_case);
 					updateCaseView(caseModel);
-					EventQueues.lookup(FiddleEventQueues.LeftRefresh).publish(new Event(FiddleEvents.ON_LEFT_REFRESH, null));
+					updateNotifications();
+					EventQueues.lookup(FiddleEventQueues.LeftRefresh).publish(
+							new Event(FiddleEvents.ON_LEFT_REFRESH, null));
 				}
 				// TODO check if we switch to tag view.
 			}
 		});
 	}
 
-	private boolean isTryCase(){
-		Boolean tryCase = (Boolean) requestScope.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
-		return  tryCase != null && tryCase;
+	private boolean isTryCase() {
+		Boolean tryCase = (Boolean) requestScope
+				.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
+		return tryCase != null && tryCase;
 	}
 
-	private void initDirectlyView(){
+	private void initDirectlyView() {
 		// @see FiddleDispatcherFilter for those use this directly
-		CaseRequest viewRequestParam = (CaseRequest) requestScope.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
+		CaseRequest viewRequestParam = (CaseRequest) requestScope
+				.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
 		if (viewRequestParam != null) {
 			runDirectlyView(viewRequestParam);
 		}
 	}
+
 	private void updateCaseView(CaseModel caseModel) {
 		// FiddleBrowserStateEventQueue
 
@@ -205,9 +289,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		sourcetabs.getChildren().clear();
 		sourcetabpanels.getChildren().clear();
 
-		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
+		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue
+				.lookup();
 		for (Resource resource : caseModel.getResources()) {
-			ISourceTabRenderer render = SourceTabRendererFactory.getRenderer(resource.getType());
+			ISourceTabRenderer render = SourceTabRendererFactory
+					.getRenderer(resource.getType());
 			render.appendSourceTab(sourcetabs, sourcetabpanels, resource);
 			if (newCase) {
 				// Notify content to do some processing,since we use desktop
@@ -264,11 +350,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		if (valueChange) {
 			ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
 
-			List<Tag> list = "".equals(val.trim()) ? new ArrayList<Tag>() : tagDao.prepareTags(val.split("[ ]*,[ ]*"));
-			ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
+			List<Tag> list = "".equals(val.trim()) ? new ArrayList<Tag>()
+					: tagDao.prepareTags(val.split("[ ]*,[ ]*"));
+			ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil
+					.getBean("caseTagDao");
 			caseTagDao.replaceTags(caseModel.getCurrentCase(), list);
 
-			EventQueues.lookup(FiddleEventQueues.Tag).publish(new Event(FiddleEvents.ON_TAG_UPDATE, null));
+			EventQueues.lookup(FiddleEventQueues.Tag).publish(
+					new Event(FiddleEvents.ON_TAG_UPDATE, null));
 
 			updateTags(list);
 		}
@@ -305,23 +394,27 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		FiddleSandbox sandbox = viewRequestParam.getFiddleSandbox();
 		if (sandbox != null) { // inst can't be null
 			// use echo event to find a good timing
-			Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, viewRequestParam));
+			Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self,
+					viewRequestParam));
 		} else {
 			alert("Can't find sandbox from specific version ");
 		}
 	}
 
 	public void onLike$fblike(LikeEvent evt) {
-		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil
+				.getBean("caseRecordDao");
 		ICase $case = caseModel.getCurrentCase();
 		if (evt.isLiked()) {
 			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion() + ":like");
+				logger.debug($case.getToken() + ":" + $case.getVersion()
+						+ ":like");
 			}
 			manager.increase(CaseRecord.Type.Like, $case);
 		} else {
 			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion() + ":unlike");
+				logger.debug($case.getToken() + ":" + $case.getVersion()
+						+ ":unlike");
 			}
 			manager.decrease(CaseRecord.Type.Like, $case.getId());
 		}
@@ -330,14 +423,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	public void onShowResult(Event e) {
 		CaseRequest viewRequestParam = (CaseRequest) e.getData();
 		if (viewRequestParam != null) {
-			FiddleSourceEventQueue.lookup().fireShowResult(caseModel.getCurrentCase(),
+			FiddleSourceEventQueue.lookup().fireShowResult(
+					caseModel.getCurrentCase(),
 					viewRequestParam.getFiddleSandbox());
 		}
 	}
 
 	public void onShowTryCase(Event e) {
 
-		FiddleSandboxManager manager = (FiddleSandboxManager) SpringUtil.getBean("sandboxManager");
+		FiddleSandboxManager manager = (FiddleSandboxManager) SpringUtil
+				.getBean("sandboxManager");
 
 		FiddleSandbox sandbox = null;
 		String version = (String) e.getData();
@@ -351,7 +446,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			if (version == null) {
 				alert("Currently no any available sandbox.");
 			} else {
-				alert("Currently no any available sandbox for ZK version[" + version + "].");
+				alert("Currently no any available sandbox for ZK version["
+						+ version + "].");
 			}
 			return;
 		}
@@ -361,8 +457,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public void onAdd$sourcetabs(Event e) {
 		try {
-			//the reason for not using auto wire is that the insertWin is included when fulfill.
-			((Window)self.getFellow("insertWin")).doOverlapped();
+			// the reason for not using auto wire is that the insertWin is
+			// included when fulfill.
+			((Window) self.getFellow("insertWin")).doOverlapped();
 		} catch (Exception e1) {
 			logger.error("onAdd$sourcetabs(Event) - e=" + e, e1);
 		}

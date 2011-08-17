@@ -17,4 +17,6 @@ public class FiddleConstant {
 	public static final String AU_PUSH_STATE_INIT = "onPushStateInit";
 
 	public static final String AU_PUSH_STATE_CHANGE = "onStateChange";
+
+	public static final String SESSION_NOTIFICATIONS = "s_notification";
 }
