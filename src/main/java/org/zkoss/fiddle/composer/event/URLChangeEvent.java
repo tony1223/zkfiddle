@@ -4,6 +4,10 @@ import org.zkoss.zk.ui.event.Event;
 
 public class URLChangeEvent extends Event {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1401670411326498604L;
 	private String url;
 
 	public URLChangeEvent(String url) {

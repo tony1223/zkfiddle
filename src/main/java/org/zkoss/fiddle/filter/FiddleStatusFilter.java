@@ -22,6 +22,7 @@ public class FiddleStatusFilter implements Filter {
 
 	private ServletContext ctx;
 
+	@SuppressWarnings("unchecked")
 	public void doFilter(ServletRequest request2, ServletResponse response2, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest request = ((HttpServletRequest) request2);
@@ -32,7 +33,7 @@ public class FiddleStatusFilter implements Filter {
 		if (path.equals("/status/versions")) {
 			JSONArray obj = new JSONArray();
 
-			FiddleSandboxManager fiddleSandboxMananger = (FiddleSandboxManager) 
+			FiddleSandboxManager fiddleSandboxMananger = (FiddleSandboxManager)
 				SpringUtilz.getBean(ctx, "sandboxManager");
 			obj.addAll(fiddleSandboxMananger.getAvailableVersions());
 			response.getWriter().print(FilterUtil.buildJSONP(request, obj));

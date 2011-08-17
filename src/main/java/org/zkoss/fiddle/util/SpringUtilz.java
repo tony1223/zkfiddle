@@ -35,7 +35,7 @@ public class SpringUtilz {
 	 * Get the spring bean by the specified name and class.
 	 */
 	@SuppressWarnings("unchecked")
-	public static Object getBean(ServletContext context, String name, Class cls) {
+	public static Object getBean(ServletContext context, String name, @SuppressWarnings("rawtypes") Class cls) {
 		Object o = null;
 		try {
 			if (getApplicationContext(context).containsBean(name)) {
