@@ -81,7 +81,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Toolbarbutton download;
 
 	private Label poserIp;
-	
+
 	/* for tags */
 	private Hlayout tagContainer;
 
@@ -97,23 +97,34 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Checkbox cbSaveTag;
 
-	private CaseRequest viewRequestParam;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		ICase _case = (ICase) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE);
 
-		Boolean tryCase = (Boolean) requestScope.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
-		tryCase = tryCase != null && tryCase;
-		if (!tryCase) {
-			caseModel = new CaseModel(_case, false, null);
+		caseModel = prepareCaseModel(_case);
+		updateCaseView(caseModel);
+
+		initEventQueue();
+
+		initSEOHandler(caseModel, desktop);
+
+		//if direct view , we handle it here.
+		initDirectlyView();
+	}
+
+	private CaseModel prepareCaseModel(ICase _case){
+		if (!isTryCase()) {
+			return new CaseModel(_case, false, null);
 		} else {
 			String zulData = (String) Executions.getCurrent().getParameter("zulData");
 			String version = (String) Executions.getCurrent().getParameter("zkver");
-			caseModel = new CaseModel(_case, tryCase, zulData);
 			Events.echoEvent(new Event("onShowTryCase", self, version));
+			return new CaseModel(_case, true, zulData);
 		}
-		setCase(caseModel);
+	}
+
+	private void initEventQueue(){
 
 		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
 		sourceQueue.subscribeResourceCreated(new FiddleEventListener<InsertResourceEvent>(InsertResourceEvent.class) {
@@ -125,7 +136,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				caseModel.addResource(resource);
 				ISourceTabRenderer render = SourceTabRendererFactory.getRenderer(resource.getType());
 				render.appendSourceTab(sourcetabs, sourcetabpanels,	resource);
-				
+
 				((Tab)sourcetabs.getLastChild()).setSelected(true);
 			}
 		});
@@ -146,9 +157,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		});
 
-		initSEOHandler(caseModel, desktop);
-
-		
 		/**
 		 * browser state , for chrome and firefox only
 		 */
@@ -160,21 +168,27 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				if (evt.getData() != null && evt.getData() instanceof ICase) {
 					ICase _case = (ICase) evt.getData();
 					caseModel.setCase(_case);
-					setCase(caseModel);
+					updateCaseView(caseModel);
 					EventQueues.lookup(FiddleEventQueues.LeftRefresh).publish(new Event(FiddleEvents.ON_LEFT_REFRESH, null));
 				}
 				// TODO check if we switch to tag view.
 			}
 		});
+	}
 
+	private boolean isTryCase(){
+		Boolean tryCase = (Boolean) requestScope.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
+		return  tryCase != null && tryCase;
+	}
+
+	private void initDirectlyView(){
 		// @see FiddleDispatcherFilter for those use this directly
-		viewRequestParam = (CaseRequest) requestScope.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
+		CaseRequest viewRequestParam = (CaseRequest) requestScope.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
 		if (viewRequestParam != null) {
 			runDirectlyView(viewRequestParam);
 		}
 	}
-
-	private void setCase(CaseModel caseModel) {
+	private void updateCaseView(CaseModel caseModel) {
 		// FiddleBrowserStateEventQueue
 
 		boolean newCase = caseModel.isStartWithNewCase();
@@ -291,7 +305,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		FiddleSandbox sandbox = viewRequestParam.getFiddleSandbox();
 		if (sandbox != null) { // inst can't be null
 			// use echo event to find a good timing
-			Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, null));
+			Events.echoEvent(new Event(FiddleEvents.ON_SHOW_RESULT, self, viewRequestParam));
 		} else {
 			alert("Can't find sandbox from specific version ");
 		}
@@ -314,6 +328,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 
 	public void onShowResult(Event e) {
+		CaseRequest viewRequestParam = (CaseRequest) e.getData();
 		if (viewRequestParam != null) {
 			FiddleSourceEventQueue.lookup().fireShowResult(caseModel.getCurrentCase(),
 					viewRequestParam.getFiddleSandbox());
