@@ -80,6 +80,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Toolbarbutton download;
 
+	private Label poserIp;
+	
 	/* for tags */
 	private Hlayout tagContainer;
 
@@ -182,6 +184,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			caseTitle.setValue(thecase.getTitle());
 			download.setHref(caseModel.getDownloadLink());
 			caseToolbar.setVisible(true);
+			poserIp.setValue(thecase.getPosterIP());
 			initTagEditor(thecase);
 		}
 

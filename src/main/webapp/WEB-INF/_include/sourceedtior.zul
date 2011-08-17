@@ -61,6 +61,9 @@
 						(separate with comma ,ex. "grid,listbox,test" )
 					</hlayout>
 					<toolbarbutton id="download" label="Download Sample Archive" src="/img/archive.png"/>
+					<div style="float:right;">
+						Posted from <label id="poserIp" />.
+					</div>					
 				</div>
 			</div>
 		</vlayout>
