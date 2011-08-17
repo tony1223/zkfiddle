@@ -1,6 +1,6 @@
 package org.zkoss.fiddle.composer;
 
-import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
 import org.zkoss.fiddle.core.utils.ResourceFactory;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.zk.ui.Component;

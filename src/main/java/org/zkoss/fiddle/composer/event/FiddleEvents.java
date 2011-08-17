@@ -18,4 +18,8 @@ public class FiddleEvents {
 	
 	public static final String ON_TAG_UPDATE = "onTagUpdate";
 	
+	public static final String ON_LEFT_REFRESH = "onLeftRefresh";
+	
+	public static final String ON_URL_CHANGE = "onURLChange";
+	
 }

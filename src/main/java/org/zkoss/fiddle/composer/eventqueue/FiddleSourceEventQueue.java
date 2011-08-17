@@ -1,5 +1,10 @@
-package org.zkoss.fiddle.composer.event;
+package org.zkoss.fiddle.composer.eventqueue;
 
+import org.zkoss.fiddle.composer.event.InsertResourceEvent;
+import org.zkoss.fiddle.composer.event.PreparingShowResultEvent;
+import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
+import org.zkoss.fiddle.composer.event.SaveCaseEvent;
+import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;

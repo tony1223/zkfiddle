@@ -1,4 +1,4 @@
-package org.zkoss.fiddle.composer.event;
+package org.zkoss.fiddle.composer.eventqueue;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

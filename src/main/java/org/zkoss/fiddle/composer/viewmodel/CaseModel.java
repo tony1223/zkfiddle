@@ -9,11 +9,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.zkoss.fiddle.composer.event.FiddleEventListener;
-import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.PreparingShowResultEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
+import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
+import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
 import org.zkoss.fiddle.core.utils.ResourceFactory;
@@ -99,6 +99,35 @@ public class CaseModel {
 				ShowResult(evt.getSandbox());
 			}
 		});
+	}
+	
+	public void setCase(ICase pCase){
+		resources.clear();
+
+		_case = pCase;
+		newCase = (_case == null || _case.getId() == null);
+		if (newCase) { // new case!
+			sourceChange = true;
+			resources.addAll(getDefaultResources());
+		} else {
+			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+			manager.increase(CaseRecord.Type.View, _case);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("counting:" + _case.getToken() + ":" + _case.getVersion() + ":view");
+			}
+			IResourceDao dao = (IResourceDao) SpringUtil.getBean("resourceDao");
+			List<Resource> dbResources = new ArrayList<Resource>(dao.listByCase(_case.getId()));
+			for (Resource r : dbResources) {
+				// we clone it , since we will create a new resource instead of
+				// updating old one.
+				Resource resource = r.clone();
+				resource.setId(null);
+				resource.setCaseId(null);
+				resource.setCreateDate(new Date());
+				resources.add(resource);
+			}
+		}
 	}
 
 	public boolean isSourceChange() {

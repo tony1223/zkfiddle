@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.TreeSet;
 
 import org.zkoss.fiddle.FiddleConstant;
-import org.zkoss.fiddle.composer.event.FiddleEventListener;
-import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
+import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
+import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
@@ -147,4 +147,5 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	public void onClick$forkBtn() {
 		FiddleSourceEventQueue.lookup().fireResourceSaved(true);
 	}
+
 }

@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.zkoss.fiddle.FiddleConstant;
+import org.zkoss.fiddle.component.renderer.ISourceTabRenderer;
 import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
-import org.zkoss.fiddle.composer.event.FiddleEventListener;
-import org.zkoss.fiddle.composer.event.FiddleEventQueues;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
-import org.zkoss.fiddle.composer.event.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.event.InsertResourceEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
 import org.zkoss.fiddle.composer.event.SaveCaseEvent;
+import org.zkoss.fiddle.composer.event.URLChangeEvent;
+import org.zkoss.fiddle.composer.eventqueue.FiddleBrowserStateEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
+import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
+import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
@@ -24,6 +27,7 @@ import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
@@ -43,6 +47,7 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
@@ -71,12 +76,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Textbox caseTitle;
 
-	private Window insertWin;
-
 	private Div caseToolbar;
 
 	private Toolbarbutton download;
 
+	private Label poserIp;
+	
 	/* for tags */
 	private Hlayout tagContainer;
 
@@ -96,39 +101,32 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
-		ICase $case = (ICase) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE);
-
-		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
+		ICase _case = (ICase) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE);
 
 		Boolean tryCase = (Boolean) requestScope.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
 		tryCase = tryCase != null && tryCase;
 		if (!tryCase) {
-			caseModel = new CaseModel($case, false, null);
+			caseModel = new CaseModel(_case, false, null);
 		} else {
 			String zulData = (String) Executions.getCurrent().getParameter("zulData");
 			String version = (String) Executions.getCurrent().getParameter("zkver");
-			caseModel = new CaseModel($case, tryCase, zulData);
+			caseModel = new CaseModel(_case, tryCase, zulData);
 			Events.echoEvent(new Event("onShowTryCase", self, version));
 		}
+		setCase(caseModel);
 
-		boolean newCase = caseModel.isStartWithNewCase();
-
-		if (!newCase) {
-			$case = caseModel.getCurrentCase();
-			caseTitle.setValue($case.getTitle());
-			download.setHref(caseModel.getDownloadLink());
-			caseToolbar.setVisible(true);
-			initTagEditor($case);
-		}
-
+		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
 		sourceQueue.subscribeResourceCreated(new FiddleEventListener<InsertResourceEvent>(InsertResourceEvent.class) {
+
 			public void onFiddleEvent(InsertResourceEvent event) throws Exception {
 				InsertResourceEvent insertEvent = (InsertResourceEvent) event;
 				Resource resource = insertEvent.getResource();
 
 				caseModel.addResource(resource);
-				SourceTabRendererFactory.getRenderer(resource.getType()).appendSourceTab(sourcetabs, sourcetabpanels, resource);
+				ISourceTabRenderer render = SourceTabRendererFactory.getRenderer(resource.getType());
+				render.appendSourceTab(sourcetabs, sourcetabpanels,	resource);
+				
+				((Tab)sourcetabs.getLastChild()).setSelected(true);
 			}
 		});
 		sourceQueue.subscribeResourceSaved(new FiddleEventListener<SaveCaseEvent>(SaveCaseEvent.class) {
@@ -142,26 +140,66 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				ICase saved = caseManager.saveCase(caseModel.getCurrentCase(), caseModel.getResources(), title,
 						saveEvt.isFork(), ip, cbSaveTag.isChecked());
 				if (saved != null) {
-					Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
+					BrowserState.go(CaseUtil.getSampleURL(saved), "ZK Fiddle - " + CaseUtil.getPublicTitle(saved),true, saved);
+//					Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
 				}
 			}
 		});
 
-		for (Resource resource : caseModel.getResources()) {
-			SourceTabRendererFactory.getRenderer(resource.getType()).appendSourceTab(sourcetabs, sourcetabpanels,
-					resource);
-			if (newCase) {
-				// Notify content to do some processing,since we use desktop
-				// scope eventQueue,it will not be a performance issue.
-				sourceQueue.fireResourceChanged(resource, Type.Created);
-			}
-		}
 		initSEOHandler(caseModel, desktop);
+
+		
+		/**
+		 * browser state , for chrome and firefox only
+		 */
+		FiddleBrowserStateEventQueue queue = FiddleBrowserStateEventQueue.lookup();
+		queue.subscribe(new FiddleEventListener<URLChangeEvent>(URLChangeEvent.class) {
+
+			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
+				// only work when updated to a case view.
+				if (evt.getData() != null && evt.getData() instanceof ICase) {
+					ICase _case = (ICase) evt.getData();
+					caseModel.setCase(_case);
+					setCase(caseModel);
+					EventQueues.lookup(FiddleEventQueues.LeftRefresh).publish(new Event(FiddleEvents.ON_LEFT_REFRESH, null));
+				}
+				// TODO check if we switch to tag view.
+			}
+		});
 
 		// @see FiddleDispatcherFilter for those use this directly
 		viewRequestParam = (CaseRequest) requestScope.get(FiddleConstant.REQUEST_ATTR_RUN_VIEW);
 		if (viewRequestParam != null) {
 			runDirectlyView(viewRequestParam);
+		}
+	}
+
+	private void setCase(CaseModel caseModel) {
+		// FiddleBrowserStateEventQueue
+
+		boolean newCase = caseModel.isStartWithNewCase();
+
+		if (!newCase) {
+			ICase thecase = caseModel.getCurrentCase();
+			caseTitle.setValue(thecase.getTitle());
+			download.setHref(caseModel.getDownloadLink());
+			caseToolbar.setVisible(true);
+			poserIp.setValue(thecase.getPosterIP());
+			initTagEditor(thecase);
+		}
+
+		sourcetabs.getChildren().clear();
+		sourcetabpanels.getChildren().clear();
+
+		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue.lookup();
+		for (Resource resource : caseModel.getResources()) {
+			ISourceTabRenderer render = SourceTabRendererFactory.getRenderer(resource.getType());
+			render.appendSourceTab(sourcetabs, sourcetabpanels, resource);
+			if (newCase) {
+				// Notify content to do some processing,since we use desktop
+				// scope eventQueue,it will not be a performance issue.
+				sourceQueue.fireResourceChanged(resource, Type.Created);
+			}
 		}
 	}
 
@@ -308,7 +346,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public void onAdd$sourcetabs(Event e) {
 		try {
-			insertWin.doOverlapped();
+			//the reason for not using auto wire is that the insertWin is included when fulfill.
+			((Window)self.getFellow("insertWin")).doOverlapped();
 		} catch (Exception e1) {
 			logger.error("onAdd$sourcetabs(Event) - e=" + e, e1);
 		}

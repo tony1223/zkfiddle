@@ -1,4 +1,4 @@
-package org.zkoss.fiddle.composer.event;
+package org.zkoss.fiddle.composer.eventqueue;
 
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventQueue;

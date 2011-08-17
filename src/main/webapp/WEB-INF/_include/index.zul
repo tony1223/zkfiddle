@@ -3,6 +3,8 @@
 <?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax OpenSource Framework) sameples right now!" ?>
 <?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
 <?script type="text/javascript" src="/js/fiddle.js.dsp"?>
+<?script type="text/javascript" src="/js/fiddle.his.js.dsp"?>
+
 <zk xmlns:w="client" xmlns:n="native">
 	<div id="header" apply="org.zkoss.fiddle.composer.TopNavigationComposer" sclass="zkfiddle-header">
 		<div sclass="header-inner">
@@ -14,7 +16,6 @@
 				</div>
 				<n:h1 class="title">ZK Fiddle - Open Source ZK Example Platform</n:h1>
 				<div id="views" style="margin-left:100px;width:500px;">
-
 					<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png" />
 					<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png" />
 					<combobox id="sandboxes" readonly="true" width="180px" height="26px">

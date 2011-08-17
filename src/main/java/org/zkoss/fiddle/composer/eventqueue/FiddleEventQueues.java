@@ -1,4 +1,4 @@
-package org.zkoss.fiddle.composer.event;
+package org.zkoss.fiddle.composer.eventqueue;
 
 
 public class FiddleEventQueues {
@@ -7,5 +7,7 @@ public class FiddleEventQueues {
 	public static final String SHOW_RESULT = "showResult";
 	
 	public static final String Tag = "tag";
+	
+	public static final String LeftRefresh = "LeftRefresh";
 	
 }
