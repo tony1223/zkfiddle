@@ -1,7 +1,7 @@
 /* Reset */
 body {
 	padding: 0;
-	background: #F8F8F8;	
+	background: #F8F8F8;
 }
 
 .z-tabs .z-tabs-cnt {
@@ -34,7 +34,7 @@ span.text-bold {
 }
 .zkfiddle-header .header-inner {
 	background-color: #FFFFFF;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DCDCDC) ); 
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#DCDCDC) );
 	background-image: -webkit-linear-gradient(top, #FFFFFF, #DCDCDC);
 	background-image: -moz-linear-gradient(top, #FFFFFF, #DCDCDC);
 	background-image: -ms-linear-gradient(top, #FFFFFF, #DCDCDC);
@@ -76,7 +76,7 @@ span.text-bold {
 .zkfiddle-header .z-combobox {
 	height: 26px;
 	background-color: #FFFFFF;
-	background-image: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#EDEDED) ); 
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#EDEDED) );
 	background-image: -webkit-linear-gradient(top, #FFFFFF, #EDEDED);
 	background-image: -moz-linear-gradient(top, #FFFFFF, #EDEDED);
 	background-image: -ms-linear-gradient(top, #FFFFFF, #EDEDED);
@@ -142,11 +142,13 @@ span.text-bold {
 .sourceCodeEditor {
 	padding: 5px;
 	border: 1px solid #C5C5C5;
+	/*fix firefox3 issue. */
+	overflow-y: auto;
 }
 
 /** Source Tabs **/
 .z-separator-hor-bar {
-	border-top: 1px solid #cccccc; 
+	border-top: 1px solid #cccccc;
 	background: 0 none;
 }
 .sourcetabs .z-tabs-cnt {
@@ -168,7 +170,7 @@ span.text-bold {
 	font-size: 18px;
 	height: 25px;
 }
-.sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr,.sourcetabs .z-tab-hm {	
+.sourcetabs .z-tab-hl,.sourcetabs .z-tab-hr,.sourcetabs .z-tab-hm {
 	*height:auto; /* Tony: fix IE7 sourcetabs tab fly away */
 }
 .sourcetabs .z-tabpanel {
@@ -209,24 +211,24 @@ span.text-bold {
 
 .left-tag .tag-container{
 	padding-top:3px;
-	padding-bottom:5px;	
+	padding-bottom:5px;
 	line-height:23px;
 }
 
 .tag-cloud{
 	padding:5px;
 	z-index:1;
-	position: relative;	
+	position: relative;
 }
 .tag-cloud-sel{
 	background:#DDDDDD;
 	z-index:0;
 }
-.tag-cloud0 {font-size: 100%;}  
-.tag-cloud1 {font-size: 120%;}  
-.tag-cloud2 {font-size: 140%;}  
-.tag-cloud3 {font-size: 160%;}  
-.tag-cloud4 {font-size: 180%;}  
+.tag-cloud0 {font-size: 100%;}
+.tag-cloud1 {font-size: 120%;}
+.tag-cloud2 {font-size: 140%;}
+.tag-cloud3 {font-size: 160%;}
+.tag-cloud4 {font-size: 180%;}
 
 /***CodeMirror***/
 span.c-like-keyword {
@@ -242,23 +244,23 @@ pre.CodeMirror-cursor {
 	margin-top: 1px;
 }
 .CodeMirror-scroll {
-	overflow: auto;	
+	overflow: auto;
 }
 
 /* Left */
 /** West **/
 .zkfiddle-center .z-west-splt {
 	background: 0 none;
-} 
+}
 .zkfiddle-center .z-west-header {
 	padding: 4px 3px 4px 5px;
 	font-size: 12px;
 	background-color: #F5F5F5;
-	background-image: -webkit-gradient(linear, 0% 43%, 0% 46%, from(#F5F5F5), to(#E3E3E3), color-stop(.1,#CCCCCC));	
+	background-image: -webkit-gradient(linear, 0% 43%, 0% 46%, from(#F5F5F5), to(#E3E3E3), color-stop(.1,#CCCCCC));
 	background-image: -moz-linear-gradient(53% 46% 270deg,#F5F5F5, #E3E3E3, #CCCCCC 0%,#E3E3E3 9%);
 	background-image: -ms-linear-gradient(top, #F5F5F5, #CCCCCC);
 	background-image: -o-linear-gradient(top, #F5F5F5, #CCCCCC);
-	background-image: linear-gradient(top, #F5F5F5, #CCCCCC);	
+	background-image: linear-gradient(top, #F5F5F5, #CCCCCC);
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFFFFF', EndColorStr='#CCCCCC');
 }
 .zkfiddle-center .z-west-colpsd {
