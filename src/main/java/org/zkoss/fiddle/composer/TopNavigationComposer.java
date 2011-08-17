@@ -147,4 +147,5 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	public void onClick$forkBtn() {
 		FiddleSourceEventQueue.lookup().fireResourceSaved(true);
 	}
+
 }

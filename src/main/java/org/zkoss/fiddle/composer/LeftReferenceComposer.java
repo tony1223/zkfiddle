@@ -21,7 +21,6 @@ import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
-import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
@@ -45,8 +44,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	/**
 	 * Logger for this class
 	 */
-	private static final Logger logger = Logger
-			.getLogger(LeftReferenceComposer.class);
+	private static final Logger logger = Logger.getLogger(LeftReferenceComposer.class);
 
 	private Listbox likes;
 
@@ -60,37 +58,14 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	private String currentTag;
 
-	// TODO move this to specific queue
-	private EventQueue tag = EventQueues.lookup(FiddleEventQueues.Tag, true);
-
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
 		// TODO move the key to constant
 		currentTag = (String) requestScope.get("tag");
-		List<CaseRecord> list = (List<CaseRecord>) FiddleCache.Top10liked
-				.execute(new CacheHandler<List<CaseRecord>>() {
-
-					protected List<CaseRecord> execute() {
-						ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil
-								.getBean("caseRecordDao");
-						return caseRecordDao.listByType(CaseRecord.Type.Like,
-								true, 1, 50);
-					}
-
-					protected String getKey() {
-						return CaseRecord.Type.Like + ":" + true + ":" + 1
-								+ ":" + 50;
-					}
-				});
-
-		if (list.size() != 0) {
-			SEOUtils.render(desktop, "Top 10 Favorites :", list);
-		}
 
 		updateTags();
-		tag.subscribe(new EventListener() {
-
+		EventQueues.lookup(FiddleEventQueues.Tag, true).subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if (FiddleEvents.ON_TAG_UPDATE.equals(event.getName())) {
 					updateTags();
@@ -98,18 +73,16 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			}
 		});
 
-		likes.setModel(new ListModelList(list));
+		updateLikeModel();
 
 		likes.setItemRenderer(new ListitemRenderer() {
 
 			public void render(Listitem item, Object data) throws Exception {
 				if (data instanceof CaseRecord) {
 					CaseRecord cr = (CaseRecord) data;
-					String title = (cr.getTitle() == null || "".equals(cr
-							.getTitle().trim())) ? cr.getToken() : cr
+					String title = (cr.getTitle() == null || "".equals(cr.getTitle().trim())) ? cr.getToken() : cr
 							.getTitle();
-					item.appendChild(new Listcell(String.valueOf((item
-							.getIndex() + 1))));
+					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
 					item.appendChild(new Listcell(String.valueOf(title)));
 
 					Listcell list = new Listcell(String.valueOf(cr.getAmount()));
@@ -117,12 +90,43 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 					item.appendChild(list);
 					item.setValue(cr);
 				} else {
-					throw new IllegalArgumentException(
-							"data should be CaseRecord!" + data);
+					throw new IllegalArgumentException("data should be CaseRecord!" + data);
 				}
 
 			}
 		});
+
+		updateRecentlyModel();
+		EventQueues.lookup(FiddleEventQueues.LeftRefresh, true).subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				updateRecentlyModel();
+				updateLikeModel();
+			}
+		});
+		
+		recentlys.setItemRenderer(new ListitemRenderer() {
+
+			public void render(Listitem item, Object data) throws Exception {
+				if (data instanceof Case) {
+					Case cr = (Case) data;
+					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getTitle();
+					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
+					item.appendChild(new Listcell(String.valueOf(title)));
+
+					Listcell list = new Listcell(String.valueOf(cr.getVersion()));
+					list.setSclass("version");
+					item.appendChild(list);
+					item.setValue(cr);
+				} else {
+					throw new IllegalArgumentException("data should be Case!" + data);
+				}
+
+			}
+		});
+
+	}
+
+	private void updateRecentlyModel() {
 
 		ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
 		List<Case> caseList = caseDao.getRecentlyCase(10);
@@ -130,31 +134,26 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 			SEOUtils.render(desktop, "Latest 10 Fiddles :", caseList);
 		}
 		recentlys.setModel(new ListModelList(caseList));
+	}
 
-		recentlys.setItemRenderer(new ListitemRenderer() {
+	private void updateLikeModel() {
 
-			public void render(Listitem item, Object data) throws Exception {
-				if (data instanceof Case) {
-					Case cr = (Case) data;
-					String title = (cr.getTitle() == null || "".equals(cr
-							.getTitle())) ? cr.getToken() : cr.getTitle();
-					item.appendChild(new Listcell(String.valueOf((item
-							.getIndex() + 1))));
-					item.appendChild(new Listcell(String.valueOf(title)));
+		List<CaseRecord> list = (List<CaseRecord>) FiddleCache.Top10liked.execute(new CacheHandler<List<CaseRecord>>() {
 
-					Listcell list = new Listcell(
-							String.valueOf(cr.getVersion()));
-					list.setSclass("version");
-					item.appendChild(list);
-					item.setValue(cr);
-				} else {
-					throw new IllegalArgumentException("data should be Case!"
-							+ data);
-				}
+			protected List<CaseRecord> execute() {
+				ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+				return caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
+			}
 
+			protected String getKey() {
+				return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
 			}
 		});
 
+		if (list.size() != 0) {
+			SEOUtils.render(desktop, "Top 10 Favorites :", list);
+		}
+		likes.setModel(new ListModelList(list));
 	}
 
 	private void updateTags() {
@@ -193,8 +192,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 			popupContent.setTitle("Maintenance Log");
 			popupContent.doOverlapped();
-			((Include) popupContent.getFellow("popupInclude"))
-					.setSrc("/html/maintain.html");
+			((Include) popupContent.getFellow("popupInclude")).setSrc("/html/maintain.html");
 		} catch (SuspendNotAllowedException e1) {
 			if (logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$newsContent(Event)", e1);
@@ -205,8 +203,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		try {
 			popupContent.setTitle("About");
 			popupContent.doOverlapped();
-			((Include) popupContent.getFellow("popupInclude"))
-					.setSrc("/html/about.html");
+			((Include) popupContent.getFellow("popupInclude")).setSrc("/html/about.html");
 		} catch (SuspendNotAllowedException e1) {
 			if (logger.isEnabledFor(Level.ERROR))
 				logger.error("onClick$whyfiddle(Event)", e1);

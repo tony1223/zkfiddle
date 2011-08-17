@@ -8,4 +8,6 @@ public class FiddleEventQueues {
 	
 	public static final String Tag = "tag";
 	
+	public static final String LeftRefresh = "LeftRefresh";
+	
 }

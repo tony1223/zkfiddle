@@ -43,6 +43,10 @@
 	  <description>Fiddle SEO Renderer</description>
 	  <listener-class>org.zkoss.fiddle.seo.FiddleSEORenderer</listener-class>
 	 </listener>
+	 <listener>
+	  <description>Fiddle PushState Init</description>
+	  <listener-class>org.zkoss.fiddle.listener.DesktopPushStateInit</listener-class>
+	 </listener>	 
     <library-property>
         <name>
             org.zkoss.zul.Button.mold

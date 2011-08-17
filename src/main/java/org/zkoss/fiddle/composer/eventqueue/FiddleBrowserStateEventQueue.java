@@ -1,10 +1,12 @@
 package org.zkoss.fiddle.composer.eventqueue;
 
+import org.zkoss.fiddle.composer.event.URLChangeEvent;
 import org.zkoss.zk.ui.event.Event;
 
 public class FiddleBrowserStateEventQueue {
 
-	private FiddleEventQueue queue ;
+	private FiddleEventQueue queue;
+
 	private static final String QUEUE_NAME = "e_browserState";
 
 	public static FiddleBrowserStateEventQueue lookup() {
@@ -19,8 +21,7 @@ public class FiddleBrowserStateEventQueue {
 		queue.subscribe(evtListener);
 	}
 
-	public void fireStateChange() {
-		System.out.println("state change ");
-//		queue.publish(new SaveCaseEvent(folk));
+	public void fireStateChange(String url, Object data) {
+		queue.publish(new URLChangeEvent(url, data));
 	}
 }

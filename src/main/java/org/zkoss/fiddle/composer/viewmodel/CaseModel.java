@@ -100,6 +100,35 @@ public class CaseModel {
 			}
 		});
 	}
+	
+	public void setCase(ICase pCase){
+		resources.clear();
+
+		_case = pCase;
+		newCase = (_case == null || _case.getId() == null);
+		if (newCase) { // new case!
+			sourceChange = true;
+			resources.addAll(getDefaultResources());
+		} else {
+			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+			manager.increase(CaseRecord.Type.View, _case);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("counting:" + _case.getToken() + ":" + _case.getVersion() + ":view");
+			}
+			IResourceDao dao = (IResourceDao) SpringUtil.getBean("resourceDao");
+			List<Resource> dbResources = new ArrayList<Resource>(dao.listByCase(_case.getId()));
+			for (Resource r : dbResources) {
+				// we clone it , since we will create a new resource instead of
+				// updating old one.
+				Resource resource = r.clone();
+				resource.setId(null);
+				resource.setCaseId(null);
+				resource.setCreateDate(new Date());
+				resources.add(resource);
+			}
+		}
+	}
 
 	public boolean isSourceChange() {
 		return sourceChange;
