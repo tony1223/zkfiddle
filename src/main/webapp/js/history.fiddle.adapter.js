@@ -10,13 +10,17 @@ if (History.emulated.pushState) {
 	zk.afterMount(function(){
 		zAu.send(new zk.Event(zk.Desktop._dt, "onPushStateInit"), -1);
 	});
-	
-	History.Adapter.bind(window,'statechange',function(){ 
+
+	History.Adapter.bind(window,'statechange',function(){
 		// Note: We are using statechange instead of popstate
-		
+
 		if (!History.pushed ) {
-			self.location.href = History.getState().url; 
-		} 
+			self.location.href = History.getState().url;
+		} else{ //push state from server
+
+			//tracker GA if exist
+			if (window._gaq) window._gaq.push(['_trackPageview', History.getState().hash]);
+		}
 		History.pushed = false;
 			/*
 			var State = History.getState(); // Note: We are using History.getState() instead of event.state
