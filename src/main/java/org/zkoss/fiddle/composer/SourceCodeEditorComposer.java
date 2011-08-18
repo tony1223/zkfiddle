@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.component.renderer.ISourceTabRenderer;
 import org.zkoss.fiddle.component.renderer.SourceTabRendererFactory;
+import org.zkoss.fiddle.composer.TopNavigationComposer.State;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.event.InsertResourceEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
@@ -16,6 +17,7 @@ import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
@@ -113,6 +115,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		caseModel = prepareCaseModel(_case);
 		updateCaseView(caseModel);
+		updateTopNavigation();
 
 		initEventQueue();
 
@@ -122,6 +125,13 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		initDirectlyView();
 	}
 
+	private void updateTopNavigation(){
+		if(caseModel.isStartWithNewCase()){
+			FiddleTopNavigationEventQueue.lookup().fireStateChange(State.New);
+		}else{
+			FiddleTopNavigationEventQueue.lookup().fireStateChange(State.Saved);
+		}
+	}
 	/**
 	 *
 	 */
@@ -130,6 +140,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				.getCurrent());
 
 		notifications.getChildren().clear();
+
 		for (String message : list) {
 			Notification notification = new Notification(message);
 			notification.setSclass("fiddle-nofication");
@@ -229,6 +240,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					ICase _case = (ICase) evt.getData();
 					caseModel.setCase(_case);
 					updateCaseView(caseModel);
+					updateTopNavigation();
 					updateNotifications();
 					EventQueues.lookup(FiddleEventQueues.LeftRefresh).publish(
 							new Event(FiddleEvents.ON_LEFT_REFRESH, null));

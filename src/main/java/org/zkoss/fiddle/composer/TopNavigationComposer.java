@@ -3,10 +3,11 @@ package org.zkoss.fiddle.composer;
 import java.util.Collection;
 import java.util.TreeSet;
 
-import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
+import org.zkoss.fiddle.composer.event.TopStateChangeEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
@@ -31,7 +32,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	 */
 	private static final long serialVersionUID = 6098592769427716897L;
 
-	enum State {
+	public enum State {
 		Tag, New, Saved
 	}
 
@@ -48,14 +49,16 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		boolean newcase = requestScope.get(FiddleConstant.REQUEST_ATTR_CASE) == null;
-		if (!newcase) { // existing case
-			updateStatus(State.Saved);
-		} else {
-			updateStatus(State.New);
-		}
-
 		initSandbox();
+
+		//Note we are not handling any state here,
+		//it's decided from outside who send the event to here.
+		FiddleTopNavigationEventQueue.lookup().subscribe(
+			new FiddleEventListener<TopStateChangeEvent>(TopStateChangeEvent.class,self) {
+			public void onFiddleEvent(TopStateChangeEvent evt) throws Exception {
+				updateStatus(evt.getState());
+			}
+		});
 
 		FiddleSourceEventQueue.lookup().subscribeResourceChanged(
 				new FiddleEventListener<ResourceChangedEvent>(
