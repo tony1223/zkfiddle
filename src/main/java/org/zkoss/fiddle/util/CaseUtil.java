@@ -7,24 +7,24 @@ public class CaseUtil {
 	public static String getDownloadURL(IRenderCase pCase){
 		return "/download/" + pCase.getToken() + "/" + pCase.getVersion();
 	}
-	
+
 	public static String getViewURL(IRenderCase pCase) {
-		return getURL(pCase, "/view/");
+		return getURL("/view/", pCase);
 	}
 
 	public static String getViewURL(IRenderCase pCase, String zkver) {
-		return getURL(pCase, "/view/", zkver);
+		return getURL("/view/",pCase, zkver);
 	}
 
 	public static String getSampleURL(IRenderCase pCase) {
-		return getURL(pCase, "/sample/");
+		return getURL( "/sample/",pCase);
 	}
 
-	private static String getURL(IRenderCase pCase, String prefix) {
+	private static String getURL(String prefix,IRenderCase pCase) {
 		return prefix + pCase.getCaseUrl();
 	}
 
-	private static String getURL(IRenderCase pCase, String prefix, String zkver) {
+	private static String getURL(String prefix, IRenderCase pCase, String zkver) {
 		return prefix + pCase.getCaseUrl(zkver);
 	}
 
