@@ -27,6 +27,7 @@ import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.notification.Notification;
 import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.NotificationUtil;
@@ -130,25 +131,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				.getCurrent());
 
 		for (String message : list) {
-			final Div container = new Div();
-			container.setSclass("notification");
-			{
-				A close = new A("X");
-				close.setSclass("notification-close");
-				close.addEventListener("onClick", new EventListener() {
-					public void onEvent(Event event) throws Exception {
-						container.detach();
-					}
-				});
-				container.appendChild(close);
-			}
-			{
-				Label lbl = new Label(message);
-				lbl.setSclass("notification-message");
-				container.appendChild(lbl);
-			}
-
-			notifications.appendChild(container);
+			Notification notification = new Notification(message);
+			notification.setSclass("fiddle-nofication");
+			notifications.appendChild(notification);
 		}
 
 		NotificationUtil.clearNotifications(Sessions.getCurrent());
@@ -211,15 +196,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 							if (caseModel.isStartWithNewCase()) {
 								notifications
-										.add("You have saved a new samples ");
+										.add("You have saved a new sample.");
 							} else if (saveEvt.isFork()) {
-								notifications.add("You have forked a new samples from "
-										+ CaseUtil.getPublicTitle(caseModel
-												.getCurrentCase()));
+								notifications.add("You have forked the sample. ");
 							} else {
-								notifications.add("You have updated a new samples from "
-										+ CaseUtil.getPublicTitle(caseModel
-												.getCurrentCase()));
+								notifications.add("You have updated the sample. ");
 							}
 							NotificationUtil.updateNotifications(
 									Sessions.getCurrent(), notifications);
