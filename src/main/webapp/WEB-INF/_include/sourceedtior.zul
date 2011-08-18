@@ -62,7 +62,7 @@
 					</hlayout>
 					<toolbarbutton id="download" label="Download Sample Archive" src="/img/archive.png"/>
 					<div style="float:right;">
-						Posted from <label id="poserIp" />.
+						Posted from <label id="poserIp" />
 					</div>
 				</div>
 			</div>
@@ -70,7 +70,6 @@
 		<div fulfill="sourcetabs.onAdd" >
 			<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
 				title=" Insert New File" width="420px" height="105px" border="normal" position="center, center">
-				<!-- TODO use selectbox instead. -->
 				<n:table>
 					<n:tr>
 						<n:td class="insertTd" width="80px">
