@@ -3,7 +3,7 @@ package org.zkoss.fiddle.component.renderer;
 import java.util.regex.Pattern;
 
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
-import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;

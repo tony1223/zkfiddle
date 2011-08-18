@@ -4,7 +4,7 @@ import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.component.Texttab;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
-import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.util.ResourceUtil;
 import org.zkoss.zk.ui.event.Event;

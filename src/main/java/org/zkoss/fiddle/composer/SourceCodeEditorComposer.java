@@ -12,10 +12,10 @@ import org.zkoss.fiddle.composer.event.InsertResourceEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
 import org.zkoss.fiddle.composer.event.SaveCaseEvent;
 import org.zkoss.fiddle.composer.event.URLChangeEvent;
-import org.zkoss.fiddle.composer.eventqueue.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
-import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
@@ -129,6 +129,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		List<String> list = NotificationUtil.getNotifications(Sessions
 				.getCurrent());
 
+		notifications.getChildren().clear();
 		for (String message : list) {
 			Notification notification = new Notification(message);
 			notification.setSclass("fiddle-nofication");

@@ -2,7 +2,7 @@ package org.zkoss.fiddle.composer;
 
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
-import org.zkoss.fiddle.composer.eventqueue.FiddleSourceEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.zk.ui.Component;

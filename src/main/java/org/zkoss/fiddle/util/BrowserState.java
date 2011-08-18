@@ -1,7 +1,7 @@
 package org.zkoss.fiddle.util;
 
 import org.zkoss.fiddle.FiddleConstant;
-import org.zkoss.fiddle.composer.eventqueue.FiddleBrowserStateEventQueue;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.json.JSONValue;
 import org.zkoss.zk.au.out.AuScript;
 import org.zkoss.zk.ui.Execution;
