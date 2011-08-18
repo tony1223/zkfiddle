@@ -54,7 +54,6 @@ import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
-import org.zkoss.zul.Vlayout;
 import org.zkoss.zul.Window;
 
 public class SourceCodeEditorComposer extends GenericForwardComposer {
@@ -103,7 +102,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Checkbox cbSaveTag;
 
 	/* for notifications */
-	private Vlayout notifications;
+	private Div notifications;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);

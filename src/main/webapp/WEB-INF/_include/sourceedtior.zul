@@ -4,7 +4,7 @@
 	<div id="sourceCodeEditor" use="org.zkoss.fiddle.component.IDSpaceDiv"
 		apply="org.zkoss.fiddle.composer.SourceCodeEditorComposer"
 		sclass="sourceCodeEditor" vflex="1">
-		<vlayout id="notifications" />
+		<div id="notifications" />
 		<vlayout>
 			<div>
 				<label value="Fiddle Name : " sclass="name" />
