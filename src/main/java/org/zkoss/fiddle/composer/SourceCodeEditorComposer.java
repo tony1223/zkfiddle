@@ -87,11 +87,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Textbox caseTitle;
 
-	private Label author;
-	
-	private Textbox authorName;
-	
 	private Div caseToolbar;
+
+	/* author start */
+	private Label author;
+
+	private Textbox authorName;
+
+	private Div authorControl;
+
+	/* author end */
 
 	private Toolbarbutton download;
 
@@ -282,7 +287,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			author.setValue(caseModel.getCurrentCase().getAuthorName());
 			String author = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
 			authorName.setValue((author == null || "".equals(author)) ? "guest" : author);
+			authorControl.setSclass("author-saved");
 			initTagEditor(thecase);
+		}else{
+			authorControl.setSclass("author-new");
 		}
 
 		sourcetabs.getChildren().clear();
@@ -377,7 +385,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				lbl.setHref(tagurl);
 				lbl.addEventListener("onClick", new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						BrowserState.go(tagurl, "ZK Fiddle - Tag "+tagurl, tag);						
+						BrowserState.go(tagurl, "ZK Fiddle - Tag "+tagurl, tag);
 					}
 				});
 				lbl.setSclass("case-tag");
@@ -410,9 +418,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		String name = evt.getValue();
 		String newname = name.substring(0,name.length()>20?20:name.length());
 		CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME, newname, CookieUtil.AGE_ONE_YEAR);
-		
+
 	}
-	
+
 	//TODO review this and remove it.
 	public void onLike$fblike(LikeEvent evt) {
 		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil

@@ -204,6 +204,19 @@ span.text-bold {
 	text-align:center;
 }
 
+/***AuthorInput***/
+.author-saved .author-input-container{
+	float: right;
+    margin-top: -7px;
+}
+.author-new .author,.author-new .author-input-label{
+	display:none;
+}
+.author-new .author-input-container{
+	display:inline;
+}
+
+
 /***Taglist***/
 .zkfiddle-taglist .token{
 	display:block;
