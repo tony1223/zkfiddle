@@ -80,6 +80,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		} else if (state == State.Saved) {
 			saveBtn.setLabel("Update");
 			saveBtn.setImage("/img/arrow_refresh.png");
+			forkBtn.setVisible(true);
 			views.setStyle("visibility:visible");
 			views.setVisible(true);
 		} else if (state == State.Tag) {
