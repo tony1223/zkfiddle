@@ -311,14 +311,6 @@ pre.CodeMirror-cursor {
 .leftlist .recentlys,.leftlist .likes {
 	border-width: 0 0 1px 0;
 }
-.leftlist .z-a-disd{
-    color: black !important;
-    cursor: pointer !important;
-    text-decoration: none !important;
-}
-.leftlist .z-a-disd:hover {
-    text-decoration: underline !important;
-}
 
 .leftlist .z-tabpanel-accordion-cnt {
 	border-width: 1px 0;

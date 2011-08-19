@@ -28,6 +28,8 @@ import org.zkoss.zul.RowRenderer;
 import org.zkoss.zul.event.PagingEvent;
 import org.zkoss.zul.event.ZulEvents;
 
+import ork.zkoss.fiddle.hyperlink.Hyperlink;
+
 public class TagListComposer extends GenericForwardComposer {
 
 	/**
@@ -85,8 +87,9 @@ public class TagListComposer extends GenericForwardComposer {
 
 				{
 					Div titlecont = new Div();
-					A titlelink = new A(CaseUtil.getPublicTitle(tclvo.getCaseRecord()));
+					Hyperlink titlelink = new Hyperlink(CaseUtil.getPublicTitle(tclvo.getCaseRecord()));
 					titlelink.setHref(CaseUtil.getSampleURL(tclvo.getCaseRecord()));
+					titlelink.setDisableHref(true);
 					titlecont.appendChild(titlelink);
 
 					String token = tclvo.getCaseRecord().getToken() + "[" + tclvo.getCaseRecord().getVersion() + "]";

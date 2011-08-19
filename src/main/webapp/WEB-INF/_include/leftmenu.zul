@@ -23,7 +23,7 @@
 				</tabpanel>
 				<tabpanel>
 					<!-- No Favorite ? Create your favorite fiddle now ! -->
-					<listbox id="likes" sclass="likes" emptyMessage="Coming soon" >
+					<listbox id="likes" sclass="likes"  nonselectableTags="" emptyMessage="Coming soon" >
 						<listhead>
 							<listheader label="#" width="25px" />
 							<listheader label="Title" />

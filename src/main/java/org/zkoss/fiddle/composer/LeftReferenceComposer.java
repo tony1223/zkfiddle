@@ -28,7 +28,6 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
-import org.zkoss.zul.A;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -37,6 +36,8 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
+
+import ork.zkoss.fiddle.hyperlink.Hyperlink;
 
 public class LeftReferenceComposer extends GenericForwardComposer {
 
@@ -94,12 +95,12 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 					{
 						Listcell list = new Listcell();
-						A titleItem = new A(String.valueOf(title));
+						Hyperlink titleItem = new Hyperlink(String.valueOf(title));
 						titleItem.setHref(CaseUtil.getSampleURL(cr));
 
 						//set disable to prevent default href behavior,
 						//since we will handle the url in onSelect event.
-						titleItem.setDisabled(true);
+						titleItem.setDisableHref(true);
 						list.appendChild(titleItem);
 						item.appendChild(list);
 					}
@@ -132,12 +133,12 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
 					{
 						Listcell list = new Listcell();
-						A titleItem = new A(String.valueOf(title));
+						Hyperlink titleItem = new Hyperlink(String.valueOf(title));
 						titleItem.setHref(CaseUtil.getSampleURL(cr));
 
 						//set disable to prevent default href behavior,
 						//since we will handle the url in onSelect event.
-						titleItem.setDisabled(true);
+						titleItem.setDisableHref(true);
 						list.appendChild(titleItem);
 						item.appendChild(list);
 					}
@@ -213,7 +214,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		//if you select it very quickly , it might be null for selectedItem.
 		if(item != null){ 
 			Case cr = (Case) item.getValue();
-			BrowserState.go(CaseUtil.getSampleURL(cr),CaseUtil.getPublicTitle(cr),true, cr);
+			BrowserState.go(CaseUtil.getSampleURL(cr),"ZK Fiddle - "+CaseUtil.getPublicTitle(cr),true, cr);
 		}
 	}
 
