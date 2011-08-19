@@ -1,65 +1,13 @@
-<?page title="ZK Fiddle${_pgtitle}" contentType="text/html;charset=UTF-8"?>
-<?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
-<?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax OpenSource Framework) sameples right now!" ?>
-<?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
-<?script type="text/javascript" src="/js/fiddle.js.dsp"?>
-<zk xmlns:w="client" xmlns:n="native" xmlns:fb="facebook">
-	<div sclass="zkfiddle-header">
-		<div sclass="header-inner">
-			<hlayout sclass="menu">
-				<div sclass="logo-outer">
-					<n:h1 class="logo">
-						<n:a href="/" title="ZK Fiddle - Share your ZK sample ONLINE"></n:a>
-					</n:h1>
-				</div>
-				<n:h1 class="title">ZK Fiddle - Open Source ZK Example Platform</n:h1>
-				<div id="views" style="margin-left:100px;width:500px;">
-			<!-- TODO review this ,
-				 this is related to [Issue #79 survey sitemesh to build a template engine if possible]
-					<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png" />
-					<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png" />
-					<combobox id="sandboxes" readonly="true" width="180px" >
-						<attribute w:name="slideDown_">
-							function (pp) {
-								jq(pp).show();  //remove slidedown effect -_-#
-								this._afterSlideDown();
-							}
-						</attribute>
-					</combobox>
-					<button width="100px" id="viewBtn" style="color:red;" label="Run" dir="reverse" image="/img/resultset_next.png" />
- 			-->
-				</div>
-				<div sclass="social">
-					<n:iframe
-						src="http://www.facebook.com/plugins/like.php?app_id=171680182893568&amp;href=${fiddleHostName}&amp;send=false&amp;layout=standard&amp;width=350&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=segoe+ui&amp;height=35"
-						scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:350px; height:35px;" allowTransparency="true">
-					</n:iframe>
-				</div>
-			</hlayout>
-		</div>
-	</div>
-	<div sclass="zkfiddle-outer" vflex="1" hflex="1">
-		<borderlayout id="main" sclass="zkfiddle-center">
-			<west title="ZK Fiddle Info" size="300px" collapsible="true" >
-				<include src="leftmenu.zul" />
-			</west>
-			<!-- TODO review this -->
-			<center autoscroll="true" border="none">
-				<groupbox apply="org.zkoss.fiddle.composer.TagListComposer" closable="false">
-					<caption label="Tag: ${tag}" />
-					<grid sclass="zkfiddle-taglist" id="tagCaseList" emptyMessage="Oops! No any cases related to this tag.">
-						<columns>
-							<column label="#" width="2%" sclass="zkfiddle-index" />
-							<column label="Title" width="40%" />
-							<column label="Tags" />
-						</columns>
-					</grid>
-					<paging id="tagCasePaging" />
-				</groupbox>
-			</center>
-		</borderlayout>
-	</div>
-	<include src="viewresult.zul" />
-
-	<include src="footer.zul" />
+<zk>
+	<groupbox apply="org.zkoss.fiddle.composer.TagListComposer" closable="false">
+		<caption label="Tag: ${tag}" />
+		<grid sclass="zkfiddle-taglist" id="tagCaseList" emptyMessage="Oops! No any cases related to this tag.">
+			<columns>
+				<column label="#" width="2%" sclass="zkfiddle-index" />
+				<column label="Title" width="40%" />
+				<column label="Tags" />
+			</columns>
+		</grid>
+		<paging id="tagCasePaging" />
+	</groupbox>
 </zk>

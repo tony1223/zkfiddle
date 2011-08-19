@@ -76,14 +76,14 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			saveBtn.setLabel("Save");
 			saveBtn.setImage("/img/database_save.png");
 			forkBtn.setVisible(false);
-			views.setVisible(true);
+			views.setStyle("visibility:visible");
 		} else if (state == State.Saved) {
 			saveBtn.setLabel("Update");
 			saveBtn.setImage("/img/arrow_refresh.png");
-			forkBtn.setVisible(true);
+			views.setStyle("visibility:visible");
 			views.setVisible(true);
 		} else if (state == State.Tag) {
-			views.setVisible(false);
+			views.setStyle("visibility:hidden");
 		}
 	}
 

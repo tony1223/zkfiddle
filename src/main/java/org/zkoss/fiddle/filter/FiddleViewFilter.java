@@ -28,6 +28,8 @@ import org.zkoss.web.servlet.Servlets;
 
 public class FiddleViewFilter implements Filter {
 
+	private static final String FIDDLE_HOST_NAME = "fiddleHostName";
+
 	private static final Logger logger = Logger.getLogger(FiddleViewFilter.class);
 
 	private ServletContext ctx;
@@ -43,20 +45,21 @@ public class FiddleViewFilter implements Filter {
 
 		String path = FilterUtil.getPath(request2);
 
-		if (path == null || path.equals("/") || path.equals("/service/try")) {
+		if (path == null || "/".equals(path) || "/service/try".equals(path)) {
 			Boolean tryCase = path.equals("/service/try");
 			if(tryCase){
 				request.setAttribute(FiddleConstant.REQUEST_ATTR_TRY_CASE, tryCase);
 			}
-
-			request.setAttribute("fiddleHostName", FiddleConfig.getHostName());
+			request.setAttribute(FiddleConstant.REQUEST_ATTR_CONTENT_PAGE, FiddleConstant.REQUEST_VALUE_PAGE_TYPE_SOURCE);
+			request.setAttribute(FIDDLE_HOST_NAME, FiddleConfig.getHostName());
 			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			return;
 		}
 
 		CaseRequest viewRequest = getAttributeFromURL(path);
 		if (viewRequest != null) {
-			request.setAttribute("fiddleHostName", FiddleConfig.getHostName());
+			request.setAttribute(FiddleConstant.REQUEST_ATTR_CONTENT_PAGE, FiddleConstant.REQUEST_VALUE_PAGE_TYPE_SOURCE);
+			request.setAttribute(FIDDLE_HOST_NAME, FiddleConfig.getHostName());
 			ICase $case = handleCaseInRequest(request, viewRequest);
 			if ($case == null) {
 				if(viewRequest.getType() == Type.Widget){

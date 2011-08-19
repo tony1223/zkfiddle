@@ -9,7 +9,13 @@ public class FiddleConstant {
 	public static final String REQUEST_ATTR_PAGE_TITLE = "_pgtitle";
 
 	public static final String REQUEST_ATTR_TRY_CASE = "_trycase";
+	
+	public static final String REQUEST_VALUE_PAGE_TYPE_SOURCE = "_source_view";
+	
+	public static final String REQUEST_VALUE_PAGE_TYPE_TAG = "_tag_view";
 
+	public static final String REQUEST_ATTR_CONTENT_PAGE = "f_contentPage";
+	
 	public static final String DESKTOP_ATTR_PUSH_STATE = "d_pushstate";
 
 	public static final String DESKTOP_ATTR_CURRENT_STATE_URI = "d_state_uri";

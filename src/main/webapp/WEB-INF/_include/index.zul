@@ -40,11 +40,11 @@
 	</div>
 	<div sclass="zkfiddle-outer" vflex="1" hflex="1">
 		<borderlayout id="main" sclass="zkfiddle-center">
-			<west title="ZK Fiddle Info" size="300px" collapsible="true" >
+			<west autoscroll="true" title="ZK Fiddle Info" size="300px" collapsible="true" >
 				<include src="leftmenu.zul" />
 			</west>
-			<center autoscroll="true" border="none">
-				<include src="sourceedtior.zul" />
+			<center id="fiddleContent" autoscroll="true" border="none" apply="org.zkoss.fiddle.composer.ContentComposer">
+				<include id="contentInclude" src="${fiddleContent$composer.contentURL}" />
 			</center>
 		</borderlayout>
 	</div>

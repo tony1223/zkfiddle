@@ -15,17 +15,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleTagFilter implements Filter {
+
+	public static final String ATTR_TAG = "tag";
+
+	private static final String FIDDLE_HOST_NAME = "fiddleHostName";
 
 	/**
 	 * Logger for this class
 	 */
 	private static final Logger logger = Logger.getLogger(FiddleTagFilter.class);
 
-	private Pattern tag = Pattern.compile("^/tag/(.*?)(;jsessionid=.*)?$");
+	private Pattern tagPattern = Pattern.compile("^/tag/(.*?)(;jsessionid=.*)?$");
 
 	private ServletContext ctx;
 
@@ -37,22 +42,23 @@ public class FiddleTagFilter implements Filter {
 		String context = request.getContextPath();
 		String path = uri.replaceFirst(context, "");
 
-		Matcher m = tag.matcher(path);
+		Matcher m = tagPattern.matcher(path);
 		if(m.find()){
+			request.setAttribute(FiddleConstant.REQUEST_ATTR_CONTENT_PAGE, FiddleConstant.REQUEST_VALUE_PAGE_TYPE_TAG);
 			String mtag = m.group(1);
 			if(mtag == null || "".equals(mtag.trim())){
 				((HttpServletResponse)response).sendRedirect("/");
 				return ;
 			}
-			request.setAttribute("tag",mtag);
+			request.setAttribute(ATTR_TAG,mtag);
 
-			request.setAttribute("fiddleHostName", FiddleConfig.getHostName());
+			request.setAttribute(FIDDLE_HOST_NAME, FiddleConfig.getHostName());
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("[FiddleTagFilter::doFilter]Tag Name=" + m.group(1));
 			}
 
-			Servlets.forward(ctx, request, response, "/WEB-INF/_include/tag.zul" );
+			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul" );
 
 		}else
 			chain.doFilter(request2, response);
