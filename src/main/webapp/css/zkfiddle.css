@@ -25,7 +25,7 @@ span.text-bold {
 .fiddle-nofication {
     background: none repeat scroll 0 0 #ADC9C8;
     -moz-box-shadow: 0 0 6px  #ADC9C8;
-    -webkit-box-shadow: 0 0 6px #ADC9C8;	
+    -webkit-box-shadow: 0 0 6px #ADC9C8;
 	margin-bottom:3px;
 }
 .fiddle-nofication .z-notification-message {
@@ -311,9 +311,19 @@ pre.CodeMirror-cursor {
 .leftlist .recentlys,.leftlist .likes {
 	border-width: 0 0 1px 0;
 }
+.leftlist .z-a-disd{
+    color: black !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+}
+.leftlist .z-a-disd:hover {
+    text-decoration: underline !important;
+}
+
 .leftlist .z-tabpanel-accordion-cnt {
 	border-width: 1px 0;
 }
+
 /** Left About**/
 .grouptop {
 	border-top: 1px solid #C5C5C5;

@@ -15,6 +15,8 @@ import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Tag;
+import org.zkoss.fiddle.util.BrowserState;
+import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -25,6 +27,7 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Include;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -83,7 +86,18 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 					String title = (cr.getTitle() == null || "".equals(cr.getTitle().trim())) ? cr.getToken() : cr
 							.getTitle();
 					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
-					item.appendChild(new Listcell(String.valueOf(title)));
+
+					{
+						Listcell list = new Listcell();
+						A titleItem = new A(String.valueOf(title));
+						titleItem.setHref(CaseUtil.getSampleURL(cr));
+
+						//set disable to prevent default href behavior,
+						//since we will handle the url in onSelect event.
+						titleItem.setDisabled(true);
+						list.appendChild(titleItem);
+						item.appendChild(list);
+					}
 
 					Listcell list = new Listcell(String.valueOf(cr.getAmount()));
 					list.setSclass("amount");
@@ -103,7 +117,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 				updateLikeModel();
 			}
 		});
-		
+
 		recentlys.setItemRenderer(new ListitemRenderer() {
 
 			public void render(Listitem item, Object data) throws Exception {
@@ -111,7 +125,17 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 					Case cr = (Case) data;
 					String title = (cr.getTitle() == null || "".equals(cr.getTitle())) ? cr.getToken() : cr.getTitle();
 					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
-					item.appendChild(new Listcell(String.valueOf(title)));
+					{
+						Listcell list = new Listcell();
+						A titleItem = new A(String.valueOf(title));
+						titleItem.setHref(CaseUtil.getSampleURL(cr));
+
+						//set disable to prevent default href behavior,
+						//since we will handle the url in onSelect event.
+						titleItem.setDisabled(true);
+						list.appendChild(titleItem);
+						item.appendChild(list);
+					}
 
 					Listcell list = new Listcell(String.valueOf(cr.getVersion()));
 					list.setSclass("version");
@@ -179,12 +203,12 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	public void onSelect$recentlys(Event e) {
 		Case cr = (Case) recentlys.getSelectedItem().getValue();
-		Executions.sendRedirect("/sample/" + cr.getCaseUrl());
+		BrowserState.go(CaseUtil.getSampleURL(cr),CaseUtil.getPublicTitle(cr),true, cr);
 	}
 
 	public void onSelect$likes(Event e) {
 		CaseRecord cr = (CaseRecord) likes.getSelectedItem().getValue();
-		Executions.sendRedirect("/sample/" + cr.getCaseUrl());
+		Executions.sendRedirect(CaseUtil.getSampleURL(cr));
 	}
 
 	public void onClick$news(Event e) {

@@ -13,8 +13,8 @@
 			</tabs>
 			<tabpanels>
 				<tabpanel>
-					<listbox id="recentlys" sclass="recentlys" emptyMessage="No latest ? Need your contribute !" >
-						<listhead> 
+					<listbox id="recentlys" sclass="recentlys" nonselectableTags="" emptyMessage="No latest ? Need your contribute !" >
+						<listhead>
 							<listheader label="#" width="25px" />
 							<listheader label="Title" />
 							<listheader label="Version" width="60px" />
@@ -37,9 +37,9 @@
 			<caption label="Tags">
 				<textbox id="tagFilter" />
 			</caption>
-			<div id="tagContainer" use="org.zkoss.fiddle.component.TagContainerDiv" 
+			<div id="tagContainer" use="org.zkoss.fiddle.component.TagContainerDiv"
 				sclass="tag-container" width="280px" />
-		</groupbox>		
+		</groupbox>
 		<groupbox sclass="leftabout grouptop" mold="3d" closable="false" height="150px">
 			<caption label="About ZK Fiddle" />
 			<vlayout>
@@ -51,7 +51,7 @@
 		</groupbox>
 		<window sclass="popupContent" border="normal"  width="800px" height="800px" minimizable="true" minimized="true" id="popupContent" position="center">
 			<include id="popupInclude" src="/html/maintain.html" />
-		</window>											
+		</window>
 	</div>
 
 </zk>
