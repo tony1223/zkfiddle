@@ -32,6 +32,7 @@ import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.notification.Notification;
 import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
+import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.util.NotificationUtil;
 import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.util.TagUtil;
@@ -47,6 +48,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zk.ui.event.InputEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
 import org.zkoss.zul.Checkbox;
@@ -85,6 +87,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Textbox caseTitle;
 
+	private Label author;
+	
+	private Textbox authorName;
+	
 	private Div caseToolbar;
 
 	private Toolbarbutton download;
@@ -201,6 +207,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					ICase saved = caseManager.saveCase(
 							caseModel.getCurrentCase(),
 							caseModel.getResources(), title,
+							authorName.getText(),
 							saveEvt.isFork(), ip, cbSaveTag.isChecked());
 					if (saved != null) {
 						List<String> notifications = NotificationUtil
@@ -272,6 +279,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			download.setHref(caseModel.getDownloadLink());
 			caseToolbar.setVisible(true);
 			poserIp.setValue(thecase.getPosterIP());
+			author.setValue(caseModel.getCurrentCase().getAuthorName());
+			String author = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
+			authorName.setValue((author == null || "".equals(author)) ? "guest" : author);
 			initTagEditor(thecase);
 		}
 
@@ -396,6 +406,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 	}
 
+	public void onChange$authorName(InputEvent evt){
+		String name = evt.getValue();
+		String newname = name.substring(0,name.length()>20?20:name.length());
+		CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME, newname, CookieUtil.AGE_ONE_YEAR);
+		
+	}
+	
+	//TODO review this and remove it.
 	public void onLike$fblike(LikeEvent evt) {
 		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil
 				.getBean("caseRecordDao");

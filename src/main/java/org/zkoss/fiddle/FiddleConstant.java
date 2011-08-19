@@ -2,6 +2,12 @@ package org.zkoss.fiddle;
 
 
 public class FiddleConstant {
+	public static final String COOKIE_ATTR_SANDBOX_HASH = "snd";
+	
+	public static final String COOKIE_ATTR_SANDBOX_INDEX = "sndInd";
+	
+	public static final String COOKIE_ATTR_AUTHOR_NAME = "author";
+	
 	public static final String REQUEST_ATTR_CASE = "__case";
 
 	public static final String REQUEST_ATTR_RUN_VIEW = "runview";

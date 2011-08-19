@@ -42,4 +42,11 @@ public interface ICase extends IRenderCase{
 	
 	public void setPosterIP(String posterIP) ;
 
+	public String getAuthorName();
+	
+	public void setAuthorName(String authorName) ;
+
+	public Long getAutherId() ;
+
+	public void setAutherId(Long autherId) ;
 }

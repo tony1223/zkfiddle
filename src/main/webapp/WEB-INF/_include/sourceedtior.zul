@@ -19,6 +19,12 @@
 				<label id="previewUrl" stubonly="true" style="margin-left:15px;" />
 			</div>
 			<separator bar="true" spacing="5px" />
+			<div>
+				Author Name: <label id="author" /> , 
+				<label value="New Author Name : " sclass="name" />
+				<textbox id="authorName" maxlength="20" cols="20" value="guest" />
+			</div>
+			<separator bar="true" spacing="5px" />
 			<tabbox height="100%" hflex="1" sclass="sourcetabs">
 				<fiddletabs id="sourcetabs" addable="true" />
 				<tabpanels id="sourcetabpanels" />

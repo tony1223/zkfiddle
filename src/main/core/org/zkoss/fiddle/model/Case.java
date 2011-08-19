@@ -50,6 +50,10 @@ public class Case implements ICase, Serializable {
 	private Date createDate;
 
 	private String posterIP;
+	
+	private String authorName;
+	
+	private Long autherId;
 
 	/**
 	 * A title for SEO friendly and data collection
@@ -162,6 +166,26 @@ public class Case implements ICase, Serializable {
 
 	public int hashCode() {
 		return new HashCodeBuilder().append(id).toHashCode();
+	}
+
+	@Column
+	public String getAuthorName() {
+		return authorName;
+	}
+
+	
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+
+	@Column
+	public Long getAutherId() {
+		return autherId;
+	}
+
+	
+	public void setAutherId(Long autherId) {
+		this.autherId = autherId;
 	}
 
 }

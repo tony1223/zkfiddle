@@ -3,6 +3,7 @@ package org.zkoss.fiddle.composer;
 import java.util.Collection;
 import java.util.TreeSet;
 
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.TopStateChangeEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
@@ -118,7 +119,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 				new EventListener() {
 
 					public void onEvent(Event event) throws Exception {
-						String sandboxHash = CookieUtil.getCookie("snd");
+						String sandboxHash = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_SANDBOX_HASH);
 						if (sandboxHash != null) {
 							ListModel lm = sandboxes.getModel();
 							// when no instance
@@ -128,7 +129,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 								return;
 							}
 							{// check last index first to speed it up
-								String indstr = CookieUtil.getCookie("sndInd");
+								String indstr = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_SANDBOX_INDEX);
 								int ind = indstr == null ? -1 : Integer
 										.parseInt(indstr);
 								if (ind != -1) {
@@ -149,9 +150,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 										.getElementAt(i);
 								if (sandboxHash.equals(sandbox.getHash())) {
 									// update index
-									CookieUtil.setCookie("sndInd",
-											String.valueOf(i),
-											CookieUtil.AGE_ONE_YEAR);
+									CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_SANDBOX_INDEX,
+											String.valueOf(i),CookieUtil.AGE_ONE_YEAR);
 									sandboxes.setSelectedIndex(i);
 									return;
 								}
@@ -167,10 +167,9 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	public void onChange$instances() {
 		FiddleSandbox inst = (FiddleSandbox) sandboxes.getSelectedItem()
 				.getValue();
-		CookieUtil.setCookie("snd", inst.getHash(), CookieUtil.AGE_ONE_YEAR);
-		CookieUtil.setCookie("sndInd",
-				String.valueOf(sandboxes.getSelectedIndex()),
-				CookieUtil.AGE_ONE_YEAR);
+		CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_SANDBOX_HASH, inst.getHash(), CookieUtil.AGE_ONE_YEAR);
+		CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_SANDBOX_INDEX,
+				String.valueOf(sandboxes.getSelectedIndex()),	CookieUtil.AGE_ONE_YEAR);
 	}
 
 	public void onClick$viewBtn() {
