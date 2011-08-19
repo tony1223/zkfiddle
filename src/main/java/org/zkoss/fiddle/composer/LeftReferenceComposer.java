@@ -77,6 +77,9 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		EventQueues.lookup(FiddleEventQueues.Tag, true).subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if (FiddleEvents.ON_TAG_UPDATE.equals(event.getName())) {
+					if(event.getData() != null){
+						currentTag = (String) event.getData();
+					}
 					updateTags();
 				}
 			}
@@ -214,7 +217,8 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		//if you select it very quickly , it might be null for selectedItem.
 		if(item != null){ 
 			Case cr = (Case) item.getValue();
-			BrowserState.go(CaseUtil.getSampleURL(cr),"ZK Fiddle - "+CaseUtil.getPublicTitle(cr),true, cr);
+			String newtitle = "ZK Fiddle - "+CaseUtil.getPublicTitle(cr);
+			BrowserState.go(CaseUtil.getSampleURL(cr), newtitle, cr);
 		}
 	}
 

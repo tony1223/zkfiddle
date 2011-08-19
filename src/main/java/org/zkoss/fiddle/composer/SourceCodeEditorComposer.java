@@ -34,6 +34,7 @@ import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.NotificationUtil;
 import org.zkoss.fiddle.util.SEOUtils;
+import org.zkoss.fiddle.util.TagUtil;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.social.facebook.event.LikeEvent;
@@ -48,7 +49,6 @@ import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zkplus.spring.SpringUtil;
-import org.zkoss.zul.A;
 import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Hlayout;
@@ -58,6 +58,8 @@ import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
+
+import ork.zkoss.fiddle.hyperlink.Hyperlink;
 
 public class SourceCodeEditorComposer extends GenericForwardComposer {
 
@@ -215,11 +217,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						NotificationUtil.updateNotifications(
 								Sessions.getCurrent(), notifications);
 
-						BrowserState.go(
-								CaseUtil.getSampleURL(saved),
-								"ZK Fiddle - "
-										+ CaseUtil.getPublicTitle(saved),
-								true, saved);
+						String newtitle = "ZK Fiddle - "+ CaseUtil.getPublicTitle(saved);
+						BrowserState.go( CaseUtil.getSampleURL(saved),newtitle, saved);
 						// Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
 					}
 				}
@@ -243,7 +242,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					EventQueues.lookup(FiddleEventQueues.LeftRefresh).publish(
 							new Event(FiddleEvents.ON_LEFT_REFRESH, null));
 				}
-				// TODO check if we switch to tag view.
 			}
 		});
 	}
@@ -363,9 +361,15 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			cbSaveTag.setVisible(false);
 		} else {
 			StringBuffer sb = new StringBuffer();
-			for (Tag tag : list) {
-				A lbl = new A(tag.getName());
-				lbl.setHref("/tag/" + tag.getName());
+			for (final Tag tag : list) {
+				Hyperlink lbl = new Hyperlink(tag.getName());
+				final String tagurl = TagUtil.getViewURL(tag);
+				lbl.setHref(tagurl);
+				lbl.addEventListener("onClick", new EventListener() {
+					public void onEvent(Event event) throws Exception {
+						BrowserState.go(tagurl, "ZK Fiddle - Tag "+tagurl, tag);						
+					}
+				});
 				lbl.setSclass("case-tag");
 				sb.append(tag.getName() + ",");
 				tagContainer.appendChild(lbl);

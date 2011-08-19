@@ -16,7 +16,7 @@ import org.zkoss.zk.ui.Executions;
 public class BrowserState {
 
 	public static void go(String uri, String title, Object data) {
-		go(uri, title, false, data, true);
+		go(uri, title, true, data, true);
 	}
 
 	public static void go(String uri, String title, boolean addContext, Object data) {

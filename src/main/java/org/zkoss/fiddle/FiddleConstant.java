@@ -6,7 +6,11 @@ public class FiddleConstant {
 
 	public static final String REQUEST_ATTR_RUN_VIEW = "runview";
 
+	/**
+	 * Note index.zul using this key as EL.
+	 */
 	public static final String REQUEST_ATTR_PAGE_TITLE = "_pgtitle";
+	
 
 	public static final String REQUEST_ATTR_TRY_CASE = "_trycase";
 	

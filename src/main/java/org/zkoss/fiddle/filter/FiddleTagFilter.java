@@ -53,6 +53,7 @@ public class FiddleTagFilter implements Filter {
 				return ;
 			}
 			
+			request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_TITLE," - Tag - "+ t.getName());
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_TAG,t);
 			request.setAttribute(FIDDLE_HOST_NAME, FiddleConfig.getHostName());
 

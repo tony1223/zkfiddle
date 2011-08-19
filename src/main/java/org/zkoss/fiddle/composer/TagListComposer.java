@@ -1,13 +1,21 @@
 package org.zkoss.fiddle.composer;
 
-import java.net.URLEncoder;
-
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.TopNavigationComposer.State;
+import org.zkoss.fiddle.composer.event.FiddleEvents;
+import org.zkoss.fiddle.composer.event.URLChangeEvent;
+import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
+import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
+import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
+import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
+import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Tag;
+import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
+import org.zkoss.fiddle.util.TagUtil;
 import org.zkoss.fiddle.visualmodel.TagCaseListVO;
 import org.zkoss.fiddle.visualmodel.TagCloudVO;
 import org.zkoss.spring.SpringUtil;
@@ -15,8 +23,9 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
+import org.zkoss.zk.ui.event.EventQueue;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
-import org.zkoss.zul.A;
 import org.zkoss.zul.Cell;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
@@ -40,41 +49,47 @@ public class TagListComposer extends GenericForwardComposer {
 	private Grid tagCaseList;
 
 	private Paging tagCasePaging;
+	private static final int pageSize = 20;;
+	private Tag currentTag;
 
-	private void setPage(Tag t, int pageIndex, int pageSize) {
+	private void setPage(int pageIndex, int pageSize) {
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		tagCaseList.setModel(new ListModelList(caseTagDao.findCaseRecordsBy(t, pageIndex, pageSize)));
+		tagCaseList.setModel(new ListModelList(caseTagDao.findCaseRecordsBy(currentTag, pageIndex, pageSize)));
 		tagCasePaging.setActivePage(pageIndex - 1);
 		tagCasePaging.setPageSize(pageSize);
-		tagCasePaging.setTotalSize(caseTagDao.countCaseRecordsBy(t).intValue());
+		tagCasePaging.setTotalSize(caseTagDao.countCaseRecordsBy(currentTag).intValue());
 	}
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
 		updateTopNavigation();
-		final Tag t = (Tag) Executions.getCurrent().getAttribute(FiddleConstant.REQUEST_ATTR_TAG);
-		if( t == null ){
+		currentTag = (Tag) Executions.getCurrent().getAttribute(FiddleConstant.REQUEST_ATTR_TAG);
+		if( currentTag == null ){
 			Executions.getCurrent().sendRedirect("/");
 			return ;
 		}
 
-		final int pageIndex = 1, pageSize = 20;
+		final int pageSize = 20;
+		setPage(1, pageSize);
 
-		setPage(t, pageIndex, pageSize);
-
+		initTagListRenderer();
+		
 		tagCasePaging.addEventListener(ZulEvents.ON_PAGING, new EventListener() {
 
 			public void onEvent(Event event) throws Exception {
 				PagingEvent pagingEvt = (PagingEvent) event;
-				setPage(t, pagingEvt.getActivePage() + 1, pageSize);
+				setPage(pagingEvt.getActivePage() + 1, pageSize);
 			}
 		});
+		initEventListenter();
 
+	}
+	private void initTagListRenderer(){
 		tagCaseList.setRowRenderer(new RowRenderer() {
 
 			public void render(Row row, Object data) throws Exception {
-				TagCaseListVO tclvo = (TagCaseListVO) data;
+				final TagCaseListVO tclvo = (TagCaseListVO) data;
 
 				{
 					int index = row.getGrid().getRows().getChildren().indexOf(row) + 1;
@@ -89,7 +104,16 @@ public class TagListComposer extends GenericForwardComposer {
 					Div titlecont = new Div();
 					Hyperlink titlelink = new Hyperlink(CaseUtil.getPublicTitle(tclvo.getCaseRecord()));
 					titlelink.setHref(CaseUtil.getSampleURL(tclvo.getCaseRecord()));
-					titlelink.setDisableHref(true);
+					
+					titlelink.addEventListener("onClick", new EventListener() {
+						public void onEvent(Event event) throws Exception {
+							CaseRecord record = tclvo.getCaseRecord();
+							ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
+							ICase theCase = caseDao.get(record.getCaseId());
+							BrowserState.go(CaseUtil.getSampleURL(theCase),
+									"ZK Fiddle - "+ CaseUtil.getPublicTitle(record), theCase);
+						}
+					});
 					titlecont.appendChild(titlelink);
 
 					String token = tclvo.getCaseRecord().getToken() + "[" + tclvo.getCaseRecord().getVersion() + "]";
@@ -106,16 +130,22 @@ public class TagListComposer extends GenericForwardComposer {
 					TagCloudVO tcvo = new TagCloudVO(tclvo.getTags());
 
 					for (int i = 0, size = tclvo.getTags().size(); i < size; ++i) {
-						Tag tag = tclvo.getTags().get(i);
-						A taglink = new A(tag.getName() +
-								(tag.getAmount() > 1 ? "(" + tag.getAmount() + ")" :"") );
-						if(t.equals(tag)){
+						final Tag tag = tclvo.getTags().get(i);
+						Hyperlink taglink = new Hyperlink(tag.getName() +
+								(tag.getAmount() > 1 ? "(" + tag.getAmount() + ") " :"") );
+						if(currentTag.equals(tag)){
 							taglink.setSclass("tag-cloud tag-cloud-sel tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));
 						}else{
 							taglink.setSclass("tag-cloud tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));
 						}
 
-						taglink.setHref("/tag/" + URLEncoder.encode(tag.getName(), "UTF-8"));
+						final String url = TagUtil.getViewURL(tag);
+						taglink.setHref(url);
+						taglink.addEventListener("onClick", new EventListener() {
+							public void onEvent(Event event) throws Exception {
+								BrowserState.go(url, "ZK Fiddle - Tag - "+ tag.getName() , tag);	
+							}
+						});
 						tagcont.appendChild(taglink);
 					}
 					row.appendChild(tagcont);
@@ -124,6 +154,32 @@ public class TagListComposer extends GenericForwardComposer {
 			}
 		});
 
+	}
+	
+	private void initEventListenter(){
+		/**
+		 * browser state , for chrome and firefox only
+		 */
+		FiddleBrowserStateEventQueue queue = FiddleBrowserStateEventQueue.lookup();
+		queue.subscribe(new FiddleEventListener<URLChangeEvent>(
+				URLChangeEvent.class,self) {
+
+			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
+				// only work when updated to a case view.
+				if (evt.getData() != null && evt.getData() instanceof Tag) {
+					Tag _case = (Tag) evt.getData();
+					currentTag = _case;
+					setPage(1, pageSize);
+					updateTopNavigation();
+
+					EventQueues.lookup(FiddleEventQueues.Tag).publish(
+							new Event(FiddleEvents.ON_TAG_UPDATE, null, currentTag.getName()));
+					
+					EventQueue queue = EventQueues.lookup(FiddleEventQueues.LeftRefresh);
+					queue.publish(new Event(FiddleEvents.ON_LEFT_REFRESH, null));					
+				}
+			}
+		});
 	}
 	
 	private void updateTopNavigation(){
