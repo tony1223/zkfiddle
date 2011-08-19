@@ -146,7 +146,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			notification.setSclass("fiddle-nofication");
 			notifications.appendChild(notification);
 		}
-
+		notifications.invalidate();
 		NotificationUtil.clearNotifications(Sessions.getCurrent());
 	}
 
