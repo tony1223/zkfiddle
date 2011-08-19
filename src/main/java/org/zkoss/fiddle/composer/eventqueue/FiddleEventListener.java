@@ -32,17 +32,17 @@ public abstract class FiddleEventListener<T extends Event> implements
 		accpeted = inp;
 	}
 
+	public FiddleEventListener(Class inp, Component compScope) {
+		accpeted = inp;
+		target = compScope;
+	}
+	
 	public EventQueue getQueue() {
 		return queue;
 	}
 
 	public void setQueue(EventQueue queue) {
 		this.queue = queue;
-	}
-
-	public FiddleEventListener(Class inp, Component compScope) {
-		accpeted = inp;
-		target = compScope;
 	}
 
 	@SuppressWarnings("unchecked")

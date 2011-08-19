@@ -16,6 +16,8 @@ public class FiddleConstant {
 
 	public static final String REQUEST_ATTR_CONTENT_PAGE = "f_contentPage";
 	
+	public static final String REQUEST_ATTR_TAG = "_tag";
+	
 	public static final String DESKTOP_ATTR_PUSH_STATE = "d_pushstate";
 
 	public static final String DESKTOP_ATTR_CURRENT_STATE_URI = "d_state_uri";

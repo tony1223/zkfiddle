@@ -39,6 +39,7 @@ import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.social.facebook.event.LikeEvent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
+import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
 import org.zkoss.zk.ui.event.Event;
@@ -108,8 +109,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		ICase _case = (ICase) requestScope
-				.get(FiddleConstant.REQUEST_ATTR_CASE);
+		Execution exec = Executions.getCurrent();
+		ICase _case = (ICase) exec.getAttribute(FiddleConstant.REQUEST_ATTR_CASE);
 
 		updateNotifications();
 
@@ -167,72 +168,69 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue
 				.lookup();
-		sourceQueue
-				.subscribeResourceCreated(new FiddleEventListener<InsertResourceEvent>(
-						InsertResourceEvent.class) {
+		sourceQueue.subscribeResourceCreated(
+			new FiddleEventListener<InsertResourceEvent>(
+					InsertResourceEvent.class,self) {
 
-					public void onFiddleEvent(InsertResourceEvent event)
-							throws Exception {
-						InsertResourceEvent insertEvent = (InsertResourceEvent) event;
-						Resource resource = insertEvent.getResource();
+				public void onFiddleEvent(InsertResourceEvent event)
+						throws Exception {
+					InsertResourceEvent insertEvent = (InsertResourceEvent) event;
+					Resource resource = insertEvent.getResource();
 
-						caseModel.addResource(resource);
-						ISourceTabRenderer render = SourceTabRendererFactory
-								.getRenderer(resource.getType());
-						render.appendSourceTab(sourcetabs, sourcetabpanels,
-								resource);
+					caseModel.addResource(resource);
+					ISourceTabRenderer render = SourceTabRendererFactory
+							.getRenderer(resource.getType());
+					render.appendSourceTab(sourcetabs, sourcetabpanels,
+							resource);
 
-						((Tab) sourcetabs.getLastChild()).setSelected(true);
-					}
-				});
-		sourceQueue
-				.subscribeResourceSaved(new FiddleEventListener<SaveCaseEvent>(
-						SaveCaseEvent.class) {
+					((Tab) sourcetabs.getLastChild()).setSelected(true);
+				}
+			});
+		sourceQueue.subscribeResourceSaved(
+			new FiddleEventListener<SaveCaseEvent>( SaveCaseEvent.class,self) {
+				public void onFiddleEvent(SaveCaseEvent event)
+						throws Exception {
+					SaveCaseEvent saveEvt = (SaveCaseEvent) event;
+					CaseManager caseManager = (CaseManager) SpringUtil
+							.getBean("caseManager");
 
-					public void onFiddleEvent(SaveCaseEvent event)
-							throws Exception {
-						SaveCaseEvent saveEvt = (SaveCaseEvent) event;
-						CaseManager caseManager = (CaseManager) SpringUtil
-								.getBean("caseManager");
+					String title = caseTitle.getValue().trim();
+					String ip = Executions.getCurrent().getRemoteAddr();
+					ICase saved = caseManager.saveCase(
+							caseModel.getCurrentCase(),
+							caseModel.getResources(), title,
+							saveEvt.isFork(), ip, cbSaveTag.isChecked());
+					if (saved != null) {
+						List<String> notifications = NotificationUtil
+								.getNotifications(Sessions.getCurrent());
 
-						String title = caseTitle.getValue().trim();
-						String ip = Executions.getCurrent().getRemoteAddr();
-						ICase saved = caseManager.saveCase(
-								caseModel.getCurrentCase(),
-								caseModel.getResources(), title,
-								saveEvt.isFork(), ip, cbSaveTag.isChecked());
-						if (saved != null) {
-							List<String> notifications = NotificationUtil
-									.getNotifications(Sessions.getCurrent());
-
-							if (caseModel.isStartWithNewCase()) {
-								notifications
-										.add("You have saved a new sample.");
-							} else if (saveEvt.isFork()) {
-								notifications.add("You have forked the sample. ");
-							} else {
-								notifications.add("You have updated the sample. ");
-							}
-							NotificationUtil.updateNotifications(
-									Sessions.getCurrent(), notifications);
-
-							BrowserState.go(
-									CaseUtil.getSampleURL(saved),
-									"ZK Fiddle - "
-											+ CaseUtil.getPublicTitle(saved),
-									true, saved);
-							// Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
+						if (caseModel.isStartWithNewCase()) {
+							notifications
+									.add("You have saved a new sample.");
+						} else if (saveEvt.isFork()) {
+							notifications.add("You have forked the sample. ");
+						} else {
+							notifications.add("You have updated the sample. ");
 						}
+						NotificationUtil.updateNotifications(
+								Sessions.getCurrent(), notifications);
+
+						BrowserState.go(
+								CaseUtil.getSampleURL(saved),
+								"ZK Fiddle - "
+										+ CaseUtil.getPublicTitle(saved),
+								true, saved);
+						// Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
 					}
-				});
+				}
+			});
 
 		/**
 		 * browser state , for chrome and firefox only
 		 */
-		FiddleBrowserStateEventQueue queue = FiddleBrowserStateEventQueue
-				.lookup();
+		FiddleBrowserStateEventQueue queue = FiddleBrowserStateEventQueue.lookup();
 		queue.subscribe(new FiddleEventListener<URLChangeEvent>(
-				URLChangeEvent.class) {
+				URLChangeEvent.class,self) {
 
 			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
 				// only work when updated to a case view.

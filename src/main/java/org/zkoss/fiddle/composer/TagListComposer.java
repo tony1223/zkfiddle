@@ -1,12 +1,11 @@
 package org.zkoss.fiddle.composer;
 
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.TopNavigationComposer.State;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
-import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.visualmodel.TagCaseListVO;
@@ -51,11 +50,8 @@ public class TagListComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
 		updateTopNavigation();
-		//TODO move to filter.
-		String tagName = URLDecoder.decode((String) requestScope.get("tag"), "UTF-8");
-		final Tag t = tagDao.getTag(tagName);
+		final Tag t = (Tag) Executions.getCurrent().getAttribute(FiddleConstant.REQUEST_ATTR_TAG);
 		if( t == null ){
 			Executions.getCurrent().sendRedirect("/");
 			return ;

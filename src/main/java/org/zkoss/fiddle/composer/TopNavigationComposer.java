@@ -55,18 +55,18 @@ public class TopNavigationComposer extends GenericForwardComposer {
 		//it's decided from outside who send the event to here.
 		FiddleTopNavigationEventQueue.lookup().subscribe(
 			new FiddleEventListener<TopStateChangeEvent>(TopStateChangeEvent.class,self) {
-			public void onFiddleEvent(TopStateChangeEvent evt) throws Exception {
-				updateStatus(evt.getState());
-			}
-		});
+				public void onFiddleEvent(TopStateChangeEvent evt) throws Exception {
+					updateStatus(evt.getState());
+				}
+			});
 
 		FiddleSourceEventQueue.lookup().subscribeResourceChanged(
-				new FiddleEventListener<ResourceChangedEvent>(
-						ResourceChangedEvent.class, viewBtn) {
-					public void onFiddleEvent(ResourceChangedEvent evt) {
-						viewBtn.setLabel("*Run");
-					};
-				});
+			new FiddleEventListener<ResourceChangedEvent>(
+					ResourceChangedEvent.class, viewBtn) {
+				public void onFiddleEvent(ResourceChangedEvent evt) {
+					viewBtn.setLabel("*Run");
+				};
+			});
 
 	}
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.component.TagContainerDiv;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
@@ -39,6 +40,7 @@ import org.zkoss.zul.Window;
 
 public class LeftReferenceComposer extends GenericForwardComposer {
 
+
 	/**
 	 *
 	 */
@@ -64,8 +66,11 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		// TODO move the key to constant
-		currentTag = (String) requestScope.get("tag");
+		
+		Tag tag = ((Tag) requestScope.get(FiddleConstant.REQUEST_ATTR_TAG));
+		if(tag != null){
+			currentTag = tag.getName();
+		}
 
 		updateTags();
 		EventQueues.lookup(FiddleEventQueues.Tag, true).subscribe(new EventListener() {
@@ -187,6 +192,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		}
 		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
 		List<Tag> list = tagDao.findPopularTags(20);
+		//FIXME update current tag after push state.
 		tagContainer.setTags(list, currentTag);
 	}
 

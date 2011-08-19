@@ -1,6 +1,8 @@
 package org.zkoss.fiddle.filter;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,16 +14,16 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.zkoss.fiddle.FiddleConstant;
+import org.zkoss.fiddle.dao.api.ITagDao;
+import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.util.FiddleConfig;
+import org.zkoss.fiddle.util.SpringUtilz;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleTagFilter implements Filter {
-
-	public static final String ATTR_TAG = "tag";
 
 	private static final String FIDDLE_HOST_NAME = "fiddleHostName";
 
@@ -45,26 +47,36 @@ public class FiddleTagFilter implements Filter {
 		Matcher m = tagPattern.matcher(path);
 		if(m.find()){
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_CONTENT_PAGE, FiddleConstant.REQUEST_VALUE_PAGE_TYPE_TAG);
-			String mtag = m.group(1);
-			if(mtag == null || "".equals(mtag.trim())){
-				((HttpServletResponse)response).sendRedirect("/");
+			final Tag t = getTag(m.group(1));
+			if( t == null ){
+				chain.doFilter(request2, response);
 				return ;
 			}
-			request.setAttribute(ATTR_TAG,mtag);
-
+			
+			request.setAttribute(FiddleConstant.REQUEST_ATTR_TAG,t);
 			request.setAttribute(FIDDLE_HOST_NAME, FiddleConfig.getHostName());
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("[FiddleTagFilter::doFilter]Tag Name=" + m.group(1));
 			}
 
-			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul" );
+			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul" );			
 
 		}else
 			chain.doFilter(request2, response);
 
 	}
 
+	private Tag getTag(String mtag) throws UnsupportedEncodingException{
+		if(mtag == null || "".equals(mtag.trim())){
+			return null;
+		}
+		
+		ITagDao tagDao = (ITagDao) SpringUtilz.getBean(ctx,"tagDao");
+		String tagName = URLDecoder.decode(mtag, "UTF-8");
+		return tagDao.getTag(tagName);
+
+	}
 	public void init(FilterConfig filterConfig) throws ServletException {
 		ctx = filterConfig.getServletContext();
 	}
