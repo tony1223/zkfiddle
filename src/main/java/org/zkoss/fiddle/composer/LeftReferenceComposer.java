@@ -208,13 +208,21 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	}
 
 	public void onSelect$recentlys(Event e) {
-		Case cr = (Case) recentlys.getSelectedItem().getValue();
-		BrowserState.go(CaseUtil.getSampleURL(cr),CaseUtil.getPublicTitle(cr),true, cr);
+		Listitem item = recentlys.getSelectedItem();
+		//Note that we will set the model of listbox after every time if pushState enabled,
+		//if you select it very quickly , it might be null for selectedItem.
+		if(item != null){ 
+			Case cr = (Case) item.getValue();
+			BrowserState.go(CaseUtil.getSampleURL(cr),CaseUtil.getPublicTitle(cr),true, cr);
+		}
 	}
 
 	public void onSelect$likes(Event e) {
-		CaseRecord cr = (CaseRecord) likes.getSelectedItem().getValue();
-		Executions.sendRedirect(CaseUtil.getSampleURL(cr));
+		Listitem item = likes.getSelectedItem();
+		if(item != null){
+			CaseRecord cr = (CaseRecord) item.getValue();
+			Executions.sendRedirect(CaseUtil.getSampleURL(cr));
+		}
 	}
 
 	public void onClick$news(Event e) {
