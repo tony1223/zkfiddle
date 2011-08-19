@@ -59,7 +59,6 @@ public class TagDaoImpl extends AbstractDao implements ITagDao {
 
 			public Tag doInHibernate(Session session) throws HibernateException, SQLException {
 				Query query = session.createQuery("from Tag where name = :name");
-				System.out.println(name);
 				query.setString("name", name);
 				query.setMaxResults(2);
 				List<Tag> result = query.list();
