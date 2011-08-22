@@ -11,6 +11,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.model.CaseRecord;
+import org.zkoss.fiddle.model.CaseRecord.Type;
 import org.zkoss.fiddle.model.api.ICase;
 
 public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
@@ -294,5 +295,49 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 			logger.debug("createCaseRecord(ICase, int, long) - end");
 		}
 		return view;
+	}
+
+	@Override
+	public boolean updateAmount(final Type type,final  ICase _case,final Long amount) {
+		if (logger.isInfoEnabled()) {
+			logger.info("increase caserecord:"+type + ":" + _case.getCaseUrl());
+		}
+
+		if (type == CaseRecord.Type.Like) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("increase(Integer, Long) - clean top10likeRecord cache");
+			}
+			FiddleCache.Top10liked.removeAll();
+		}
+		boolean returnboolean = getTxTemplate().execute(
+				new HibernateTransacationCallback<Boolean>(getHibernateTemplate()) {
+
+					public Boolean doInHibernate(Session session) throws HibernateException, SQLException {
+						if (logger.isDebugEnabled()) {
+							logger.debug("doInHibernate(Session) - start");
+						}
+
+						Query query = session.createQuery("update CaseRecord set amount = :amount where type = :type and caseId = :caseId");
+						query.setLong("type", type.value());
+						query.setLong("caseId", _case.getId());
+						query.setLong("amount", amount);
+
+						int update = query.executeUpdate();
+
+						if (update == 0) {
+							CaseRecord view = createCaseRecord(_case, type.value(), amount);
+							session.save(view);
+						}
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("doInHibernate(Session) - end");
+						}
+						return true;
+					}
+				});
+		if (logger.isDebugEnabled()) {
+			logger.debug("increase(CaseRecord.Type, ICase) - end");
+		}
+		return returnboolean;
 	}
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.BasicTransformerAdapter;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.core.utils.CacheHandler;
 import org.zkoss.fiddle.core.utils.FiddleCache;
@@ -88,7 +88,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 				Query qu = session.createQuery("select t from Tag t,CaseTag tc "
 						+ " where t.id = tc.tagId and tc.caseId = :caseId ");
 				qu.setLong("caseId", c.getId());
-				
+
 				setPage(qu,pageIndex,pageSize);
 				return qu.list();
 			}
@@ -128,12 +128,8 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 					public List<TagCaseListVO> doInHibernate(final Session session) throws HibernateException, SQLException {
 						Query query = session.createQuery(HQL_findCaseByTag);
 						query.setLong("tagId", tag.getId());
-						query.setResultTransformer(new ResultTransformer() {
-
-							/**
-							 *
-							 */
-							private static final long serialVersionUID = 5448254005740927852L;
+						query.setResultTransformer(new BasicTransformerAdapter() {
+							private static final long serialVersionUID = 4466976604759893212L;
 
 							public Object transformTuple(Object[] tuple, String[] aliases) {
 								TagCaseListVO tcvo = new TagCaseListVO();
@@ -147,11 +143,6 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 
 								tcvo.setTags(list);
 								return tcvo;
-							}
-
-							@SuppressWarnings("rawtypes")
-							public List transformList(List collection) {
-								return collection;
 							}
 						});
 						setPage(query,pageIndex,pageSize);

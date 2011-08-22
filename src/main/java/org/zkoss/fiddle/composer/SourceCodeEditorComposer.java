@@ -25,6 +25,7 @@ import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.fiddletabs.Fiddletabs;
 import org.zkoss.fiddle.manager.CaseManager;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
@@ -96,29 +97,29 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Label author;
 
 	private Hyperlink loginedAuthor;
-	
+
 	private Textbox authorName;
 
 	private Div authorControl;
 
 	private Hyperlink loginedAuthorName;
-	
+
 	private Hyperlink logoffBtn;
-	
+
 	private Hyperlink loginBtn;
-	
+
 	private Window loginWin;
-	
+
 	/* author end */
 
 	/*login start*/
-	
+
 	private Textbox loginWin$account;
-	
+
 	private Textbox loginWin$password;
-	
+
 	/* login end */
-	
+
 	private Toolbarbutton download;
 
 	private Label poserIp;
@@ -144,7 +145,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		Execution exec = Executions.getCurrent();
-		ICase _case = (ICase) exec.getAttribute(FiddleConstant.REQUEST_ATTR_CASE);
+		Case _case = (Case) exec.getAttribute(FiddleConstant.REQUEST_ATTR_CASE);
 
 		updateNotifications();
 
@@ -159,12 +160,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		// if direct view , we handle it here.
 		initDirectlyView();
 
-		
+
 		//only fill the author field at begining.
 		String author = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
 		boolean emptyAuthor = (author == null || "".equals(author));
 		authorName.setValue((emptyAuthor) ? "guest" : author);
-		
+
 		if(!UserUtil.isLogin(Sessions.getCurrent()) && !emptyAuthor){
 			loginWin$account.setValue(author);
 		}
@@ -195,7 +196,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		NotificationUtil.clearNotifications(Sessions.getCurrent());
 	}
 
-	private CaseModel prepareCaseModel(ICase _case) {
+	private CaseModel prepareCaseModel(Case _case) {
 		if (!isTryCase()) {
 			return new CaseModel(_case, false, null);
 		} else {
@@ -240,10 +241,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 					String title = caseTitle.getValue().trim();
 					String ip = Executions.getCurrent().getRemoteAddr();
-					
+
 					String autherName = authorName.getText();
 					boolean isGuest = true;
-					
+
 					if(UserUtil.isLogin(Sessions.getCurrent())){
 						IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
 						autherName = user.getName();
@@ -251,11 +252,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					}
 					ICase saved = caseManager.saveCase(
 							caseModel.getCurrentCase(),
-							caseModel.getResources(), 
+							caseModel.getResources(),
 							title,
 							autherName,	isGuest,
 							saveEvt.isFork(), ip, cbSaveTag.isChecked());
-					
+
 					if (saved != null) {
 						List<String> notifications = NotificationUtil
 								.getNotifications(Sessions.getCurrent());
@@ -287,8 +288,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
 				// only work when updated to a case view.
-				if (evt.getData() != null && evt.getData() instanceof ICase) {
-					ICase _case = (ICase) evt.getData();
+				if (evt.getData() != null && evt.getData() instanceof Case) {
+					Case _case = (Case) evt.getData();
 					caseModel.setCase(_case);
 					updateCaseView(caseModel);
 					updateTopNavigation();
@@ -314,14 +315,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			runDirectlyView(viewRequestParam);
 		}
 	}
-	
+
 	private void updateAuthorLoginState(){
 
 		if(UserUtil.isLogin(Sessions.getCurrent())){
 			IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
 			loginedAuthorName.setLabel(user.getName());
 			loginedAuthorName.setVisible(true);
-			
+
 			authorName.setValue(user.getName());
 			authorName.setVisible(false);
 			logoffBtn.setVisible(true);
@@ -330,7 +331,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			authorName.setVisible(true);
 			loginedAuthorName.setVisible(false);
 			logoffBtn.setVisible(false);
-			loginBtn.setVisible(true);			
+			loginBtn.setVisible(true);
 		}
 
 	}
@@ -348,7 +349,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			caseToolbar.setVisible(true);
 			poserIp.setValue(thecase.getPosterIP());
 			initTagEditor(thecase);
-			
+
 			if(thecase.isGuest()){
 				author.setVisible(true);
 				loginedAuthor.setVisible(false);
@@ -356,16 +357,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				author.setVisible(false);
 				loginedAuthor.setVisible(true);
 			}
-			
+
 			author.setValue(thecase.getAuthorName());
 			loginedAuthor.setLabel(thecase.getAuthorName());
-			
+
 			authorControl.setSclass("author-saved");
 		}else{
 			authorControl.setSclass("author-new");
 		}
 		updateAuthorLoginState();
-		
+
 		sourcetabs.getChildren().clear();
 		sourcetabpanels.getChildren().clear();
 
@@ -550,23 +551,23 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public void onClick$loginBtn(Event evt){
 		loginWin.doOverlapped();
-		if(!"".equals(authorName.getValue()) 
-		   && !"guest".equals(authorName.getValue())		
+		if(!"".equals(authorName.getValue())
+		   && !"guest".equals(authorName.getValue())
 		){
 			loginWin$account.setValue(authorName.getValue());
 		}
 		loginWin$account.focus();
 	}
-	
+
 	public void onClick$logoffBtn(Event evt){
 		UserUtil.logout(Sessions.getCurrent());
 		this.updateAuthorLoginState();
 	}
-	
+
 	public void onCancel$loginWin(Event evt){
 		loginWin.setMinimized(true);
 	}
-	
+
 	public void onOK$loginWin(Event evt){
 		if(loginWin$account.isValid() && loginWin$password.isValid()){
 			IReadonlyLoginService loginService = (IReadonlyLoginService) SpringUtil.getBean("loginManager");
@@ -582,7 +583,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		}
 	}
-	
+
 	public void onAdd$sourcetabs(Event e) {
 		try {
 			// the reason for not using auto wire is that the insertWin is

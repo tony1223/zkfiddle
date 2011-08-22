@@ -7,12 +7,16 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
 import org.zkoss.fiddle.dao.api.ICaseDao;
+import org.zkoss.fiddle.dao.api.ICaseRatingdDao;
+import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.IResourceDao;
 import org.zkoss.fiddle.model.Case;
+import org.zkoss.fiddle.model.CaseRating;
+import org.zkoss.fiddle.model.CaseRecord.Type;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
-import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.visualmodel.RatingAmount;
 
 public class CaseManager extends AbstractManager {
 
@@ -20,9 +24,13 @@ public class CaseManager extends AbstractManager {
 
 	private IResourceDao resourceDao;
 
+	private ICaseRecordDao caseRecordDao;
+
+	private ICaseRatingdDao caseRatingDao;
+
 	private ICaseTagDao caseTagDao;
 
-	public Case saveCase(final ICase _case, final List<Resource> resources, 
+	public Case saveCase(final Case _case, final List<Resource> resources,
 			final String title, final String authorName,final Boolean isGuest,
 			final boolean fork,final String posterIP,final boolean keepTag) {
 
@@ -78,6 +86,27 @@ public class CaseManager extends AbstractManager {
 
 	}
 
+	public RatingAmount rankCase(final Case cas,final String userName,final long amount){
+		return (RatingAmount) getTxTemplate().execute(new TransactionCallback<RatingAmount>() {
+			public RatingAmount doInTransaction(TransactionStatus status) {
+
+				CaseRating rating = caseRatingDao.findBy(cas, userName);
+				if(rating == null){
+					rating = new CaseRating();
+					rating.setCaseId(cas.getId());
+					rating.setUserName(userName);
+				}
+				rating.setAmount(amount);
+				caseRatingDao.saveOrUdate(rating);
+
+				RatingAmount ratingAmount = caseRatingDao.countAverage(cas);
+				caseRecordDao.updateAmount(Type.Rating, cas, ratingAmount.getAmount());
+
+				return ratingAmount;
+			}
+		});
+	}
+
 	public void setCaseDao(ICaseDao caseDao) {
 		this.caseDao = caseDao;
 	}
@@ -90,4 +119,11 @@ public class CaseManager extends AbstractManager {
 		this.caseTagDao = caseTagDao;
 	}
 
+	public void setCaseRecordDao(ICaseRecordDao caseRecordDao) {
+		this.caseRecordDao = caseRecordDao;
+	}
+
+	public void setCaseRatingDao(ICaseRatingdDao caseRatingdDao) {
+		this.caseRatingDao = caseRatingdDao;
+	}
 }

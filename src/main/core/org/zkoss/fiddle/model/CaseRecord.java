@@ -30,7 +30,8 @@ public class CaseRecord implements Serializable,IRenderCase{
 	private static final long serialVersionUID = -2427044850941659111L;
 
 	public enum Type {
-		View(0), Like(1), RunTemp(2), Run(3), Download(4),Widget(5);
+		View(0), Like(1), RunTemp(2), Run(3), Download(4), Widget(5),
+		Rating(6) ;
 		private Integer type;
 		Type(int type) {
 			this.type = type;
@@ -149,7 +150,7 @@ public class CaseRecord implements Serializable,IRenderCase{
 		if(ver == null) return getCaseUrl();
 		return getToken() + "/" + getVersion() + "/v" + ver + getURLFriendlyTitle();
 	}
-	
+
 	public boolean equals(final Object other) {
 		if (!(other instanceof CaseRecord))
 			return false;

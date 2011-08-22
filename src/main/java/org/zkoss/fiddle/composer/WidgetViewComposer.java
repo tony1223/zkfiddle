@@ -7,9 +7,9 @@ import org.zkoss.codemirror.CodeEditor;
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
-import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.util.ResourceUtil;
@@ -63,7 +63,7 @@ public class WidgetViewComposer extends GenericForwardComposer {
 		}
 
 
-		ICase $case = ((ICase) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE));
+		Case $case = ((Case) requestScope.get(FiddleConstant.REQUEST_ATTR_CASE));
 		caseModel = new CaseModel($case, false, null);
 		self.setTitle("Sample Code:" + CaseUtil.getPublicTitle(caseModel.getCurrentCase()));
 
@@ -72,7 +72,7 @@ public class WidgetViewComposer extends GenericForwardComposer {
 			logger.debug($case.getToken() + ":" + $case.getVersion() + ":view");
 		}
 		manager.increase(CaseRecord.Type.Widget, $case);
-		
+
 		renderTabAndTabpanels(caseModel.getResources(), height);
 
 

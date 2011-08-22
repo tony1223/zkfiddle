@@ -14,11 +14,13 @@
 	</bean>
 
 	<bean id="caseDao" class="org.zkoss.fiddle.dao.CaseDaoImpl" parent="baseDao" />
-	
+
 	<bean id="caseRecordDao" class="org.zkoss.fiddle.dao.CaseRecordDaoImpl" parent="baseDao" />
-	
+
+	<bean id="caseRatingDao" class="org.zkoss.fiddle.dao.CaseRatingDaoImpl" parent="baseDao" />
+
 	<bean id="resourceDao" class="org.zkoss.fiddle.dao.ResourceDaoImpl"  parent="baseDao" />
-	
+
 	<bean id="userDao" class="org.zkoss.fiddle.dao.UserDaoImpl"  parent="baseDao" />
 
 	<bean id="tagDao" class="org.zkoss.fiddle.dao.TagDaoImpl"  parent="baseDao" />
@@ -26,11 +28,13 @@
 	<bean id="caseTagDao" class="org.zkoss.fiddle.dao.CaseTagDaoImpl"  parent="baseDao" />
 
 	<!-- services -->
-	
+
 	<bean id="caseManager" class="org.zkoss.fiddle.manager.CaseManager">
 		<property name="transactionManager" ref="transactionManager"/>
 		<property name="caseDao" ref="caseDao" />
 		<property name="resourceDao" ref="resourceDao" />
 		<property name="caseTagDao" ref="caseTagDao" />
+		<property name="caseRecordDao" ref="caseRecordDao" />
+		<property name="caseRatingDao" ref="caseRatingDao" />
 	</bean>
 </beans>

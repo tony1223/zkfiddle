@@ -45,13 +45,13 @@ public class CaseModel {
 	 */
 	private boolean sourceChange;
 
-	private ICase _case;
+	private Case _case;
 
 	private boolean newCase;
 
 	private List<Resource> resources;
 
-	public CaseModel(ICase pCase, boolean tryCase,String zulData) {
+	public CaseModel(Case pCase, boolean tryCase,String zulData) {
 		resources = new ArrayList<Resource>();
 
 		_case = pCase;
@@ -100,8 +100,8 @@ public class CaseModel {
 			}
 		});
 	}
-	
-	public void setCase(ICase pCase){
+
+	public void setCase(Case pCase){
 		resources.clear();
 
 		_case = pCase;
@@ -174,11 +174,11 @@ public class CaseModel {
 		return resources;
 	}
 
-	public void setCurrentCase(ICase pCase) {
+	public void setCurrentCase(Case pCase) {
 		_case = pCase;
 	}
 
-	public ICase getCurrentCase() {
+	public Case getCurrentCase() {
 		return _case;
 	}
 

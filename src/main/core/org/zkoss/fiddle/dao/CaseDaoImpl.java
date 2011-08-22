@@ -23,23 +23,11 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 	 */
 	private static final Logger logger = Logger.getLogger(CaseDaoImpl.class);
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.zkoss.usergroup.dao.ICaseDao#list()
-	 */
 	@SuppressWarnings("unchecked")
 	public List<Case> list() {
 		return getHibernateTemplate().find("from Case");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.zkoss.usergroup.dao.ICaseDao#saveOrUdate(org.zkoss.usergroup.model
-	 * .Case)
-	 */
 	public void saveOrUdate(Case m) {
 		super.saveOrUdateObject(m);
 
@@ -49,30 +37,15 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 		FiddleCache.RecentlyCases.removeAll();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.zkoss.usergroup.dao.ICaseDao#get(java.lang.Long)
-	 */
+
 	public Case get(Long id) {
 		return (Case) getHibernateTemplate().get(Case.class, id);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.zkoss.usergroup.dao.ICaseDao#remove(org.zkoss.usergroup.model.
-	 * Case)
-	 */
 	public void remove(Case m) {
 		throw new UnsupportedOperationException("Can't delete cases .");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.zkoss.usergroup.dao.ICaseDao#remove(java.lang.Long)
-	 */
 	public void remove(final Long id) {
 		throw new UnsupportedOperationException("Can't delete cases.");
 	}
