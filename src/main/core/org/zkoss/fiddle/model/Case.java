@@ -50,9 +50,9 @@ public class Case implements ICase, Serializable {
 	private Date createDate;
 
 	private String posterIP;
-	
+
 	private String authorName;
-	
+
 	private Boolean guest;
 
 	/**
@@ -173,14 +173,14 @@ public class Case implements ICase, Serializable {
 		return authorName;
 	}
 
-	
+
 	public void setAuthorName(String authorName) {
 		this.authorName = authorName;
 	}
 
 	@Column
 	public Boolean isGuest() {
-		return guest;
+		return guest == null ? true : guest;
 	}
 
 	public void setGuest(Boolean guest) {

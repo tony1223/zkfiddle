@@ -67,7 +67,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 
-		
+
 		Tag tag = ((Tag) requestScope.get(FiddleConstant.REQUEST_ATTR_TAG));
 		if(tag != null){
 			currentTag = tag.getName();
@@ -196,7 +196,6 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		}
 		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
 		List<Tag> list = tagDao.findPopularTags(20);
-		//FIXME update current tag after push state.
 		tagContainer.setTags(list, currentTag);
 	}
 
@@ -215,7 +214,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		Listitem item = recentlys.getSelectedItem();
 		//Note that we will set the model of listbox after every time if pushState enabled,
 		//if you select it very quickly , it might be null for selectedItem.
-		if(item != null){ 
+		if(item != null){
 			Case cr = (Case) item.getValue();
 			String newtitle = "ZK Fiddle - "+CaseUtil.getPublicTitle(cr);
 			BrowserState.go(CaseUtil.getSampleURL(cr), newtitle, cr);

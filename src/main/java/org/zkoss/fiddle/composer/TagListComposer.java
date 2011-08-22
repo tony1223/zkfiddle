@@ -8,16 +8,16 @@ import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
-import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
-import org.zkoss.fiddle.model.CaseRecord;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Tag;
-import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.TagUtil;
+import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.fiddle.visualmodel.TagCaseListVO;
 import org.zkoss.fiddle.visualmodel.TagCloudVO;
+import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -25,6 +25,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Caption;
 import org.zkoss.zul.Cell;
@@ -54,7 +55,7 @@ public class TagListComposer extends GenericForwardComposer {
 	private Tag currentTag;
 
 	private Caption tagCaption;
-	
+
 	private void setPage(int pageIndex, int pageSize) {
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 		tagCaseList.setModel(new ListModelList(caseTagDao.findCaseRecordsBy(currentTag, pageIndex, pageSize)));
@@ -77,10 +78,10 @@ public class TagListComposer extends GenericForwardComposer {
 		final int pageSize = 20;
 		setPage(1, pageSize);
 		tagCaption.setLabel("Tag: " + currentTag.getName());
-		
+
 
 		initTagListRenderer();
-		
+
 		tagCasePaging.addEventListener(ZulEvents.ON_PAGING, new EventListener() {
 
 			public void onEvent(Event event) throws Exception {
@@ -95,7 +96,7 @@ public class TagListComposer extends GenericForwardComposer {
 		tagCaseList.setRowRenderer(new RowRenderer() {
 
 			public void render(Row row, Object data) throws Exception {
-				final TagCaseListVO tclvo = (TagCaseListVO) data;
+				final TagCaseListVO tagListVO = (TagCaseListVO) data;
 
 				{
 					int index = row.getGrid().getRows().getChildren().indexOf(row) + 1;
@@ -109,21 +110,19 @@ public class TagListComposer extends GenericForwardComposer {
 
 				{
 					Div titlecont = new Div();
-					Hyperlink titlelink = new Hyperlink(CaseUtil.getPublicTitle(tclvo.getCaseRecord()));
-					titlelink.setHref(CaseUtil.getSampleURL(tclvo.getCaseRecord()));
-					
+					Hyperlink titlelink = new Hyperlink(CaseUtil.getPublicTitle(tagListVO.getCase()));
+					titlelink.setHref(CaseUtil.getSampleURL(tagListVO.getCase()));
+
 					titlelink.addEventListener("onClick", new EventListener() {
 						public void onEvent(Event event) throws Exception {
-							CaseRecord record = tclvo.getCaseRecord();
-							ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
-							ICase theCase = caseDao.get(record.getCaseId());
+							Case theCase = tagListVO.getCase();
 							BrowserState.go(CaseUtil.getSampleURL(theCase),
-									"ZK Fiddle - "+ CaseUtil.getPublicTitle(record), theCase);
+									"ZK Fiddle - "+ CaseUtil.getPublicTitle(theCase), theCase);
 						}
 					});
 					titlecont.appendChild(titlelink);
 
-					String token = tclvo.getCaseRecord().getToken() + "[" + tclvo.getCaseRecord().getVersion() + "]";
+					String token = tagListVO.getCase().getToken() + "[" + tagListVO.getCase().getVersion() + "]";
 					Label lbl = new Label(token);
 					lbl.setSclass("token");
 					titlecont.appendChild(lbl);
@@ -134,10 +133,10 @@ public class TagListComposer extends GenericForwardComposer {
 					// implements tag cloud
 					Div tagcont = new Div();
 					tagcont.setSclass("tag-container");
-					TagCloudVO tcvo = new TagCloudVO(tclvo.getTags());
+					TagCloudVO tcvo = new TagCloudVO(tagListVO.getTags());
 
-					for (int i = 0, size = tclvo.getTags().size(); i < size; ++i) {
-						final Tag tag = tclvo.getTags().get(i);
+					for (int i = 0, size = tagListVO.getTags().size(); i < size; ++i) {
+						final Tag tag = tagListVO.getTags().get(i);
 						Hyperlink taglink = new Hyperlink(tag.getName() +
 								(tag.getAmount() > 1 ? "(" + tag.getAmount() + ") " :"") );
 						if(currentTag.equals(tag)){
@@ -148,21 +147,36 @@ public class TagListComposer extends GenericForwardComposer {
 
 						final String url = TagUtil.getViewURL(tag);
 						taglink.setHref(url);
-						taglink.addEventListener("onClick", new EventListener() {
+						taglink.addEventListener(Events.ON_CLICK, new EventListener() {
 							public void onEvent(Event event) throws Exception {
-								BrowserState.go(url, "ZK Fiddle - Tag - "+ tag.getName() , tag);	
+								BrowserState.go(url, "ZK Fiddle - Tag - "+ tag.getName() , tag);
 							}
 						});
 						tagcont.appendChild(taglink);
 					}
 					row.appendChild(tagcont);
 				}
-
+				//TODO replace all "onClick" to Events.ON_CLICK
+				{
+					Label link = new Label(tagListVO.getCase().getAuthorName());
+					link.addEventListener(Events.ON_CLICK, new EventListener() {
+						public void onEvent(Event event) throws Exception {
+							UserVO userVO = new UserVO(tagListVO.getCase());
+							BrowserState.go(UserUtil.getUserView(userVO),
+									"ZK Fiddle - User - "+ userVO.getUserName(), userVO);
+						}
+					});
+					//FIXME using hyperlink to handle this after implemented the label mold.
+					row.appendChild(link);
+				}
+				{
+					row.appendChild(new Label(tagListVO.getCase().getCreateDate().toString()));
+				}
 			}
 		});
 
 	}
-	
+
 	private void initEventListenter(){
 		/**
 		 * browser state , for chrome and firefox only
@@ -178,19 +192,19 @@ public class TagListComposer extends GenericForwardComposer {
 					currentTag = _case;
 					setPage(1, pageSize);
 					tagCaption.setLabel("Tag: " + currentTag.getName());
-					
+
 					updateTopNavigation();
 
 					EventQueues.lookup(FiddleEventQueues.Tag).publish(
 							new Event(FiddleEvents.ON_TAG_UPDATE, null, currentTag.getName()));
-					
+
 					EventQueue queue = EventQueues.lookup(FiddleEventQueues.LeftRefresh);
-					queue.publish(new Event(FiddleEvents.ON_LEFT_REFRESH, null));					
+					queue.publish(new Event(FiddleEvents.ON_LEFT_REFRESH, null));
 				}
 			}
 		});
 	}
-	
+
 	private void updateTopNavigation(){
 		FiddleTopNavigationEventQueue.lookup().fireStateChange(State.Tag);
 	}

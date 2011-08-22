@@ -1,6 +1,7 @@
 package org.zkoss.fiddle.filter;
 
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,19 +44,19 @@ public class FiddleUserFilter implements Filter {
 		if(m.find()){
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_CONTENT_PAGE, FiddleConstant.REQUEST_VALUE_PAGE_TYPE_USER);
 			final boolean guest = (m.group(1) != null);
-			final String userName = m.group(2);
-			
+			final String userName = URLDecoder.decode(m.group(2),  FiddleConstant.CHARSET_UTF_8);
+
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_TITLE," - User - "+ userName);
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_USERNAME,userName);
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_GUEST,guest);
-			
+
 			request.setAttribute(FIDDLE_HOST_NAME, FiddleConfig.getHostName());
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("[FiddleUserFilter::doFilter]User Name=" + m.group(1));
 			}
 
-			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul" );			
+			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul" );
 
 		}else
 			chain.doFilter(request2, response);

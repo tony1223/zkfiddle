@@ -25,6 +25,7 @@ import org.zkoss.web.servlet.Servlets;
 
 public class FiddleTagFilter implements Filter {
 
+
 	private static final String FIDDLE_HOST_NAME = "fiddleHostName";
 
 	/**
@@ -52,7 +53,7 @@ public class FiddleTagFilter implements Filter {
 				chain.doFilter(request2, response);
 				return ;
 			}
-			
+
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_TITLE," - Tag - "+ t.getName());
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_TAG,t);
 			request.setAttribute(FIDDLE_HOST_NAME, FiddleConfig.getHostName());
@@ -61,7 +62,7 @@ public class FiddleTagFilter implements Filter {
 				logger.debug("[FiddleTagFilter::doFilter]Tag Name=" + m.group(1));
 			}
 
-			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul" );			
+			Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul" );
 
 		}else
 			chain.doFilter(request2, response);
@@ -72,9 +73,9 @@ public class FiddleTagFilter implements Filter {
 		if(mtag == null || "".equals(mtag.trim())){
 			return null;
 		}
-		
+
 		ITagDao tagDao = (ITagDao) SpringUtilz.getBean(ctx,"tagDao");
-		String tagName = URLDecoder.decode(mtag, "UTF-8");
+		String tagName = URLDecoder.decode(mtag, FiddleConstant.CHARSET_UTF_8);
 		return tagDao.getTag(tagName);
 
 	}

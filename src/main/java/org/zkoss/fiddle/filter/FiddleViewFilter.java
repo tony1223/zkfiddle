@@ -66,7 +66,7 @@ public class FiddleViewFilter implements Filter {
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					Servlets.forward(ctx, request, response, "/WEB-INF/_include/widgetnotfound.zul");
 				}else{
-					((HttpServletResponse) response).sendRedirect("/");
+					((HttpServletResponse) response).sendRedirect(FilterUtil.getContextPath(request2));
 				}
 				return;
 			}

@@ -6,6 +6,8 @@
 				<column label="#" width="2%" sclass="zkfiddle-index" />
 				<column label="Title" width="40%" />
 				<column label="Tags" />
+				<column label="Poster"/>
+				<column label="Post Date"/>
 			</columns>
 		</grid>
 		<paging id="tagCasePaging" />

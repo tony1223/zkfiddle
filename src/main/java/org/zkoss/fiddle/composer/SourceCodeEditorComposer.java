@@ -40,6 +40,7 @@ import org.zkoss.fiddle.util.TagUtil;
 import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
+import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.service.login.IReadonlyLoginService;
 import org.zkoss.service.login.IUser;
 import org.zkoss.social.facebook.event.LikeEvent;
@@ -162,12 +163,29 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 
 		//only fill the author field at begining.
-		String author = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
-		boolean emptyAuthor = (author == null || "".equals(author));
-		authorName.setValue((emptyAuthor) ? "guest" : author);
+		String cookieAuthor = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
+		boolean emptyAuthor = (cookieAuthor == null || "".equals(cookieAuthor));
+		authorName.setValue((emptyAuthor) ? "guest" : cookieAuthor);
+
+
+		author.addEventListener("onClick", new EventListener() {
+			public void onEvent(Event event) throws Exception {
+
+				UserVO userVO = new UserVO(author.getValue(), true);
+				BrowserState.go(UserUtil.getUserView(userVO),
+						"ZK Fiddle - Guest User - "+ userVO.getUserName(), userVO);
+			}
+		});
+		loginedAuthor.addEventListener("onClick", new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				UserVO userVO = new UserVO(loginedAuthor.getLabel(), false);
+				BrowserState.go(UserUtil.getUserView(userVO),
+						"ZK Fiddle - User - "+ userVO.getUserName(), userVO);
+			}
+		});
 
 		if(!UserUtil.isLogin(Sessions.getCurrent()) && !emptyAuthor){
-			loginWin$account.setValue(author);
+			loginWin$account.setValue(cookieAuthor);
 		}
 	}
 

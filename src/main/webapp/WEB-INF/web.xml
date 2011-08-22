@@ -99,7 +99,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>		
+	  </init-param>
 	</filter>
 
 	<filter>
@@ -116,7 +116,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>	  
+	  </init-param>
 	 </filter>
 
 	<filter>
@@ -133,7 +133,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>	  
+	  </init-param>
 	 </filter>
 
 	<filter>
@@ -199,7 +199,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>	  
+	  </init-param>
 	 </filter>
 
 	<filter>
@@ -216,7 +216,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>	  
+	  </init-param>
 	 </filter>
 
 	<filter>
@@ -233,7 +233,7 @@
 	  <init-param>
 	   <param-name>targetFilterLifecycle</param-name>
 	   <param-value>true</param-value>
-	  </init-param>	  
+	  </init-param>
 	 </filter>
 
 
@@ -324,6 +324,10 @@
         <filter-name>TagFilter</filter-name>
         <url-pattern>/tag/*</url-pattern>
     </filter-mapping>
+	<filter-mapping>
+		<filter-name>UserFilter</filter-name>
+		<url-pattern>/user/*</url-pattern>
+	</filter-mapping>
     <filter-mapping>
         <filter-name>DataFilter</filter-name>
         <url-pattern>/data/*</url-pattern>

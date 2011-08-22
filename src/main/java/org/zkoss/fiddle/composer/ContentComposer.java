@@ -4,8 +4,9 @@ import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.URLChangeEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Tag;
-import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
@@ -37,14 +38,22 @@ public class ContentComposer extends GenericForwardComposer {
 
 			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
 				// only work when updated to a case view.
-				if (evt.getData() == null ){
+
+				Object data = evt.getData();
+
+				if (data == null ){
 					throw new IllegalStateException("not expected type");
-				}else if(evt.getData() instanceof ICase) {
+				}else if(data instanceof Case) {
 					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_SOURCE;
-					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_CASE, evt.getData());
-				}else if(evt.getData() instanceof Tag){
+					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_CASE, data);
+				}else if(data instanceof Tag){
 					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_TAG;
-					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_TAG, evt.getData());
+					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_TAG, data);
+				}else if(data instanceof UserVO){
+					UserVO userVO = (UserVO) data;
+					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_USER;
+					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_GUEST, userVO.isGuest());
+					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_USERNAME, userVO.getUserName());
 				}else{
 					throw new IllegalStateException("not expected type");
 				}
@@ -55,6 +64,13 @@ public class ContentComposer extends GenericForwardComposer {
 	}
 
 	public String getContentURL() {
-		return FiddleConstant.REQUEST_VALUE_PAGE_TYPE_TAG.equals(currentState) ? "tag.zul" : "sourceedtior.zul";
+
+		if(FiddleConstant.REQUEST_VALUE_PAGE_TYPE_TAG.equals(currentState)){
+			return "tag.zul";
+		}else if(FiddleConstant.REQUEST_VALUE_PAGE_TYPE_SOURCE.equals(currentState)){
+			return "sourceedtior.zul";
+		}else{
+			return "user.zul";
+		}
 	}
 }

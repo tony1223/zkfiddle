@@ -11,6 +11,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.core.utils.CacheHandler;
 import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.CaseTag;
 import org.zkoss.fiddle.model.Tag;
@@ -112,8 +113,8 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 		throw new UnsupportedOperationException("unsupported");
 	}
 
-	private static String HQL_findCaseByTag = "select c from CaseRecord c, " + " CaseTag tc "
-			+ " where c.caseId = tc.caseId and c.type = 0 and tc.tagId = :tagId "+
+	private static String HQL_findCaseByTag = "select cas from CaseRecord c,Case cas, CaseTag tc "
+			+ " where  tc.tagId = :tagId and c.caseId = tc.caseId and c.type = :type and cas.id = tc.caseId "+
 			" order by c.amount desc";
 
 	/**
@@ -128,17 +129,18 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 					public List<TagCaseListVO> doInHibernate(final Session session) throws HibernateException, SQLException {
 						Query query = session.createQuery(HQL_findCaseByTag);
 						query.setLong("tagId", tag.getId());
+						query.setLong("type", CaseRecord.Type.View.value());
 						query.setResultTransformer(new BasicTransformerAdapter() {
 							private static final long serialVersionUID = 4466976604759893212L;
 
 							public Object transformTuple(Object[] tuple, String[] aliases) {
 								TagCaseListVO tcvo = new TagCaseListVO();
 
-								CaseRecord cas = (CaseRecord) tuple[0];
-								tcvo.setCaseRecord(cas);
+								Case cas = (Case) tuple[0];
+								tcvo.setCase(cas);
 								Query query = session.createQuery("select t from Tag t,CaseTag ct "
 										+ " where t.id = ct.tagId and ct.caseId = :caseId ");
-								query.setLong("caseId", cas.getCaseId());
+								query.setLong("caseId", cas.getId());
 								List<Tag> list = query.list();
 
 								tcvo.setTags(list);

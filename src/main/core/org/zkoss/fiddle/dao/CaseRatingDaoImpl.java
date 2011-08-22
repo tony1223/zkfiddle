@@ -86,11 +86,10 @@ public class CaseRatingDaoImpl extends AbstractDao implements ICaseRatingdDao {
 							private static final long serialVersionUID = 2558727927107253017L;
 
 							public Object transformTuple(Object[] tuple, String[] aliases) {
-								RatingAmount ra = new RatingAmount();
-								ra.setRatingUserAmount((Long)tuple[0]);
-								ra.setAmount((Long)tuple[1]);
-								// TODO Auto-generated method stub
-								return ra;
+								RatingAmount ratingAmount = new RatingAmount();
+								ratingAmount.setRatingUserAmount((Long)tuple[0]);
+								ratingAmount.setAmount((Long)tuple[1]);
+								return ratingAmount;
 							}
 						});
 						return (RatingAmount) query.uniqueResult();

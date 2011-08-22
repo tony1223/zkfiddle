@@ -7,6 +7,9 @@ import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 
 public class FilterUtil {
+	public static String getContextPath(ServletRequest request2) {
+		return ((HttpServletRequest) request2).getContextPath();
+	}
 
 	public static String getPath(ServletRequest request2) {
 		HttpServletRequest request = ((HttpServletRequest) request2);
