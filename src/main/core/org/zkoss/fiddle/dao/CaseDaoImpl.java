@@ -130,4 +130,29 @@ public class CaseDaoImpl extends AbstractDao implements ICaseDao {
 		})).intValue();
 	}
 
+	public List<Case> findByAuthor(final String author,final boolean guest,final int pageIndex,final int pageSize) {
+		return (List<Case>) getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
+
+			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("from Case where authorName = :authorName  and guest = :guest order by id desc");
+				query.setString("authorName", author);
+				query.setBoolean("guest", guest);
+				setPage(query,pageIndex,pageSize);
+				return query.list();
+			}
+		});
+	}
+
+	public Integer countByAuthor(final String author,final boolean guest) {
+		return ((Long) getHibernateTemplate().execute(new HibernateCallback<Long>() {
+
+			public Long doInHibernate(Session session) throws HibernateException, SQLException {
+				Query query = session.createQuery("select count(id) from Case where authorName = :authorName and guest = :guest");
+				query.setString("authorName", author);
+				query.setBoolean("guest", guest);
+				return (Long) query.uniqueResult();
+			}
+		})).intValue();
+	}
+
 }

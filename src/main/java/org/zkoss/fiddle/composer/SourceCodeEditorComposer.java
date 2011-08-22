@@ -243,6 +243,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					String ip = Executions.getCurrent().getRemoteAddr();
 
 					String autherName = authorName.getText();
+					autherName.replaceAll("[^a-zA-Z ]","");
 					boolean isGuest = true;
 
 					if(UserUtil.isLogin(Sessions.getCurrent())){
@@ -488,8 +489,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 
 	public void onChange$authorName(InputEvent evt){
-		String name = evt.getValue();
+		String name = evt.getValue().replaceAll("[\\\\/\\.&$#@:!?]","");
 		String newname = name.substring(0,name.length()>20?20:name.length());
+		authorName.setValue(newname);
 		CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME, newname, CookieUtil.AGE_ONE_YEAR);
 
 	}

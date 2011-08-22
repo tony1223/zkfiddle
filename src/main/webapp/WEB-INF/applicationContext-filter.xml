@@ -35,6 +35,8 @@
     </bean>
 
 	<bean id="tagFilter" class="org.zkoss.fiddle.filter.FiddleTagFilter" />
+	
+	<bean id="userFilter" class="org.zkoss.fiddle.filter.FiddleUserFilter" />
 
 	<bean id="authFilter" class="org.zkoss.fiddle.filter.FiddleAuthFilter" />
 

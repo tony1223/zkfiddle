@@ -203,6 +203,23 @@
 	 </filter>
 
 	<filter>
+	  <description>user filter</description>
+	  <display-name>UserFilter</display-name>
+	  <filter-name>UserFilter</filter-name>
+	  <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	  <init-param>
+	   <description>
+	   </description>
+	   <param-name>targetBeanName</param-name>
+	   <param-value>userFilter</param-value>
+	  </init-param>
+	  <init-param>
+	   <param-name>targetFilterLifecycle</param-name>
+	   <param-value>true</param-value>
+	  </init-param>	  
+	 </filter>
+
+	<filter>
 	  <description>status filter</description>
 	  <display-name>StatusFilter</display-name>
 	  <filter-name>StatusFilter</filter-name>
@@ -263,6 +280,11 @@
 	<filter-mapping>
 		<filter-name>hibernateFilter</filter-name>
 		<url-pattern>/tag/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>hibernateFilter</filter-name>
+		<url-pattern>/user/*</url-pattern>
 	</filter-mapping>
 
 	<!-- open session in View end -->

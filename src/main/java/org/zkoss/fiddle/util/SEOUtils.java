@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.zkoss.fiddle.model.Resource;
+import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IRenderCase;
 import org.zkoss.fiddle.seo.SEOContainer;
 import org.zkoss.fiddle.seo.SEOHandler;
@@ -37,6 +38,11 @@ public class SEOUtils {
 					appendTagStart(out, "div", "case");
 					appendTitle(out, 2, item.getTitle());
 					appendText(out, "version", item.getVersion());
+					
+					if(item instanceof ICase){
+						appendText(out, "author", ((ICase)item).getAuthorName());
+						appendText(out, "poserIP", ((ICase)item).getPosterIP());
+					}
 					appendText(out, "sample", item.getToken());
 					
 					if(item.getCreateDate() != null){
