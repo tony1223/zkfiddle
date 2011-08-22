@@ -32,10 +32,11 @@
 	    </property>
 	</bean>
 	
+	<bean id="sandboxManager" class="org.zkoss.fiddle.manager.FiddleSandboxManager" 
+		scope="singleton" />
+		
 	<import resource="applicationContext-dao.xml"/>
 	<import resource="applicationContext-filter.xml"/>
 
-
-	<bean id="sandboxManager" class="org.zkoss.fiddle.manager.FiddleSandboxManager" 
-		scope="singleton" />
+	<import resource="applicationContext-extra.xml"/>		
 </beans>

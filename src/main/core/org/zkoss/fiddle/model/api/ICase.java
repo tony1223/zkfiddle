@@ -46,7 +46,7 @@ public interface ICase extends IRenderCase{
 	
 	public void setAuthorName(String authorName) ;
 
-	public Long getAutherId() ;
+	public Boolean isGuest() ;
 
-	public void setAutherId(Long autherId) ;
+	public void setGuest(Boolean guest) ;
 }

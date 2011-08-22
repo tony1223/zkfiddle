@@ -17,7 +17,7 @@ public class NotificationUtil {
 	public static List<String> getNotifications(Session session) {
 		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>) session
-				.getAttribute(FiddleConstant.SESSION_NOTIFICATIONS);
+				.getAttribute(FiddleConstant.SESSION_ATTR_NOTIFICATIONS);
 		if (list == null)
 			return new ArrayList<String>();
 
@@ -26,11 +26,11 @@ public class NotificationUtil {
 
 	public static void updateNotifications(Session session,
 			List<String> notifications) {
-		session.setAttribute(FiddleConstant.SESSION_NOTIFICATIONS,
+		session.setAttribute(FiddleConstant.SESSION_ATTR_NOTIFICATIONS,
 				notifications);
 	}
 
 	public static void clearNotifications(Session session) {
-		session.removeAttribute(FiddleConstant.SESSION_NOTIFICATIONS);
+		session.removeAttribute(FiddleConstant.SESSION_ATTR_NOTIFICATIONS);
 	}
 }

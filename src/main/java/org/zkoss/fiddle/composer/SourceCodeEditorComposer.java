@@ -36,8 +36,11 @@ import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.util.NotificationUtil;
 import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.util.TagUtil;
+import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
+import org.zkoss.service.login.IReadonlyLoginService;
+import org.zkoss.service.login.IUser;
 import org.zkoss.social.facebook.event.LikeEvent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
@@ -92,12 +95,30 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	/* author start */
 	private Label author;
 
+	private Hyperlink loginedAuthor;
+	
 	private Textbox authorName;
 
 	private Div authorControl;
 
+	private Hyperlink loginedAuthorName;
+	
+	private Hyperlink logoffBtn;
+	
+	private Hyperlink loginBtn;
+	
+	private Window loginWin;
+	
 	/* author end */
 
+	/*login start*/
+	
+	private Textbox loginWin$account;
+	
+	private Textbox loginWin$password;
+	
+	/* login end */
+	
 	private Toolbarbutton download;
 
 	private Label poserIp;
@@ -137,6 +158,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		// if direct view , we handle it here.
 		initDirectlyView();
+
+		
+		//only fill the author field at begining.
+		String author = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
+		boolean emptyAuthor = (author == null || "".equals(author));
+		authorName.setValue((emptyAuthor) ? "guest" : author);
+		
+		if(!UserUtil.isLogin(Sessions.getCurrent()) && !emptyAuthor){
+			loginWin$account.setValue(author);
+		}
 	}
 
 	private void updateTopNavigation(){
@@ -209,11 +240,22 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 					String title = caseTitle.getValue().trim();
 					String ip = Executions.getCurrent().getRemoteAddr();
+					
+					String autherName = authorName.getText();
+					boolean isGuest = true;
+					
+					if(UserUtil.isLogin(Sessions.getCurrent())){
+						IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
+						autherName = user.getName();
+						isGuest = false;
+					}
 					ICase saved = caseManager.saveCase(
 							caseModel.getCurrentCase(),
-							caseModel.getResources(), title,
-							authorName.getText(),
+							caseModel.getResources(), 
+							title,
+							autherName,	isGuest,
 							saveEvt.isFork(), ip, cbSaveTag.isChecked());
+					
 					if (saved != null) {
 						List<String> notifications = NotificationUtil
 								.getNotifications(Sessions.getCurrent());
@@ -272,27 +314,58 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			runDirectlyView(viewRequestParam);
 		}
 	}
+	
+	private void updateAuthorLoginState(){
+
+		if(UserUtil.isLogin(Sessions.getCurrent())){
+			IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
+			loginedAuthorName.setLabel(user.getName());
+			loginedAuthorName.setVisible(true);
+			
+			authorName.setValue(user.getName());
+			authorName.setVisible(false);
+			logoffBtn.setVisible(true);
+			loginBtn.setVisible(false);
+		}else{
+			authorName.setVisible(true);
+			loginedAuthorName.setVisible(false);
+			logoffBtn.setVisible(false);
+			loginBtn.setVisible(true);			
+		}
+
+	}
 
 	private void updateCaseView(CaseModel caseModel) {
 		// FiddleBrowserStateEventQueue
 
 		boolean newCase = caseModel.isStartWithNewCase();
 
+		loginedAuthor.setVisible(false);
 		if (!newCase) {
 			ICase thecase = caseModel.getCurrentCase();
 			caseTitle.setValue(thecase.getTitle());
 			download.setHref(caseModel.getDownloadLink());
 			caseToolbar.setVisible(true);
 			poserIp.setValue(thecase.getPosterIP());
-			author.setValue(caseModel.getCurrentCase().getAuthorName());
-			String author = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
-			authorName.setValue((author == null || "".equals(author)) ? "guest" : author);
-			authorControl.setSclass("author-saved");
 			initTagEditor(thecase);
+			
+			if(thecase.isGuest()){
+				author.setVisible(true);
+				loginedAuthor.setVisible(false);
+			}else{
+				author.setVisible(false);
+				loginedAuthor.setVisible(true);
+			}
+			
+			author.setValue(thecase.getAuthorName());
+			loginedAuthor.setLabel(thecase.getAuthorName());
+			
+			authorControl.setSclass("author-saved");
 		}else{
 			authorControl.setSclass("author-new");
 		}
-
+		updateAuthorLoginState();
+		
 		sourcetabs.getChildren().clear();
 		sourcetabpanels.getChildren().clear();
 
@@ -312,7 +385,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private void initTagEditor(final ICase pCase) {
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		// TODO check if we need to cache this.
 		updateTags(caseTagDao.findTagsBy(pCase));
 
 		EventListener handler = new EventListener() {
@@ -476,6 +548,41 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		caseModel.ShowResult(sandbox);
 	}
 
+	public void onClick$loginBtn(Event evt){
+		loginWin.doOverlapped();
+		if(!"".equals(authorName.getValue()) 
+		   && !"guest".equals(authorName.getValue())		
+		){
+			loginWin$account.setValue(authorName.getValue());
+		}
+		loginWin$account.focus();
+	}
+	
+	public void onClick$logoffBtn(Event evt){
+		UserUtil.logout(Sessions.getCurrent());
+		this.updateAuthorLoginState();
+	}
+	
+	public void onCancel$loginWin(Event evt){
+		loginWin.setMinimized(true);
+	}
+	
+	public void onOK$loginWin(Event evt){
+		if(loginWin$account.isValid() && loginWin$password.isValid()){
+			IReadonlyLoginService loginService = (IReadonlyLoginService) SpringUtil.getBean("loginManager");
+
+			IUser user = loginService.verifyUser(loginWin$account.getValue(), loginWin$password.getValue());
+
+			if (user != null) {
+				UserUtil.login(Sessions.getCurrent(), user);
+				loginWin.setMinimized(true);
+				this.updateAuthorLoginState();
+			}else{
+				alert("account or password incorrect.");
+			}
+		}
+	}
+	
 	public void onAdd$sourcetabs(Event e) {
 		try {
 			// the reason for not using auto wire is that the insertWin is

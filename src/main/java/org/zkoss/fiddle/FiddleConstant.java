@@ -36,5 +36,10 @@ public class FiddleConstant {
 
 	public static final String AU_PUSH_STATE_CHANGE = "onStateChange";
 
-	public static final String SESSION_NOTIFICATIONS = "s_notification";
+	public static final String SESSION_ATTR_NOTIFICATIONS = "s_notification";
+	
+	public static final String SESSION_ATTR_USER = "s_user";
+	
+	public static final int ROLE_USER = 0 ;
+	public static final int ROLE_ADMIN = 1 ;
 }

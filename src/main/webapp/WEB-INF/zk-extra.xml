@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+	<!-- This one is for local environment configs , 
+	    Note that your change here won't apply to production,
+		
+		if you need to update production , tell admin to handle this. 
+	-->
+
 <zk>
-	<!-- this one is for specific site configs , like production only settings -->
     <library-property>
         <name>org.zkoss.fiddle.hostname</name>
         <value>http://localhost:9999/datahandler</value>

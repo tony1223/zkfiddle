@@ -23,7 +23,7 @@ public class CaseManager extends AbstractManager {
 	private ICaseTagDao caseTagDao;
 
 	public Case saveCase(final ICase _case, final List<Resource> resources, 
-			final String title, final String authorName,
+			final String title, final String authorName,final Boolean isGuest,
 			final boolean fork,final String posterIP,final boolean keepTag) {
 
 		return getTxTemplate().execute(new TransactionCallback<Case>() {
@@ -47,7 +47,7 @@ public class CaseManager extends AbstractManager {
 				if (_case != null) { // from a existing case
 					newCase.setFromId(_case.getId());
 				}
-
+				newCase.setGuest(isGuest);
 				newCase.setAuthorName(authorName);
 				newCase.setTitle(title);
 				newCase.setPosterIP(posterIP);

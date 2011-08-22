@@ -10,7 +10,12 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.zkoss.fiddle.dao.api.IUserDao;
 import org.zkoss.fiddle.model.User;
 
-
+/**
+ * Note the one is only used in local development,
+ * not production. we use forum service on production.
+ * @author tony
+ *
+ */
 public class UserDaoImpl extends AbstractDao implements IUserDao {
 
 	@SuppressWarnings("unchecked")
@@ -36,8 +41,8 @@ public class UserDaoImpl extends AbstractDao implements IUserDao {
 		return getHibernateTemplate().execute(new HibernateCallback<User>() {
 
 			public User doInHibernate(Session session) throws HibernateException, SQLException {
-				Query q = session.createQuery("from User where account = :account and password = :password");
-				q.setString("account", account);
+				Query q = session.createQuery("from User where name = :name and password = :password");
+				q.setString("name", account);
 				q.setString("password", password);
 				return (User) q.uniqueResult();
 			}
@@ -46,7 +51,6 @@ public class UserDaoImpl extends AbstractDao implements IUserDao {
 	}
 
 	public void remove(final Long id) {
-
 		getTxTemplate().execute(new HibernateTransacationCallback<Void>(getHibernateTemplate()) {
 			public Void doInHibernate(Session session) throws HibernateException, SQLException {
 				session.createQuery("delete from User where id = :id").setLong("id", id).executeUpdate();

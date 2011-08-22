@@ -1,0 +1,18 @@
+<zk>
+	<div apply="org.zkoss.fiddle.composer.LoginComposer">
+		<n:table>
+			<n:tr>
+				<n:td>Account</n:td>
+				<n:td>
+					<textbox id="account" constraint="no empty" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>Password</n:td>
+				<n:td>
+					<textbox id="password" type="password" constraint="no empty" />
+				</n:td>
+			</n:tr>
+		</n:table>
+	</div>
+</zk>

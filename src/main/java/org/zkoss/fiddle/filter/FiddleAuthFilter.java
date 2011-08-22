@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleAuthFilter implements Filter {
@@ -24,14 +25,15 @@ public class FiddleAuthFilter implements Filter {
 		
 		HttpSession s = httprequest.getSession(true);
 		
-		if( s.getAttribute("login") == null || (Boolean) s.getAttribute("login") != true){
-			Servlets.forward(ctx, httprequest, response, "/admin/login.zul");
-		}else{
+		
+		if( UserUtil.isAdmin(s) ){
 			if(httprequest.getRequestURL().indexOf("login.zul")!=-1){
 				((HttpServletResponse)response).sendRedirect("/admin/index.zul");
 			}else{
 				chain.doFilter(request, response);
 			}
+		}else{
+			Servlets.forward(ctx, httprequest, response, "/admin/login.zul");			
 		}
 	}
 

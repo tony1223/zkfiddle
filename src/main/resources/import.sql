@@ -1,1 +1,2 @@
-INSERT INTO USERS VALUES(1,'admin',TRUE,'2011-06-23 20:37:40','127.0.0.1','1234')
+INSERT INTO USERS VALUES(1,TRUE,'tonywang@zkoss.org','admin','admin',1);
+INSERT INTO USERS VALUES(2,TRUE,'tonywang@zkoss.org','user','user',0);

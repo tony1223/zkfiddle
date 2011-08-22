@@ -53,7 +53,7 @@ public class Case implements ICase, Serializable {
 	
 	private String authorName;
 	
-	private Long autherId;
+	private Boolean guest;
 
 	/**
 	 * A title for SEO friendly and data collection
@@ -179,13 +179,12 @@ public class Case implements ICase, Serializable {
 	}
 
 	@Column
-	public Long getAutherId() {
-		return autherId;
+	public Boolean isGuest() {
+		return guest;
 	}
 
-	
-	public void setAutherId(Long autherId) {
-		this.autherId = autherId;
+	public void setGuest(Boolean guest) {
+		this.guest = guest;
 	}
 
 }

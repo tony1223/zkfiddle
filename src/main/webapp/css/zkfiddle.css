@@ -215,7 +215,10 @@ span.text-bold {
 .author-new .author-input-container{
 	display:inline;
 }
-
+.author-login-ctrl{
+	margin-left:20px;
+	font-size:80%;
+}
 
 /***Taglist***/
 .zkfiddle-taglist .token{
