@@ -15,5 +15,7 @@
 		http://www.zkoss.org/2008/zkspring/core http://www.zkoss.org/2008/zkspring/core/zkspring-core.xsd">
 
 	
-	<bean id="loginManager" class="org.zkoss.zorum.service.ZorumReadonlyLoginService" />
+	<bean id="loginManager" class="org.zkoss.fiddle.manager.LocalUserManager">
+		<property name="userDao" ref="userDao" />
+	</bean>
 </beans>
