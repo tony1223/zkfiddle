@@ -15,6 +15,11 @@ import org.zkoss.zul.Include;
 
 public class ContentComposer extends GenericForwardComposer {
 
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 6526163707470169730L;
+
 	private Include contentInclude;
 
 	private String currentState;
@@ -43,10 +48,10 @@ public class ContentComposer extends GenericForwardComposer {
 				}else{
 					throw new IllegalStateException("not expected type");
 				}
-				
+
 				contentInclude.setSrc(getContentURL());
 			}
-		});		
+		});
 	}
 
 	public String getContentURL() {
