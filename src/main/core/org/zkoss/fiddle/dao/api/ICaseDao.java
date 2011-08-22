@@ -16,4 +16,9 @@ public interface ICaseDao extends IDao<Case> {
 	public List<Case> list(int pageIndex,int pageSize);
 
 	public Integer size();
+	
+	public List<Case> findByAuthor(String author,boolean isGuest,int pageIndex,int pageSize);
+	
+	public Integer countByAuthor(String author,boolean isGuest);
+	
 }

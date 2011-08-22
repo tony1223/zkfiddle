@@ -34,7 +34,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 	private static final long serialVersionUID = 6098592769427716897L;
 
 	public enum State {
-		Tag, New, Saved
+		Tag, New, Saved, User
 	}
 
 	private Div views;
@@ -84,7 +84,7 @@ public class TopNavigationComposer extends GenericForwardComposer {
 			forkBtn.setVisible(true);
 			views.setStyle("visibility:visible");
 			views.setVisible(true);
-		} else if (state == State.Tag) {
+		} else if (state == State.Tag || state == State.User) {
 			views.setStyle("visibility:hidden");
 		}
 	}

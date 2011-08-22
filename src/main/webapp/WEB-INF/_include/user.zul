@@ -1,0 +1,13 @@
+<zk>
+	<groupbox apply="org.zkoss.fiddle.composer.UserListComposer" closable="false">
+		<caption id="userCaption" label="Tag: " />
+		<grid sclass="zkfiddle-taglist" id="userCaseList" emptyMessage="Oops! No any cases related to this tag.">
+			<columns>
+				<column label="#" width="2%" sclass="zkfiddle-index" />
+				<column label="Title" width="40%" />
+				<column label="Tags" />
+			</columns>
+		</grid>
+		<paging id="userCasePaging" />
+	</groupbox>
+</zk>

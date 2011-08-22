@@ -1,6 +1,6 @@
 <zk>
 	<groupbox apply="org.zkoss.fiddle.composer.TagListComposer" closable="false">
-		<caption label="Tag: ${tag}" />
+		<caption id="tagCaption" />
 		<grid sclass="zkfiddle-taglist" id="tagCaseList" emptyMessage="Oops! No any cases related to this tag.">
 			<columns>
 				<column label="#" width="2%" sclass="zkfiddle-index" />

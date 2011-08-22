@@ -26,6 +26,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueue;
 import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
+import org.zkoss.zul.Caption;
 import org.zkoss.zul.Cell;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.Grid;
@@ -52,9 +53,12 @@ public class TagListComposer extends GenericForwardComposer {
 	private static final int pageSize = 20;;
 	private Tag currentTag;
 
+	private Caption tagCaption;
+	
 	private void setPage(int pageIndex, int pageSize) {
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 		tagCaseList.setModel(new ListModelList(caseTagDao.findCaseRecordsBy(currentTag, pageIndex, pageSize)));
+		tagCaseList.setAttribute("pagestart", (pageIndex-1) * pageSize );
 		tagCasePaging.setActivePage(pageIndex - 1);
 		tagCasePaging.setPageSize(pageSize);
 		tagCasePaging.setTotalSize(caseTagDao.countCaseRecordsBy(currentTag).intValue());
@@ -72,6 +76,8 @@ public class TagListComposer extends GenericForwardComposer {
 
 		final int pageSize = 20;
 		setPage(1, pageSize);
+		tagCaption.setLabel("Tag: " + currentTag.getName());
+		
 
 		initTagListRenderer();
 		
@@ -93,9 +99,10 @@ public class TagListComposer extends GenericForwardComposer {
 
 				{
 					int index = row.getGrid().getRows().getChildren().indexOf(row) + 1;
+					int pageStart = (Integer) row.getGrid().getAttribute("pagestart");
 					Cell cell = new Cell();
 					cell.setSclass("zkfiddle-index");
-					Label lbl = new Label(String.valueOf(index));
+					Label lbl = new Label(String.valueOf((pageStart+index)));
 					cell.appendChild(lbl);
 					row.appendChild(cell);
 				}
@@ -170,6 +177,8 @@ public class TagListComposer extends GenericForwardComposer {
 					Tag _case = (Tag) evt.getData();
 					currentTag = _case;
 					setPage(1, pageSize);
+					tagCaption.setLabel("Tag: " + currentTag.getName());
+					
 					updateTopNavigation();
 
 					EventQueues.lookup(FiddleEventQueues.Tag).publish(
