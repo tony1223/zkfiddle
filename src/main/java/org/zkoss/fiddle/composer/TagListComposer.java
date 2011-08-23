@@ -135,6 +135,7 @@ public class TagListComposer extends GenericForwardComposer {
 					tagcont.setSclass("tag-container");
 					TagCloudVO tcvo = new TagCloudVO(tagListVO.getTags());
 
+					//FIXME: The tag is blocked , fix this later
 					for (int i = 0, size = tagListVO.getTags().size(); i < size; ++i) {
 						final Tag tag = tagListVO.getTags().get(i);
 						Hyperlink taglink = new Hyperlink(tag.getName() +
@@ -171,7 +172,6 @@ public class TagListComposer extends GenericForwardComposer {
 					if(userVO.isGuest()){
 						link.setSclass("guest-user");
 					}
-					//FIXME using hyperlink to handle this after implemented the label mold.
 					row.appendChild(link);
 				}
 				{
