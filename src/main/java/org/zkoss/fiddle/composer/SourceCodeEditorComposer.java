@@ -19,6 +19,7 @@ import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
+import org.zkoss.fiddle.dao.api.ICaseRatingdDao;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.ITagDao;
@@ -26,6 +27,7 @@ import org.zkoss.fiddle.fiddletabs.Fiddletabs;
 import org.zkoss.fiddle.manager.CaseManager;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.Case;
+import org.zkoss.fiddle.model.CaseRating;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
@@ -40,7 +42,10 @@ import org.zkoss.fiddle.util.TagUtil;
 import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
+import org.zkoss.fiddle.visualmodel.RatingAmount;
 import org.zkoss.fiddle.visualmodel.UserVO;
+import org.zkoss.rating.Rating;
+import org.zkoss.rating.event.RatingEvent;
 import org.zkoss.service.login.IReadonlyLoginService;
 import org.zkoss.service.login.IUser;
 import org.zkoss.social.facebook.event.LikeEvent;
@@ -96,7 +101,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	/* author start */
 
-	private Hyperlink loginedAuthor;
+	private Hyperlink authorLink;
 
 	private Textbox authorName;
 
@@ -139,6 +144,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private Checkbox cbSaveTag;
 
+	/* for rating */
+	
+	private Rating caseRating;
+	
 	/* for notifications */
 	private Div notifications;
 
@@ -220,7 +229,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		boolean emptyAuthor = (cookieAuthor == null || "".equals(cookieAuthor));
 		authorName.setValue((emptyAuthor) ? "guest" : cookieAuthor);
 
-		loginedAuthor.addEventListener("onClick", new EventListener() {
+		authorLink.addEventListener("onClick", new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if(!caseModel.isStartWithNewCase()){
 					UserVO userVO = new UserVO(caseModel.getCurrentCase());
@@ -352,9 +361,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 	}
 
-	private void updateAuthorLoginState(){
-
+	private void updateLoginState(){
+		caseRating.setReadOnly(! UserUtil.isLogin(Sessions.getCurrent()));
+		
 		if(UserUtil.isLogin(Sessions.getCurrent())){
+			updateCaseRating(caseModel.getCurrentCase());			
 			IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
 			loginedAuthorName.setLabel(user.getName());
 			loginedAuthorName.setVisible(true);
@@ -364,6 +375,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			logoffBtn.setVisible(true);
 			loginBtn.setVisible(false);
 		}else{
+
+			caseRating.setRated(false);
+			
 			authorName.setVisible(true);
 			loginedAuthorName.setVisible(false);
 			logoffBtn.setVisible(false);
@@ -377,7 +391,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		boolean newCase = caseModel.isStartWithNewCase();
 
-		loginedAuthor.setVisible(false);
+		authorLink.setVisible(false);
 		if (!newCase) {
 			Case thecase = caseModel.getCurrentCase();
 			caseTitle.setValue(thecase.getTitle());
@@ -392,17 +406,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			caseToolbar.setVisible(true);
 			poserIp.setValue(thecase.getPosterIP());
 			updateTagEditor(thecase);
+			updateCaseRating(thecase);
 			
-			loginedAuthor.setHref(UserUtil.getUserView(thecase));
-			loginedAuthor.setVisible(true);
-			loginedAuthor.setSclass(thecase.isGuest()? "guest-user author":"author");
-			loginedAuthor.setLabel(thecase.getAuthorName());
+			authorLink.setHref(UserUtil.getUserView(thecase));
+			authorLink.setVisible(true);
+			authorLink.setSclass(thecase.isGuest()? "guest-user author":"author");
+			authorLink.setLabel(thecase.getAuthorName());
 
 			authorControl.setSclass("author-saved");
 		}else{
 			authorControl.setSclass("author-new");
 		}
-		updateAuthorLoginState();
+		updateLoginState();
 
 		sourcetabs.getChildren().clear();
 		sourcetabpanels.getChildren().clear();
@@ -420,8 +435,44 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		}
 	}
+	
+	public void onRating$caseRating(RatingEvent evt){
+		if(UserUtil.isLogin(Sessions.getCurrent()) && ! caseModel.isStartWithNewCase()){
+			IUser user = UserUtil.getLoginUser(Sessions.getCurrent()); 
+			CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
+			RatingAmount ratingResultAmount = caseManager.rankCase(caseModel.getCurrentCase(), user.getName(), evt.getValue());
+			caseRating.setValue((int) ratingResultAmount.getAmount());
+			caseRating.setRatedvalue(evt.getValue());
+		}
+	}
+	
+	private void updateCaseRating(final Case thecase){
 
-	private void updateTagEditor(final ICase pCase) {
+		caseRating.setReadOnly(! UserUtil.isLogin(Sessions.getCurrent()));
+		
+		ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+		CaseRecord record = caseRecordDao.get(CaseRecord.Type.Rating,thecase.getId());
+		caseRating.setRatedvalue(0);
+		caseRating.setRated(false);
+		if(record == null){
+			caseRating.setValue(0);
+		}else{
+			caseRating.setValue(record.getAmount().intValue());
+			
+			if(UserUtil.isLogin(Sessions.getCurrent())){
+				IUser user = UserUtil.getLoginUser(Sessions.getCurrent()); 
+				ICaseRatingdDao caseRatingDao = (ICaseRatingdDao) SpringUtil.getBean("caseRatingDao");
+				CaseRating userRating = caseRatingDao.findBy(thecase, user.getName());
+				if(userRating != null){
+					caseRating.setRatedvalue(userRating.getAmount().intValue());
+				}
+			}
+			
+		}
+		
+	}
+
+	private void updateTagEditor(final Case pCase) {
 		lastVal = null;
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 		updateTags(caseTagDao.findTagsBy(pCase));
@@ -584,7 +635,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	public void onClick$logoffBtn(Event evt){
 		UserUtil.logout(Sessions.getCurrent());
-		this.updateAuthorLoginState();
+		this.updateLoginState();
 	}
 
 	public void onCancel$loginWin(Event evt){
@@ -600,7 +651,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			if (user != null) {
 				UserUtil.login(Sessions.getCurrent(), user);
 				loginWin.setMinimized(true);
-				this.updateAuthorLoginState();
+				this.updateLoginState();
 			}else{
 				alert("account or password incorrect.");
 			}

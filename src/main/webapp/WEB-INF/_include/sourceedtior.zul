@@ -21,7 +21,7 @@
 			<separator bar="true" spacing="5px" />
 			<div id="authorControl" sclass="author-new">
 				Author Name: 
-				<hyperlink id="loginedAuthor" disableHref="true" sclass="author" />
+				<hyperlink id="authorLink" disableHref="true" sclass="author" />
 				<div sclass="author-input-container" >
 					<label value="New Author Name : " sclass="author-input-label" />
 					<textbox id="authorName" sclass="author-input" maxlength="20" cols="20" value="guest" />
@@ -31,9 +31,12 @@
 				</div>
 			</div>
 			<separator bar="true" spacing="5px" />
-			<tabbox height="100%" hflex="1" sclass="sourcetabs">
+			<tabbox height="380px" sclass="sourcetabs">
 				<fiddletabs id="sourcetabs" addable="true" />
 				<tabpanels id="sourcetabpanels" />
+			    <toolbar>
+    				<toolbarbutton id="download" label="Download" src="/img/archive.png"/>
+			    </toolbar>
 			</tabbox>
 			<script>
 				jq(".tab-textbox",".sourceCodeEditor").live("focus",function(e){
@@ -72,7 +75,8 @@
 						<textbox id="tagInput" cols="100" maxlength="96" />
 						(separate with comma ,ex. "grid,listbox,test" )
 					</hlayout>
-					<toolbarbutton id="download" label="Download Sample Archive" src="/img/archive.png"/>
+					
+					<rating id="caseRating" />
 					<div style="float:right;">
 						Posted from <label id="poserIp" />
 					</div>

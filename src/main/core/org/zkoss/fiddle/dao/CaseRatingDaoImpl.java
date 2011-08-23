@@ -79,7 +79,7 @@ public class CaseRatingDaoImpl extends AbstractDao implements ICaseRatingdDao {
 							throws HibernateException, SQLException {
 
 						Query query = session
-								.createQuery("select count(userName) and avg(amount) from CaseRating where caseId = :caseId ");
+								.createQuery("select count(userName),avg(amount) from CaseRating where caseId = :caseId ");
 
 						query.setLong("caseId", theCase.getId());
 						query.setResultTransformer(new BasicTransformerAdapter() {
@@ -88,7 +88,8 @@ public class CaseRatingDaoImpl extends AbstractDao implements ICaseRatingdDao {
 							public Object transformTuple(Object[] tuple, String[] aliases) {
 								RatingAmount ratingAmount = new RatingAmount();
 								ratingAmount.setRatingUserAmount((Long)tuple[0]);
-								ratingAmount.setAmount((Long)tuple[1]);
+								
+								ratingAmount.setAmount(((Double)tuple[1]).longValue());
 								return ratingAmount;
 							}
 						});

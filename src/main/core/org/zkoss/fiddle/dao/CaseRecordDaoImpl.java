@@ -97,6 +97,9 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	}
 
 	public boolean increase(final CaseRecord.Type type, final ICase _case) {
+		if( type == null) {
+			throw new IllegalArgumentException("type is null");
+		}
 		if (logger.isInfoEnabled()) {
 			logger.info("increase caserecord:"+type + ":" + _case.getCaseUrl());
 		}
@@ -142,6 +145,10 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	 * amount <= 0.
 	 */
 	public boolean decrease(final CaseRecord.Type type, final Long caseId) {
+		if( type == null) {
+			throw new IllegalArgumentException("type is null");
+		}
+		
 		if (logger.isDebugEnabled()) {
 			logger.debug("decrease(CaseRecord.Type, Long) - start");
 		}
@@ -180,6 +187,9 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 	public List<CaseRecord> listByType(final CaseRecord.Type type, final boolean excludeEmpty, final int pageIndex,
 			final int pageSize) {
+		
+		if( type == null) throw new IllegalArgumentException("type is null");
+		
 		if (logger.isDebugEnabled()) {
 			logger.debug("listByType(CaseRecord.Type, boolean, int, int) - start");
 		}
@@ -217,6 +227,9 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 	}
 
 	public Long countByType(final CaseRecord.Type type, final boolean excludeEmpty) {
+		
+		if( type == null) throw new IllegalArgumentException("type is null");
+		
 		if (logger.isDebugEnabled()) {
 			logger.debug("countByType(CaseRecord.Type, boolean) - start");
 		}
@@ -250,7 +263,15 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 	}
 
-	public CaseRecord get(final Integer type, final Long caseId) {
+	public CaseRecord get(final Type type, final Long caseId) {
+		if( type == null) {
+			throw new IllegalArgumentException("type is null");
+		}
+		
+		if( caseId == null) {
+			throw new IllegalArgumentException("caseId is null");
+		}
+		
 		if (logger.isDebugEnabled()) {
 			logger.debug("get(Integer, Long) - start");
 		}
@@ -263,7 +284,7 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 				}
 
 				Query query = session.createQuery("from CaseRecord where type = :type and caseId = :caseId");
-				query.setLong("type", type).setLong("caseId", caseId);
+				query.setLong("type", type.value()).setLong("caseId", caseId);
 				CaseRecord returnCaseRecord2 = (CaseRecord) query.uniqueResult();
 				if (logger.isDebugEnabled()) {
 					logger.debug("doInHibernate(Session) - end");
@@ -299,6 +320,11 @@ public class CaseRecordDaoImpl extends AbstractDao implements ICaseRecordDao {
 
 	@Override
 	public boolean updateAmount(final Type type,final  ICase _case,final Long amount) {
+		
+		if( type == null) {
+			throw new IllegalArgumentException("type is null");
+		}
+		
 		if (logger.isInfoEnabled()) {
 			logger.info("increase caserecord:"+type + ":" + _case.getCaseUrl());
 		}
