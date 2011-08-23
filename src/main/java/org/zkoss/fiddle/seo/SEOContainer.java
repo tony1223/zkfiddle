@@ -71,8 +71,8 @@ public class SEOContainer {
 		if (!isAchived) {
 			items.add(token);
 		} else {
-			if (logger.isEnabledFor(Level.WARN)) {
-				logger.warn(
+			if (logger.isEnabledFor(Level.DEBUG)) {
+				logger.debug(
 						"addToken(SEOToken) - SEO Container is archived , it will not take any effect to add a SEO Token. - token="
 								+ token, null);
 			}
