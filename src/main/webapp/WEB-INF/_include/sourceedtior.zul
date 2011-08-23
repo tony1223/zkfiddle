@@ -21,7 +21,6 @@
 			<separator bar="true" spacing="5px" />
 			<div id="authorControl" sclass="author-new">
 				Author Name: 
-				<label id="author" sclass="author" />
 				<hyperlink id="loginedAuthor" disableHref="true" sclass="author" />
 				<div sclass="author-input-container" >
 					<label value="New Author Name : " sclass="author-input-label" />

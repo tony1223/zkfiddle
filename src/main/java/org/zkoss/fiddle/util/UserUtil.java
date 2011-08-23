@@ -6,11 +6,16 @@ import java.net.URLEncoder;
 import javax.servlet.http.HttpSession;
 
 import org.zkoss.fiddle.FiddleConstant;
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.service.login.IUser;
 import org.zkoss.zk.ui.Session;
 
 public class UserUtil {
+
+	public static String getUserView(Case thecase){
+		return getUserView(thecase.getAuthorName(), thecase.isGuest());
+	}
 
 	public static String getUserView(UserVO uservo){
 		return getUserView(uservo.getUserName(), uservo.isGuest());

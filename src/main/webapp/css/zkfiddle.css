@@ -205,6 +205,12 @@ span.text-bold {
 }
 
 /***AuthorInput***/
+.guest-user{
+	color:black !important;
+	text-decoration:none !important;
+	font-weight:normal;
+}
+
 .author-saved .author-input-container{
 	float: right;
     margin-top: -7px;

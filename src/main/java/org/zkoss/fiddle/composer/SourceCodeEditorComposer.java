@@ -95,7 +95,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Div caseToolbar;
 
 	/* author start */
-	private Label author;
 
 	private Hyperlink loginedAuthor;
 
@@ -221,20 +220,13 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		boolean emptyAuthor = (cookieAuthor == null || "".equals(cookieAuthor));
 		authorName.setValue((emptyAuthor) ? "guest" : cookieAuthor);
 
-
-		author.addEventListener("onClick", new EventListener() {
-			public void onEvent(Event event) throws Exception {
-
-				UserVO userVO = new UserVO(author.getValue(), true);
-				BrowserState.go(UserUtil.getUserView(userVO),
-						"ZK Fiddle - Guest User - "+ userVO.getUserName(), userVO);
-			}
-		});
 		loginedAuthor.addEventListener("onClick", new EventListener() {
 			public void onEvent(Event event) throws Exception {
-				UserVO userVO = new UserVO(loginedAuthor.getLabel(), false);
-				BrowserState.go(UserUtil.getUserView(userVO),
-						"ZK Fiddle - User - "+ userVO.getUserName(), userVO);
+				if(!caseModel.isStartWithNewCase()){
+					UserVO userVO = new UserVO(caseModel.getCurrentCase());
+					BrowserState.go(UserUtil.getUserView(userVO),
+							"ZK Fiddle - User - "+ userVO.getUserName(), userVO);
+				}
 			}
 		});
 
@@ -387,7 +379,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		loginedAuthor.setVisible(false);
 		if (!newCase) {
-			ICase thecase = caseModel.getCurrentCase();
+			Case thecase = caseModel.getCurrentCase();
 			caseTitle.setValue(thecase.getTitle());
 			download.setHref(caseModel.getDownloadLink());
 
@@ -400,16 +392,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			caseToolbar.setVisible(true);
 			poserIp.setValue(thecase.getPosterIP());
 			updateTagEditor(thecase);
-
-			if(thecase.isGuest()){
-				author.setVisible(true);
-				loginedAuthor.setVisible(false);
-			}else{
-				author.setVisible(false);
-				loginedAuthor.setVisible(true);
-			}
-
-			author.setValue(thecase.getAuthorName());
+			
+			loginedAuthor.setHref(UserUtil.getUserView(thecase));
+			loginedAuthor.setVisible(true);
+			loginedAuthor.setSclass(thecase.isGuest()? "guest-user author":"author");
 			loginedAuthor.setLabel(thecase.getAuthorName());
 
 			authorControl.setSclass("author-saved");

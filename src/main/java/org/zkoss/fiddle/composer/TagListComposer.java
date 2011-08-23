@@ -158,14 +158,19 @@ public class TagListComposer extends GenericForwardComposer {
 				}
 				//TODO replace all "onClick" to Events.ON_CLICK
 				{
-					Label link = new Label(tagListVO.getCase().getAuthorName());
+
+					Hyperlink link = new Hyperlink(tagListVO.getCase().getAuthorName());
+					final UserVO userVO = new UserVO(tagListVO.getCase());
+					link.setHref(UserUtil.getUserView(userVO));
 					link.addEventListener(Events.ON_CLICK, new EventListener() {
 						public void onEvent(Event event) throws Exception {
-							UserVO userVO = new UserVO(tagListVO.getCase());
 							BrowserState.go(UserUtil.getUserView(userVO),
 									"ZK Fiddle - User - "+ userVO.getUserName(), userVO);
 						}
 					});
+					if(userVO.isGuest()){
+						link.setSclass("guest-user");
+					}
 					//FIXME using hyperlink to handle this after implemented the label mold.
 					row.appendChild(link);
 				}
