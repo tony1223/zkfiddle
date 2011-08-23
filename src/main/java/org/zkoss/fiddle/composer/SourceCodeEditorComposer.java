@@ -156,38 +156,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 		initEventQueue();
 
+		initTagEditor();
+
 		initSEOHandler(caseModel, desktop);
 
 		// if direct view , we handle it here.
 		initDirectlyView();
 
-
-		//only fill the author field at begining.
-		String cookieAuthor = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
-		boolean emptyAuthor = (cookieAuthor == null || "".equals(cookieAuthor));
-		authorName.setValue((emptyAuthor) ? "guest" : cookieAuthor);
+		initAuthor();
 
 
-		author.addEventListener("onClick", new EventListener() {
-			public void onEvent(Event event) throws Exception {
-
-				UserVO userVO = new UserVO(author.getValue(), true);
-				BrowserState.go(UserUtil.getUserView(userVO),
-						"ZK Fiddle - Guest User - "+ userVO.getUserName(), userVO);
-			}
-		});
-		loginedAuthor.addEventListener("onClick", new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				UserVO userVO = new UserVO(loginedAuthor.getLabel(), false);
-				BrowserState.go(UserUtil.getUserView(userVO),
-						"ZK Fiddle - User - "+ userVO.getUserName(), userVO);
-			}
-		});
-
-		if(!UserUtil.isLogin(Sessions.getCurrent()) && !emptyAuthor){
-			loginWin$account.setValue(cookieAuthor);
-		}
 	}
+
 
 	private void updateTopNavigation(){
 		if(caseModel.isStartWithNewCase()){
@@ -224,6 +204,42 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					"zkver");
 			Events.echoEvent(new Event("onShowTryCase", self, version));
 			return new CaseModel(_case, true, zulData);
+		}
+	}
+
+
+	private boolean isTryCase() {
+		Boolean tryCase = (Boolean) requestScope
+				.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
+		return tryCase != null && tryCase;
+	}
+
+
+	private void initAuthor(){
+		//only fill the author field at begining.
+		String cookieAuthor = CookieUtil.getCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME);
+		boolean emptyAuthor = (cookieAuthor == null || "".equals(cookieAuthor));
+		authorName.setValue((emptyAuthor) ? "guest" : cookieAuthor);
+
+
+		author.addEventListener("onClick", new EventListener() {
+			public void onEvent(Event event) throws Exception {
+
+				UserVO userVO = new UserVO(author.getValue(), true);
+				BrowserState.go(UserUtil.getUserView(userVO),
+						"ZK Fiddle - Guest User - "+ userVO.getUserName(), userVO);
+			}
+		});
+		loginedAuthor.addEventListener("onClick", new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				UserVO userVO = new UserVO(loginedAuthor.getLabel(), false);
+				BrowserState.go(UserUtil.getUserView(userVO),
+						"ZK Fiddle - User - "+ userVO.getUserName(), userVO);
+			}
+		});
+
+		if(!UserUtil.isLogin(Sessions.getCurrent()) && !emptyAuthor){
+			loginWin$account.setValue(cookieAuthor);
 		}
 	}
 
@@ -319,11 +335,20 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		});
 	}
+	private void initTagEditor(){
+		tagInput.addEventListener("onOK", new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				performUpdateTag();
+			}
+		});
+		tagInput.addEventListener("onCancel", new EventListener() {
 
-	private boolean isTryCase() {
-		Boolean tryCase = (Boolean) requestScope
-				.get(FiddleConstant.REQUEST_ATTR_TRY_CASE);
-		return tryCase != null && tryCase;
+			public void onEvent(Event event) throws Exception {
+				tagInput.setValue(lastVal);
+				setTagEditable(false);
+				event.stopPropagation();
+			}
+		});
 	}
 
 	private void initDirectlyView() {
@@ -365,9 +390,16 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			ICase thecase = caseModel.getCurrentCase();
 			caseTitle.setValue(thecase.getTitle());
 			download.setHref(caseModel.getDownloadLink());
+
+			//The invalidate is fixing the issue for #147,
+			//since we use client event to switch the view ,
+			//so I can't switch it back in server side ,
+			//it's better to invalidate it directly. by Tony.
+
+			caseToolbar.invalidate();
 			caseToolbar.setVisible(true);
 			poserIp.setValue(thecase.getPosterIP());
-			initTagEditor(thecase);
+			updateTagEditor(thecase);
 
 			if(thecase.isGuest()){
 				author.setVisible(true);
@@ -403,28 +435,42 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}
 	}
 
-	private void initTagEditor(final ICase pCase) {
+	private void updateTagEditor(final ICase pCase) {
+		lastVal = null;
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 		updateTags(caseTagDao.findTagsBy(pCase));
-
-		EventListener handler = new EventListener() {
-
-			public void onEvent(Event event) throws Exception {
-				performUpdateTag();
-			}
-		};
-
-		tagInput.addEventListener("onOK", handler);
-		tagInput.addEventListener("onCancel", new EventListener() {
-
-			public void onEvent(Event event) throws Exception {
-				tagInput.setValue(lastVal);
-				setTagEditable(false);
-				event.stopPropagation();
-			}
-		});
 	}
 
+	private void updateTags(List<Tag> list) {
+		tagContainer.getChildren().clear();
+		if (list.size() == 0) {
+			tagInput.setValue("");
+			tagEmpty.setVisible(true);
+			cbSaveTag.setVisible(false);
+		} else {
+			StringBuffer sb = new StringBuffer();
+			for (final Tag tag : list) {
+				Hyperlink lbl = new Hyperlink(tag.getName());
+				final String tagurl = TagUtil.getViewURL(tag);
+				lbl.setHref(tagurl);
+				lbl.addEventListener("onClick", new EventListener() {
+					public void onEvent(Event event) throws Exception {
+						BrowserState.go(tagurl, "ZK Fiddle - Tag "+tagurl, tag);
+					}
+				});
+				lbl.setSclass("case-tag");
+				sb.append(tag.getName() + ",");
+				tagContainer.appendChild(lbl);
+			}
+			if (sb.length() != 0) {
+				sb.deleteCharAt(sb.length() - 1);
+			}
+			tagInput.setValue(sb.toString());
+			lastVal = sb.toString();
+			tagEmpty.setVisible(false);
+			cbSaveTag.setVisible(true);
+		}
+	}
 	private void setTagEditable(boolean bool) {
 
 		// 2011/6/27:TonyQ
@@ -464,35 +510,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		setTagEditable(false);
 	}
 
-	private void updateTags(List<Tag> list) {
-		tagContainer.getChildren().clear();
-		if (list.size() == 0) {
-			tagEmpty.setVisible(true);
-			cbSaveTag.setVisible(false);
-		} else {
-			StringBuffer sb = new StringBuffer();
-			for (final Tag tag : list) {
-				Hyperlink lbl = new Hyperlink(tag.getName());
-				final String tagurl = TagUtil.getViewURL(tag);
-				lbl.setHref(tagurl);
-				lbl.addEventListener("onClick", new EventListener() {
-					public void onEvent(Event event) throws Exception {
-						BrowserState.go(tagurl, "ZK Fiddle - Tag "+tagurl, tag);
-					}
-				});
-				lbl.setSclass("case-tag");
-				sb.append(tag.getName() + ",");
-				tagContainer.appendChild(lbl);
-			}
-			if (sb.length() != 0) {
-				sb.deleteCharAt(sb.length() - 1);
-			}
-			tagInput.setValue(sb.toString());
-			lastVal = sb.toString();
-			tagEmpty.setVisible(false);
-			cbSaveTag.setVisible(true);
-		}
-	}
 
 	private void runDirectlyView(CaseRequest viewRequestParam) {
 
