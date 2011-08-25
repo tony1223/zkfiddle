@@ -2,6 +2,7 @@ package org.zkoss.fiddle.dao.api;
 
 import java.util.List;
 
+import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseTag;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
@@ -28,8 +29,11 @@ public interface ICaseTagDao extends IDao<CaseTag> {
 
 	public List<Tag> findTagsBy(ICase c);
 	
+	public List<Case> findCasesBy(Tag tag,final int pageIndex,final int pageSize);
 	
-	public List<TagCaseListVO> findCaseRecordsBy(Tag c, int pageIndex, int pageSize);
+	public List<Case> findCasesBy(String tagName,final int pageIndex,final int pageSize);
+	
+	public List<TagCaseListVO> findCaseListsBy(Tag c, int pageIndex, int pageSize, boolean loadTag);
 	
 	public Long countCaseRecordsBy(Tag tag);
 	

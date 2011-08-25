@@ -64,7 +64,7 @@ public class TagListComposer extends GenericForwardComposer {
 	private List<TagCaseListVO> updatePage(int pageIndex, int pageSize) {
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
 		
-		List<TagCaseListVO> list = caseTagDao.findCaseRecordsBy(currentTag, pageIndex, pageSize);
+		List<TagCaseListVO> list = caseTagDao.findCaseListsBy(currentTag, pageIndex, pageSize, true);
 		tagCaseList.setModel(new ListModelList(list));
 		tagCaseList.setAttribute("pagestart", (pageIndex-1) * pageSize );
 		tagCasePaging.setActivePage(pageIndex - 1);

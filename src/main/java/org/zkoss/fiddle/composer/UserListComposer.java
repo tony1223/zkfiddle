@@ -92,9 +92,7 @@ public class UserListComposer extends GenericForwardComposer {
 	private void updateUser(boolean initSEO){
 		List<Case> cases = updatePage(1, pageSize);
 		if(initSEO){
-			for(Case cas:cases){
-				SEOUtils.render(desktop, cas);
-			}
+			SEOUtils.render(desktop,"User "+userName +"'s case List", cases);
 		}
 		
 		userCaption.setLabel("User: "+ userName );

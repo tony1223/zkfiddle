@@ -7,30 +7,40 @@
 	<div apply="org.zkoss.fiddle.composer.LeftReferenceComposer" height="100%">
 		<tabbox sclass="leftlist" mold="accordion" vflex="1">
 			<tabs>
-				<tab id="recentlytab" label="Latest 10 Fiddles :" >
-				</tab>
-				<tab id="likestab" label="Top 10 Favorites :" />
+				<tab id="suggestedtab" label="Suggested fiddles :" />
+				<tab id="likestab" visible="false" label="Top 10 Favorites :" />
+				<tab id="recentlytab" label="Latest 10 Fiddles :" />				
 			</tabs>
 			<tabpanels>
 				<tabpanel>
-					<listbox id="recentlys" sclass="recentlys" nonselectableTags="" emptyMessage="No latest ? Need your contribute !" >
+					<listbox id="suggests" sclass="likes"  nonselectableTags="" emptyMessage="Coming soon" >
 						<listhead>
 							<listheader label="#" width="25px" />
 							<listheader label="Title" />
-							<listheader label="Version" width="60px" />
+							<listheader label="Version"  width="70px" />
 						</listhead>
 					</listbox>
-				</tabpanel>
-				<tabpanel>
+					<hyperlink id="moreSuggests" href="/tag/suggest" label="more..." style="float:right;" />
+				</tabpanel>			
+				<tabpanel visible="false" >
 					<!-- No Favorite ? Create your favorite fiddle now ! -->
 					<listbox id="likes" sclass="likes"  nonselectableTags="" emptyMessage="Coming soon" >
 						<listhead>
 							<listheader label="#" width="25px" />
 							<listheader label="Title" />
-							<listheader sclass="amount" label="Count" width="60px" />
+							<listheader sclass="amount" label="Count"  width="70px" />
 						</listhead>
 					</listbox>
 				</tabpanel>
+				<tabpanel>
+					<listbox id="recentlys" sclass="recentlys" nonselectableTags="" emptyMessage="No latest ? Need your contribute !" >
+						<listhead>
+							<listheader label="#" width="25px" />
+							<listheader label="Title" />
+							<listheader label="Version" width="70px" />
+						</listhead>
+					</listbox>
+				</tabpanel>				
 			</tabpanels>
 		</tabbox>
 		<groupbox sclass="leftabout left-tag" mold="3d" closable="false" >

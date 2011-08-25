@@ -310,6 +310,9 @@ pre.CodeMirror-cursor {
 	background: linear-gradient(left, #f5f5f5 0%,#dddddd 100%); /* W3C */
 }
 /** Left List **/
+.leftlist .z-tabpanel-accordion-cnt{
+	overflow-y:auto;
+}
 .leftlist div.z-listheader-cnt {
 	padding: 4px 5px;
 }

@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.zkoss.fiddle.model.Tag;
-import org.zkoss.fiddle.util.BrowserState;
+import org.zkoss.fiddle.util.BrowserStateUtil;
 import org.zkoss.fiddle.util.TagUtil;
 import org.zkoss.fiddle.visualmodel.TagCloudVO;
 import org.zkoss.zk.ui.IdSpace;
@@ -55,7 +55,7 @@ public class TagContainerDiv extends Div implements IdSpace {
 			taglink.addEventListener("onClick", new EventListener() {
 
 				public void onEvent(Event event) throws Exception {
-					BrowserState.go(url, "ZK Fiddle - Tag - " + tag.getName(), tag);
+					BrowserStateUtil.go(tag);
 				}
 			});
 

@@ -11,7 +11,7 @@ import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
 import org.zkoss.fiddle.core.utils.CacheHandler;
 import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseDao;
-import org.zkoss.fiddle.dao.api.ICaseRecordDao;
+import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.ITagDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
@@ -42,6 +42,8 @@ import ork.zkoss.fiddle.hyperlink.Hyperlink;
 public class LeftReferenceComposer extends GenericForwardComposer {
 
 
+	private static final String TAG_SUGGEST = "suggest";
+
 	/**
 	 *
 	 */
@@ -56,6 +58,13 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	private Listbox recentlys;
 
+	/* suggests */
+	private Listbox suggests;
+	
+	private Hyperlink moreSuggests;
+	
+	/* suggests end */
+
 	private Window popupContent;
 
 	private TagContainerDiv tagContainer;
@@ -66,40 +75,55 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-
-
-		Tag tag = ((Tag) requestScope.get(FiddleConstant.REQUEST_ATTR_TAG));
+		initListRenderers();
+		initEventListener();
+		Tag tag =(Tag) Executions.getCurrent().getAttribute(FiddleConstant.REQUEST_ATTR_TAG);
 		if(tag != null){
 			currentTag = tag.getName();
 		}
 
 		updateTags();
+//		updateLikeModel();
+		updateSuggestsModel();
+		updateRecentlyModel();
+
+	}
+	
+	private void initEventListener(){
+
 		EventQueues.lookup(FiddleEventQueues.Tag, true).subscribe(new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				if (FiddleEvents.ON_TAG_UPDATE.equals(event.getName())) {
 					if(event.getData() != null){
 						currentTag = (String) event.getData();
 					}
+					updateSuggestsModel();
 					updateTags();
 				}
 			}
 		});
+		EventQueues.lookup(FiddleEventQueues.LeftRefresh, true).subscribe(new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				updateRecentlyModel();
+//				updateLikeModel();
+				updateSuggestsModel();
+			}
+		});
 
-		updateLikeModel();
-
-		likes.setItemRenderer(new ListitemRenderer() {
-
+		
+	}
+	private void initListRenderers(){
+		suggests.setItemRenderer(new ListitemRenderer() {
 			public void render(Listitem item, Object data) throws Exception {
-				if (data instanceof CaseRecord) {
-					CaseRecord cr = (CaseRecord) data;
-					String title = (cr.getTitle() == null || "".equals(cr.getTitle().trim())) ? cr.getToken() : cr
+				if (data instanceof Case) {
+					Case theCase = (Case) data;
+					String title = (theCase.getTitle() == null || "".equals(theCase.getTitle().trim())) ? theCase.getToken() : theCase
 							.getTitle();
 					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
-
 					{
 						Listcell list = new Listcell();
 						Hyperlink titleItem = new Hyperlink(String.valueOf(title));
-						titleItem.setHref(CaseUtil.getSampleURL(cr));
+						titleItem.setHref(CaseUtil.getSampleURL(theCase));
 
 						//set disable to prevent default href behavior,
 						//since we will handle the url in onSelect event.
@@ -107,26 +131,46 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 						list.appendChild(titleItem);
 						item.appendChild(list);
 					}
-
-					Listcell list = new Listcell(String.valueOf(cr.getAmount()));
-					list.setSclass("amount");
-					item.appendChild(list);
-					item.setValue(cr);
+					item.appendChild(new Listcell(String.valueOf(theCase.getVersion())));
+					item.setValue(theCase);
 				} else {
 					throw new IllegalArgumentException("data should be CaseRecord!" + data);
 				}
 
 			}
 		});
-
-		updateRecentlyModel();
-		EventQueues.lookup(FiddleEventQueues.LeftRefresh, true).subscribe(new EventListener() {
-			public void onEvent(Event event) throws Exception {
-				updateRecentlyModel();
-				updateLikeModel();
-			}
-		});
-
+		//likes is not ready now , we will handle this after
+		//we apply googlplus.
+//		likes.setItemRenderer(new ListitemRenderer() {
+//
+//			public void render(Listitem item, Object data) throws Exception {
+//				if (data instanceof CaseRecord) {
+//					CaseRecord cr = (CaseRecord) data;
+//					String title = (cr.getTitle() == null || "".equals(cr.getTitle().trim())) ? cr.getToken() : cr
+//							.getTitle();
+//					item.appendChild(new Listcell(String.valueOf((item.getIndex() + 1))));
+//					{
+//						Listcell list = new Listcell();
+//						Hyperlink titleItem = new Hyperlink(String.valueOf(title));
+//						titleItem.setHref(CaseUtil.getSampleURL(cr));
+//
+//						//set disable to prevent default href behavior,
+//						//since we will handle the url in onSelect event.
+//						titleItem.setDisableHref(true);
+//						list.appendChild(titleItem);
+//						item.appendChild(list);
+//					}
+//
+//					Listcell list = new Listcell(String.valueOf(cr.getAmount()));
+//					list.setSclass("amount");
+//					item.appendChild(list);
+//					item.setValue(cr);
+//				} else {
+//					throw new IllegalArgumentException("data should be CaseRecord!" + data);
+//				}
+//
+//			}
+//		});
 		recentlys.setItemRenderer(new ListitemRenderer() {
 
 			public void render(Listitem item, Object data) throws Exception {
@@ -156,7 +200,7 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 
 			}
 		});
-
+		
 	}
 
 	private void updateRecentlyModel() {
@@ -169,25 +213,43 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		recentlys.setModel(new ListModelList(caseList));
 	}
 
-	private void updateLikeModel() {
-
-		List<CaseRecord> list = (List<CaseRecord>) FiddleCache.Top10liked.execute(new CacheHandler<List<CaseRecord>>() {
-
-			protected List<CaseRecord> execute() {
-				ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-				return caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
+	private void updateSuggestsModel() {
+		List<Case> list = (List<Case>) FiddleCache.CaseTag.execute(new CacheHandler<List<Case>>() {
+			protected List<Case> execute() {
+				ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
+				return caseTagDao.findCasesBy(TAG_SUGGEST, 1, 20);
 			}
-
 			protected String getKey() {
-				return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
+				return "suggestedTag:1:20";
 			}
 		});
 
 		if (list.size() != 0) {
-			SEOUtils.render(desktop, "Top 10 Favorites :", list);
+			SEOUtils.render(desktop, "Suggested case list:", list);
 		}
-		likes.setModel(new ListModelList(list));
+		moreSuggests.setVisible((list.size() >= 20));
+		suggests.setModel(new ListModelList(list));
 	}
+	
+//	private void updateLikeModel() {
+//
+//		List<CaseRecord> list = (List<CaseRecord>) FiddleCache.Top10liked.execute(new CacheHandler<List<CaseRecord>>() {
+//
+//			protected List<CaseRecord> execute() {
+//				ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+//				return caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
+//			}
+//
+//			protected String getKey() {
+//				return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
+//			}
+//		});
+//
+//		if (list.size() != 0) {
+//			SEOUtils.render(desktop, "Top 10 Favorites :", list);
+//		}
+//		likes.setModel(new ListModelList(list));
+//	}
 
 	private void updateTags() {
 		if (!"".equals(tagFilter.getValue().trim())) {
@@ -210,6 +272,17 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		searchTags(e.getValue());
 	}
 
+	public void onSelect$suggests(Event e) {
+		Listitem item = suggests.getSelectedItem();
+		//Note that we will set the model of listbox after every time if pushState enabled,
+		//if you select it very quickly , it might be null for selectedItem.
+		if(item != null){
+			Case theCase = (Case) item.getValue();
+			String newtitle = "ZK Fiddle - "+CaseUtil.getPublicTitle(theCase);
+			BrowserState.go(CaseUtil.getSampleURL(theCase), newtitle, theCase);
+		}
+	}
+	
 	public void onSelect$recentlys(Event e) {
 		Listitem item = recentlys.getSelectedItem();
 		//Note that we will set the model of listbox after every time if pushState enabled,

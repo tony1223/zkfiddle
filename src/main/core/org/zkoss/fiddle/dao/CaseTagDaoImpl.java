@@ -121,7 +121,7 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 	 * This one is also a time consuming one ,
 	 * need to find a better approach , I do believe I miss something here; :-(
 	 */
-	public List<TagCaseListVO> findCaseRecordsBy(final Tag tag,final int pageIndex,final int pageSize) {
+	public List<TagCaseListVO> findCaseListsBy(final Tag tag,final int pageIndex,final int pageSize,final boolean loadTag) {
 		return (List<TagCaseListVO>) FiddleCache.CaseTag.execute(new CacheHandler<List<TagCaseListVO>>() {
 			protected List<TagCaseListVO> execute() {
 				return getHibernateTemplate().execute(new HibernateCallback<List<TagCaseListVO>>() {
@@ -138,12 +138,14 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 
 								Case cas = (Case) tuple[0];
 								tcvo.setCase(cas);
-								Query query = session.createQuery("select t from Tag t,CaseTag ct "
-										+ " where t.id = ct.tagId and ct.caseId = :caseId ");
-								query.setLong("caseId", cas.getId());
-								List<Tag> list = query.list();
-
-								tcvo.setTags(list);
+								if(loadTag){
+									Query query = session.createQuery("select t from Tag t,CaseTag ct "
+											+ " where t.id = ct.tagId and ct.caseId = :caseId ");
+									query.setLong("caseId", cas.getId());
+									List<Tag> list = query.list();
+	
+									tcvo.setTags(list);
+								}
 								return tcvo;
 							}
 						});
@@ -169,6 +171,34 @@ public class CaseTagDaoImpl extends AbstractDao implements ICaseTagDao{
 				Query query = session.createQuery(HQL_countCaseByTag);
 				query.setLong("tagId", tag.getId());
 				return (Long) query.uniqueResult();
+			}
+		});
+	}
+
+	public List<Case> findCasesBy(final Tag tag,final int pageIndex,final int pageSize) {
+		return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
+
+			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query qu = session.createQuery("select c from Case c,CaseTag tc "
+						+ " where c.id = tc.caseId and tc.tagId = :tagId ");
+				qu.setLong("tagId", tag.getId());
+
+				setPage(qu,pageIndex,pageSize);
+				return qu.list();
+			}
+		});
+	}
+
+	public List<Case> findCasesBy(final String tagName,final int pageIndex,final int pageSize) {
+		return getHibernateTemplate().execute(new HibernateCallback<List<Case>>() {
+
+			public List<Case> doInHibernate(Session session) throws HibernateException, SQLException {
+				Query qu = session.createQuery("select c from Case c,CaseTag tc,Tag t "
+						+ " where t.name= :tagName and tc.tagId = t.id and c.id = tc.caseId order by tc.caseId desc");
+				qu.setString("tagName", tagName);
+
+				setPage(qu,pageIndex,pageSize);
+				return qu.list();
 			}
 		});
 	}
