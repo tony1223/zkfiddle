@@ -1,5 +1,7 @@
 package org.zkoss.fiddle.composer;
 
+import java.util.List;
+
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.TopNavigationComposer.State;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
@@ -12,6 +14,7 @@ import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
+import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
@@ -55,13 +58,18 @@ public class UserListComposer extends GenericForwardComposer {
 
 	private Caption userCaption;
 
-	private void setPage(int pageIndex, int pageSize) {
+	//TODO add page index to URL
+	private List<Case> updatePage(int pageIndex, int pageSize) {
 		ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
-		userCaseList.setModel(new ListModelList(caseDao.findByAuthor(userName, isGuest, pageIndex, pageSize)));
+		
+		List<Case> cases = caseDao.findByAuthor(userName, isGuest, pageIndex, pageSize);
+		userCaseList.setModel(new ListModelList(cases));
 		userCaseList.setAttribute("pagestart", (pageIndex - 1) * pageSize);
 		userCasePaging.setActivePage(pageIndex - 1);
 		userCasePaging.setPageSize(pageSize);
 		userCasePaging.setTotalSize(caseDao.countByAuthor(userName, isGuest));
+		
+		return cases;
 	}
 
 	public void doAfterCompose(Component comp) throws Exception {
@@ -77,12 +85,18 @@ public class UserListComposer extends GenericForwardComposer {
 		}
 		initUserList();
 		initEventQueue();
-		updateUser();
+		updateUser(true);
 
 	}
 
-	private void updateUser(){
-		setPage(1, pageSize);
+	private void updateUser(boolean initSEO){
+		List<Case> cases = updatePage(1, pageSize);
+		if(initSEO){
+			for(Case cas:cases){
+				SEOUtils.render(desktop, cas);
+			}
+		}
+		
 		userCaption.setLabel("User: "+ userName );
 	}
 
@@ -165,7 +179,7 @@ public class UserListComposer extends GenericForwardComposer {
 
 			public void onEvent(Event event) throws Exception {
 				PagingEvent pagingEvt = (PagingEvent) event;
-				setPage(pagingEvt.getActivePage() + 1, pageSize);
+				updatePage(pagingEvt.getActivePage() + 1, pageSize);
 			}
 		});
 	}
@@ -184,7 +198,7 @@ public class UserListComposer extends GenericForwardComposer {
 					userName = user.getUserName();
 					isGuest = user.isGuest();
 
-					updateUser();
+					updateUser(false);
 					updateTopNavigation();
 
 					EventQueues.lookup(FiddleEventQueues.Tag).publish(new Event(FiddleEvents.ON_TAG_UPDATE, null, null));

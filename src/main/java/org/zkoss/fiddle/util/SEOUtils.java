@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.zkoss.fiddle.model.Resource;
+import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.model.api.IRenderCase;
 import org.zkoss.fiddle.seo.SEOContainer;
@@ -29,6 +30,21 @@ public class SEOUtils {
 		}
 	}
 	
+	public static void render(Desktop desktop,final Tag tag) {
+		SEOContainer seo = SEOContainer.getInstance(desktop);
+		if (tag != null) {
+			seo.addHandler(new SEOHandler<Tag>(tag) {
+
+				public void resolve(Writer out, Tag item) throws IOException {
+					appendTagStart(out, "div", "tag");
+					appendLink(out, FiddleConfig.getHostName() +  TagUtil.getViewURL(tag), tag.getName());
+					appendText(out, "amount", tag.getAmount());
+					appendTagEnd(out, "div");
+				}
+			});
+		}
+	}
+	
 	public static void render(Desktop desktop, IRenderCase pCase) {
 		SEOContainer seo = SEOContainer.getInstance(desktop);
 		if (pCase != null) {
@@ -49,7 +65,7 @@ public class SEOUtils {
 						appendText(out, "create-date", item.getCreateDate());
 					}
 					
-					appendLink(out, CaseUtil.getSampleURL(item), "link");
+					appendLink(out, FiddleConfig.getHostName() + CaseUtil.getSampleURL(item), "link");
 					appendTagEnd(out, "div");
 				}
 			});

@@ -1,5 +1,7 @@
 package org.zkoss.fiddle.composer;
 
+import java.util.List;
+
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.TopNavigationComposer.State;
 import org.zkoss.fiddle.composer.event.FiddleEvents;
@@ -13,6 +15,7 @@ import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.util.BrowserState;
 import org.zkoss.fiddle.util.CaseUtil;
+import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.util.TagUtil;
 import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.fiddle.visualmodel.TagCaseListVO;
@@ -20,6 +23,7 @@ import org.zkoss.fiddle.visualmodel.TagCloudVO;
 import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
@@ -56,13 +60,18 @@ public class TagListComposer extends GenericForwardComposer {
 
 	private Caption tagCaption;
 
-	private void setPage(int pageIndex, int pageSize) {
+	//TODO add page index to URL
+	private List<TagCaseListVO> updatePage(int pageIndex, int pageSize) {
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
-		tagCaseList.setModel(new ListModelList(caseTagDao.findCaseRecordsBy(currentTag, pageIndex, pageSize)));
+		
+		List<TagCaseListVO> list = caseTagDao.findCaseRecordsBy(currentTag, pageIndex, pageSize);
+		tagCaseList.setModel(new ListModelList(list));
 		tagCaseList.setAttribute("pagestart", (pageIndex-1) * pageSize );
 		tagCasePaging.setActivePage(pageIndex - 1);
 		tagCasePaging.setPageSize(pageSize);
 		tagCasePaging.setTotalSize(caseTagDao.countCaseRecordsBy(currentTag).intValue());
+		
+		return list;
 	}
 
 	public void doAfterCompose(Component comp) throws Exception {
@@ -76,7 +85,10 @@ public class TagListComposer extends GenericForwardComposer {
 		}
 
 		final int pageSize = 20;
-		setPage(1, pageSize);
+		List<TagCaseListVO> cases = updatePage(1, pageSize);
+		
+		initSEOHandler(currentTag, cases, desktop);
+		
 		tagCaption.setLabel("Tag: " + currentTag.getName());
 
 
@@ -86,12 +98,13 @@ public class TagListComposer extends GenericForwardComposer {
 
 			public void onEvent(Event event) throws Exception {
 				PagingEvent pagingEvt = (PagingEvent) event;
-				setPage(pagingEvt.getActivePage() + 1, pageSize);
+				updatePage(pagingEvt.getActivePage() + 1, pageSize);
 			}
 		});
 		initEventListenter();
 
 	}
+	
 	private void initTagListRenderer(){
 		tagCaseList.setRowRenderer(new RowRenderer() {
 
@@ -195,7 +208,7 @@ public class TagListComposer extends GenericForwardComposer {
 				if (evt.getData() != null && evt.getData() instanceof Tag) {
 					Tag _case = (Tag) evt.getData();
 					currentTag = _case;
-					setPage(1, pageSize);
+					updatePage(1, pageSize);
 					tagCaption.setLabel("Tag: " + currentTag.getName());
 
 					updateTopNavigation();
@@ -209,7 +222,14 @@ public class TagListComposer extends GenericForwardComposer {
 			}
 		});
 	}
-
+	private static void initSEOHandler(Tag tag,List<TagCaseListVO> caseList, Desktop desktop) {
+		SEOUtils.render(desktop, tag);
+		
+		for(TagCaseListVO tagCase:caseList){
+			SEOUtils.render(desktop, tagCase.getCase());	
+		}
+		
+	}
 	private void updateTopNavigation(){
 		FiddleTopNavigationEventQueue.lookup().fireStateChange(State.Tag);
 	}
