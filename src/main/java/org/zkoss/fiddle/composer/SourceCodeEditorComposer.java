@@ -145,9 +145,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Checkbox cbSaveTag;
 
 	/* for rating */
-	
+
 	private Rating caseRating;
-	
+
 	/* for notifications */
 	private Div notifications;
 
@@ -363,9 +363,11 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 	private void updateLoginState(){
 		caseRating.setReadOnly(! UserUtil.isLogin(Sessions.getCurrent()));
-		
+
 		if(UserUtil.isLogin(Sessions.getCurrent())){
-			updateCaseRating(caseModel.getCurrentCase());			
+			if(!caseModel.isStartWithNewCase())
+				updateCaseRating(caseModel.getCurrentCase());
+
 			IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
 			loginedAuthorName.setLabel(user.getName());
 			loginedAuthorName.setVisible(true);
@@ -377,7 +379,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		}else{
 
 			caseRating.setRated(false);
-			
+
 			authorName.setVisible(true);
 			loginedAuthorName.setVisible(false);
 			logoffBtn.setVisible(false);
@@ -407,7 +409,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			poserIp.setValue(thecase.getPosterIP());
 			updateTagEditor(thecase);
 			updateCaseRating(thecase);
-			
+
 			authorLink.setHref(UserUtil.getUserView(thecase));
 			authorLink.setVisible(true);
 			authorLink.setSclass(thecase.isGuest()? "guest-user author":"author");
@@ -435,21 +437,21 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		}
 	}
-	
+
 	public void onRating$caseRating(RatingEvent evt){
 		if(UserUtil.isLogin(Sessions.getCurrent()) && ! caseModel.isStartWithNewCase()){
-			IUser user = UserUtil.getLoginUser(Sessions.getCurrent()); 
+			IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
 			CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
 			RatingAmount ratingResultAmount = caseManager.rankCase(caseModel.getCurrentCase(), user.getName(), evt.getValue());
 			caseRating.setValue((int) ratingResultAmount.getAmount());
 			caseRating.setRatedvalue(evt.getValue());
 		}
 	}
-	
+
 	private void updateCaseRating(final Case thecase){
 
 		caseRating.setReadOnly(! UserUtil.isLogin(Sessions.getCurrent()));
-		
+
 		ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 		CaseRecord record = caseRecordDao.get(CaseRecord.Type.Rating,thecase.getId());
 		caseRating.setRatedvalue(0);
@@ -458,18 +460,18 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			caseRating.setValue(0);
 		}else{
 			caseRating.setValue(record.getAmount().intValue());
-			
+
 			if(UserUtil.isLogin(Sessions.getCurrent())){
-				IUser user = UserUtil.getLoginUser(Sessions.getCurrent()); 
+				IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
 				ICaseRatingdDao caseRatingDao = (ICaseRatingdDao) SpringUtil.getBean("caseRatingDao");
 				CaseRating userRating = caseRatingDao.findBy(thecase, user.getName());
 				if(userRating != null){
 					caseRating.setRatedvalue(userRating.getAmount().intValue());
 				}
 			}
-			
+
 		}
-		
+
 	}
 
 	private void updateTagEditor(final Case pCase) {
