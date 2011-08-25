@@ -262,7 +262,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 							.getRenderer(resource.getType());
 					render.appendSourceTab(sourcetabs, sourcetabpanels,
 							resource);
-
+					sourceQueue.fireResourceChanged(resource,Type.Modified);
 					((Tab) sourcetabs.getLastChild()).setSelected(true);
 				}
 			});
