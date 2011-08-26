@@ -20,14 +20,14 @@
 			</div>
 			<separator bar="true" spacing="5px" />
 			<div id="authorControl" sclass="author-new">
-				Author Name: 
+				Author Name:
 				<hyperlink id="authorLink" disableHref="true" sclass="author" />
 				<div sclass="author-input-container" >
 					<label value="New Author Name : " sclass="author-input-label" />
 					<textbox id="authorName" sclass="author-input" maxlength="20" cols="20" value="guest" />
 					<hyperlink id="loginedAuthorName" disableHref="true" sclass="author-input" />
-					<hyperlink id="logoffBtn" disableHref="true" sclass="author-login-ctrl"  label="Log-off" />					
-					<hyperlink id="loginBtn" disableHref="true" sclass="author-login-ctrl" label="Login" />									
+					<hyperlink id="logoffBtn" disableHref="true" sclass="author-login-ctrl"  label="Log-off" />
+					<hyperlink id="loginBtn" disableHref="true" sclass="author-login-ctrl" label="Login" />
 				</div>
 			</div>
 			<separator bar="true" spacing="5px" />
@@ -75,7 +75,7 @@
 						<textbox id="tagInput" cols="100" maxlength="96" />
 						(separate with comma ,ex. "grid,listbox,test" )
 					</hlayout>
-					
+
 					<rating id="caseRating" />
 					<div style="float:right;">
 						Posted from <label id="poserIp" />
@@ -86,7 +86,7 @@
 		<div>
 			<window id="loginWin" minimizable="true" minimized="true"
 				title="Login" width="420px" height="150px" border="normal" position="center, center">
-				Used ZK Forum account to login: 
+				Used ZK Forum account to login:
 				<n:table>
 					<n:tr>
 						<n:td>Account</n:td>
@@ -103,7 +103,7 @@
 				</n:table>
 				<button label="Login" forward="onClick=loginWin.onOK"/>
 				<button label="cancel" onClick="loginWin.setMinimized(true);" />
-			</window>		
+			</window>
 		</div>
 		<div fulfill="sourcetabs.onAdd" >
 			<window id="insertWin" apply="org.zkoss.fiddle.composer.SourceCodeEditorInsertComposer" minimizable="true" minimized="true"
