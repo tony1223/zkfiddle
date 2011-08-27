@@ -313,6 +313,12 @@ pre.CodeMirror-cursor {
 .leftlist .z-tabpanel-accordion-cnt{
 	overflow-y:auto;
 }
+.ie7 .leftabout,.ie6 .leftabout{
+	position:relative;
+	background:white;
+	z-index:100;
+}
+
 .leftlist div.z-listheader-cnt {
 	padding: 4px 5px;
 }
