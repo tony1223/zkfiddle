@@ -31,7 +31,7 @@
 				</div>
 			</div>
 			<separator bar="true" spacing="5px" />
-			<tabbox height="380px" sclass="sourcetabs">
+			<tabbox height="440px" sclass="sourcetabs">
 				<fiddletabs id="sourcetabs" addable="true" />
 				<tabpanels id="sourcetabpanels" />
 			    <toolbar>
