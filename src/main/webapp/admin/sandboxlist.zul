@@ -1,0 +1,21 @@
+<?page title="ZK Fiddle Backend" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="client" xmlns:n="native" >
+
+	<div style="float:right"> 
+		<include src="/WEB-INF/_admin/_userbar.zul" />
+	</div>
+	
+	<div apply="org.zkoss.fiddle.admin.composer.CaseListComposer">
+		<grid id="cases">
+			<columns>
+				<column label="#" />
+				<column label="Ttile" />
+				<column label="Version" />
+				<column label="Create Date" />
+			</columns>
+		</grid>
+		<paging id="casesPaging" activePage="0" pageSize="30" />
+	</div>
+	
+	<include src="/WEB-INF/_include/footer.zul" />
+</zk>

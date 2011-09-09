@@ -13,9 +13,9 @@ import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 /**
  * We store this data in system wild and not persisting, this should be used as
  * a singleton
- * 
+ *
  * @author tony
- * 
+ *
  */
 public class FiddleSandboxManager {
 
@@ -23,7 +23,7 @@ public class FiddleSandboxManager {
 
 	private Map<String, List<FiddleSandbox>> sandboxesByVersion = new TreeMap<String, List<FiddleSandbox>>();
 
-	private String latest = "5.0.7.1";
+	private String latest = "5.0.8";
 
 	private long checkTime = 1000 * 60 * 5;
 
@@ -39,7 +39,7 @@ public class FiddleSandboxManager {
 			};
 			sandbox.setLastUpdate(new Date());
 			sandbox.setName("localtest");
-			sandbox.setVersion("5.0.7.1");
+			sandbox.setVersion("5.0.8");
 			sandbox.setPath("http://localhost/test1");
 			this.addFiddleSandbox(sandbox);
 
@@ -52,7 +52,7 @@ public class FiddleSandboxManager {
 			};
 			sandbox.setLastUpdate(new Date());
 			sandbox.setName("localtest2");
-			sandbox.setVersion("5.0.6");
+			sandbox.setVersion("5.0.7.1");
 			sandbox.setPath("http://localhost/test2");
 			this.addFiddleSandbox(sandbox);
 		}
@@ -68,12 +68,12 @@ public class FiddleSandboxManager {
 	}
 
 	public FiddleSandbox getFiddleSandboxByVersion(String version) {
-		
+
 		if(version == null)
 			return null;
-		
+
 		version = version.trim();
-		
+
 		for (FiddleSandbox fi : getVersionList(version)) {
 			FiddleSandbox sandbox = checkDate(fi);
 			if (sandbox != null)
@@ -106,12 +106,13 @@ public class FiddleSandboxManager {
 		return os;
 	}
 
-	private void removeSandbox(String hash) {
+	public void removeSandbox(String hash) {
 
 		FiddleSandbox ins = sandboxesByHash.get(hash);
-		sandboxesByHash.remove(hash);
-
-		getVersionList(ins.getZKVersion()).remove(ins);
+		if(ins != null){
+			sandboxesByHash.remove(hash);
+			getVersionList(ins.getZKVersion()).remove(ins);
+		}
 
 	}
 
@@ -125,7 +126,6 @@ public class FiddleSandboxManager {
 		getVersionList(sandbox.getZKVersion()).add(sandbox);
 
 		Date d = new Date();
-		long checkTime = 1000 * 60 * 5;
 
 		for (String hash : sandboxesByHash.keySet()) {
 
