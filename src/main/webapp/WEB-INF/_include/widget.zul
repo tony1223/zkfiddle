@@ -9,9 +9,9 @@
 		border="normal">
 		<caption>
 			<div sclass="operations">
-				<button id="downloadBtn" target="_blank" image="/img/download.png" />
-				<button id="runBtn" target="_blank" image="/img/resultset_next.png" />
-				<button id="goBtn" target="_blank" src="/img/viewresult-newwindow.png" />
+				<button id="downloadBtn" tooltiptext="Download the archived sample" target="_blank" image="/img/download.png" />
+				<button id="runBtn" tooltiptext="Test the sample online." target="_blank" image="/img/resultset_next.png" />
+				<button id="goBtn" tooltiptext="Find this sample on ZK Fiddle." target="_blank" src="/img/viewresult-newwindow.png" />
 			</div>
 		</caption>
 		<tabbox id="resources" sclass="sourcetabs">
