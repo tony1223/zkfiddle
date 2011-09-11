@@ -54,29 +54,17 @@ public class SEOContainer {
 					logger.error("SEO processing ERROR:",e);
 			}
 		}
+		
+		items.clear();
 
-		isAchived = true;
-		items = null;
 	}
 
 	public List<ISEOHandler> getTokens() {
-		if (!isAchived) {
-			return Collections.unmodifiableList(items);
-		} else {
-			return null;
-		}
+		return Collections.unmodifiableList(items);
 	}
 
 	public void addHandler(ISEOHandler token) {
-		if (!isAchived) {
-			items.add(token);
-		} else {
-			if (logger.isEnabledFor(Level.DEBUG)) {
-				logger.debug(
-						"addToken(SEOToken) - SEO Container is archived , it will not take any effect to add a SEO Token. - token="
-								+ token, null);
-			}
-		}
+		items.add(token);
 	}
 
 	public static SEOContainer getInstance(Desktop desktop) {
