@@ -3,10 +3,10 @@
   "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
   "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
-	<!-- This one is for local environment configs , 
+	<!-- This one is for local environment configs ,
 	    Note that your change here won't apply to production,
-		
-		if you need to update production , tell admin to handle this. 
+
+		if you need to update production , tell admin to handle this.
 	-->
 <hibernate-configuration>
     <session-factory>
@@ -59,6 +59,7 @@
 		<mapping class="org.zkoss.fiddle.model.User" />
 		<mapping class="org.zkoss.fiddle.model.Tag" />
 		<mapping class="org.zkoss.fiddle.model.CaseTag" />
+		<mapping class="org.zkoss.fiddle.model.UserRememberToken" />
 
     </session-factory>
 

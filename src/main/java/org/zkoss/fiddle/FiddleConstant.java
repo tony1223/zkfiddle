@@ -9,6 +9,8 @@ public class FiddleConstant {
 
 	public static final String COOKIE_ATTR_AUTHOR_NAME = "author";
 
+	public static final String COOKIE_ATTR_USER_TOKEN = "utk";
+
 	public static final String REQUEST_ATTR_CASE = "__case";
 
 	public static final String REQUEST_ATTR_RUN_VIEW = "runview";
@@ -45,6 +47,8 @@ public class FiddleConstant {
 	public static final String SESSION_ATTR_NOTIFICATIONS = "s_notification";
 
 	public static final String SESSION_ATTR_USER = "s_user";
+
+	public static final String SESSION_ATTR_USER_TOKEN = "s_user_tk";
 
 	public static final String URL_DATA_CASE_VIEW = "caseView";
 

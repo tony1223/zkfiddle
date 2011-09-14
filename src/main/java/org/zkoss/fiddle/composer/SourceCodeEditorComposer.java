@@ -24,6 +24,7 @@ import org.zkoss.fiddle.dao.api.ICaseRatingdDao;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.ITagDao;
+import org.zkoss.fiddle.dao.api.IUserRememberTokenDao;
 import org.zkoss.fiddle.fiddletabs.Fiddletabs;
 import org.zkoss.fiddle.manager.CaseManager;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
@@ -32,6 +33,7 @@ import org.zkoss.fiddle.model.CaseRating;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
+import org.zkoss.fiddle.model.UserRememberToken;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.notification.Notification;
 import org.zkoss.fiddle.util.BrowserStateUtil;
@@ -120,6 +122,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	/* author end */
 
 	/*login start*/
+
+	private Checkbox loginWin$rembember;
 
 	private Textbox loginWin$account;
 
@@ -653,6 +657,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 
 	public void onClick$logoffBtn(Event evt){
+
+		UserRememberToken remember = UserUtil.getLoginUserToken(Sessions.getCurrent());
+		if(remember != null){
+			CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_USER_TOKEN,"", 0);
+			IUserRememberTokenDao userRememberTokenDao = (IUserRememberTokenDao) SpringUtil.getBean("userRememberTokenDao");
+			userRememberTokenDao.remove(remember);
+		}
+
 		UserUtil.logout(Sessions.getCurrent());
 		this.updateLoginState();
 	}
@@ -668,7 +680,13 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			IUser user = loginService.verifyUser(loginWin$account.getValue(), loginWin$password.getValue());
 
 			if (user != null) {
-				UserUtil.login(Sessions.getCurrent(), user);
+				UserRememberToken token = null;
+				if(loginWin$rembember.isChecked()){
+					IUserRememberTokenDao userRememberTokenDao = (IUserRememberTokenDao) SpringUtil.getBean("userRememberTokenDao");
+					token = userRememberTokenDao.genereate(user.getName());
+					CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_USER_TOKEN, token.getToken(), CookieUtil.AGE_ONE_YEAR);
+				}
+				UserUtil.login(Sessions.getCurrent(), user, token);
 				loginWin.setMinimized(true);
 				this.updateLoginState();
 			}else{
