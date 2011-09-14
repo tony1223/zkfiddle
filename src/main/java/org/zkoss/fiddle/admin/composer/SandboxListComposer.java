@@ -27,37 +27,49 @@ public class SandboxListComposer extends GenericForwardComposer {
 	private Grid sampleboxs;
 
 
-	public void doAfterCompose(Component comp) throws Exception {
-		super.doAfterCompose(comp);
+	public void updateList(){
 		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil
 		.getBean("sandboxManager");
-		Collection<FiddleSandbox> acounts = sandboxManager.listFiddleInstances().values();
-
+		Collection<FiddleSandbox> acounts = sandboxManager
+				.listFiddleInstances().values();
 		sampleboxs.setModel(new ListModelList(acounts));
+	}
+
+	public void doAfterCompose(Component comp) throws Exception {
+		super.doAfterCompose(comp);
+		updateList();
 
 		sampleboxs.setRowRenderer(new RowRenderer() {
+
+			@SuppressWarnings("deprecation")
 
 			public void render(Row row, Object data) throws Exception {
 				final FiddleSandbox sandbox = (FiddleSandbox) data;
 
 				int rowIndex = row.getParent().getChildren().indexOf(row);
-				row.appendChild(new Label(String.valueOf(rowIndex)));
+
 
 				row.appendChild(new Label(sandbox.getZKVersion()));
 				row.appendChild(new Label(sandbox.getPath()));
 
-				row.appendChild(new Label(sandbox.getHash()));
-				row.appendChild(new Label(sandbox.getLastUpdate().toLocaleString()));
+
+				row.appendChild(new Label(sandbox.getLastUpdate()
+						.toLocaleString()));
 
 				{
 					Button remove = new Button("Remove");
-					remove.addEventListener(Events.ON_CLICK,new EventListener() {
-						public void onEvent(Event event) throws Exception {
-							FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil
-							.getBean("sandboxManager");
-							sandboxManager.removeSandbox(sandbox.getHash());
-						}
-					});
+					remove.addEventListener(Events.ON_CLICK,
+							new EventListener() {
+								public void onEvent(Event event)
+										throws Exception {
+									FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil
+											.getBean("sandboxManager");
+									sandboxManager.removeSandbox(sandbox
+											.getHash());
+									updateList();
+								}
+							});
+
 					row.appendChild(remove);
 				}
 

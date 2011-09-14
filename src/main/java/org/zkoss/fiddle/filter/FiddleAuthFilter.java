@@ -2,10 +2,7 @@ package org.zkoss.fiddle.filter;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -16,33 +13,25 @@ import javax.servlet.http.HttpSession;
 import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.web.servlet.Servlets;
 
-public class FiddleAuthFilter implements Filter {
+public class FiddleAuthFilter extends FiddleViewBaseFilter {
 
-	private ServletContext ctx;
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException {
+		super.doFilter(request, response, chain);
 		HttpServletRequest httprequest = (HttpServletRequest) request;
-		
-		HttpSession s = httprequest.getSession(true);
-		
-		
-		if( UserUtil.isAdmin(s) ){
-			if(httprequest.getRequestURL().indexOf("login.zul")!=-1){
-				((HttpServletResponse)response).sendRedirect("/admin/index.zul");
-			}else{
+
+		HttpSession session = httprequest.getSession(true);
+		if (UserUtil.isAdmin(session)) {
+			if (httprequest.getRequestURL().indexOf("login.zul") != -1) {
+				((HttpServletResponse) response)
+						.sendRedirect("/admin/index.zul");
+			} else {
 				chain.doFilter(request, response);
 			}
-		}else{
-			Servlets.forward(ctx, httprequest, response, "/admin/login.zul");			
+		} else {
+			Servlets.forward(ctx, httprequest, response, "/admin/login.zul");
 		}
-	}
-
-	public void init(FilterConfig filterConfig) throws ServletException {
-		ctx = filterConfig.getServletContext();
-	}
-
-	public void destroy() {
-
 	}
 
 }

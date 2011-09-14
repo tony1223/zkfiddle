@@ -11,7 +11,7 @@
 			<hlayout sclass="menu">
 				<div sclass="logo-outer">
 					<n:h1 class="logo">
-						<n:a href="/" title="ZK Fiddle - Share your ZK sample ONLINE"></n:a>
+						<hyperlink id="logolink" href="/" tooltiptext="ZK Fiddle - Create and Share your ZK sample ONLINE right now" />
 					</n:h1>
 				</div>
 				<n:h1 class="title">ZK Fiddle - Open Source ZK Example Platform</n:h1>

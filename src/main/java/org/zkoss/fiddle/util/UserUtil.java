@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.model.Case;
+import org.zkoss.fiddle.model.UserRememberToken;
 import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.service.login.IUser;
 import org.zkoss.zk.ui.Session;
@@ -39,26 +40,37 @@ public class UserUtil {
 		return isAdmin((HttpSession) sess.getNativeSession());
 	}
 
-	public static void login(HttpSession sess, IUser user) {
+	public static void login(HttpSession sess, IUser user, UserRememberToken token) {
 		sess.setAttribute(FiddleConstant.SESSION_ATTR_USER, user);
+		if(token != null){
+			sess.setAttribute(FiddleConstant.SESSION_ATTR_USER_TOKEN, token);
+		}
 	}
 
-	public static void login(Session sess, IUser user) {
-		login((HttpSession) sess.getNativeSession(), user);
-	}
-
-	public static IUser getLoginUser(HttpSession sess) {
-		return (IUser) sess.getAttribute(FiddleConstant.SESSION_ATTR_USER);
+	public static void login(Session sess, IUser user, UserRememberToken token) {
+		login((HttpSession) sess.getNativeSession(), user, token);
 	}
 
 	public static void logout(HttpSession sess) {
 		sess.removeAttribute(FiddleConstant.SESSION_ATTR_USER);
+		sess.removeAttribute(FiddleConstant.SESSION_ATTR_USER_TOKEN);
 	}
 
 	public static void logout(Session sess) {
 		logout(((HttpSession) sess.getNativeSession()));
 	}
 
+	public static UserRememberToken getLoginUserToken(HttpSession sess) {
+		return (UserRememberToken) sess.getAttribute(FiddleConstant.SESSION_ATTR_USER_TOKEN);
+	}
+
+	public static UserRememberToken getLoginUserToken(Session sess) {
+		return getLoginUserToken((HttpSession) sess.getNativeSession());
+	}
+
+	public static IUser getLoginUser(HttpSession sess) {
+		return (IUser) sess.getAttribute(FiddleConstant.SESSION_ATTR_USER);
+	}
 
 	public static IUser getLoginUser(Session sess) {
 		return getLoginUser((HttpSession) sess.getNativeSession());
