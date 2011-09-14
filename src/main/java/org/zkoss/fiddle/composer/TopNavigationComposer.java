@@ -26,6 +26,8 @@ import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.api.Button;
 import org.zkoss.zul.event.ZulEvents;
 
+import ork.zkoss.fiddle.hyperlink.Hyperlink;
+
 public class TopNavigationComposer extends GenericForwardComposer {
 
 	/**
@@ -69,6 +71,10 @@ public class TopNavigationComposer extends GenericForwardComposer {
 				};
 			});
 
+	}
+
+	public void logolink$onClick(){
+		//FIXME implements this
 	}
 
 	public void updateStatus(State state) {

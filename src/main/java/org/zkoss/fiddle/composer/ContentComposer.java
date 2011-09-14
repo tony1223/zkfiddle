@@ -4,6 +4,7 @@ import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.URLChangeEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
+import org.zkoss.fiddle.composer.viewmodel.URLData;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.visualmodel.UserVO;
@@ -39,18 +40,18 @@ public class ContentComposer extends GenericForwardComposer {
 			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
 				// only work when updated to a case view.
 
-				Object data = evt.getData();
+				URLData data = (URLData) evt.getData();
 
 				if (data == null ){
 					throw new IllegalStateException("not expected type");
-				}else if(data instanceof Case) {
+				}else if(FiddleConstant.URL_DATA_CASE_VIEW.equals(data.getType())) {
 					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_SOURCE;
-					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_CASE, data);
-				}else if(data instanceof Tag){
+					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_CASE, data.getData());
+				}else if(FiddleConstant.URL_DATA_TAG_VIEW.equals(data.getType())){
 					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_TAG;
-					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_TAG, data);
-				}else if(data instanceof UserVO){
-					UserVO userVO = (UserVO) data;
+					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_TAG, data.getData());
+				}else if(FiddleConstant.URL_DATA_USER_VIEW.equals(data.getType())){
+					UserVO userVO = (UserVO) data.getData();
 					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_USER;
 					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_GUEST, userVO.isGuest());
 					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_USERNAME, userVO.getUserName());

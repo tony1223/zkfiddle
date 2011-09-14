@@ -19,6 +19,7 @@ import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
+import org.zkoss.fiddle.composer.viewmodel.URLData;
 import org.zkoss.fiddle.dao.api.ICaseRatingdDao;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
@@ -33,8 +34,7 @@ import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.notification.Notification;
-import org.zkoss.fiddle.util.BrowserState;
-import org.zkoss.fiddle.util.CaseUtil;
+import org.zkoss.fiddle.util.BrowserStateUtil;
 import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.util.NotificationUtil;
 import org.zkoss.fiddle.util.SEOUtils;
@@ -233,8 +233,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			public void onEvent(Event event) throws Exception {
 				if(!caseModel.isStartWithNewCase()){
 					UserVO userVO = new UserVO(caseModel.getCurrentCase());
-					BrowserState.go(UserUtil.getUserView(userVO),
-							"ZK Fiddle - User - "+ userVO.getUserName(), userVO);
+					BrowserStateUtil.go(userVO);
 				}
 			}
 		});
@@ -286,7 +285,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						autherName = user.getName();
 						isGuest = false;
 					}
-					ICase saved = caseManager.saveCase(
+					Case saved = caseManager.saveCase(
 							caseModel.getCurrentCase(),
 							caseModel.getResources(),
 							title,
@@ -308,9 +307,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						NotificationUtil.updateNotifications(
 								Sessions.getCurrent(), notifications);
 
-						String newtitle = "ZK Fiddle - "+ CaseUtil.getPublicTitle(saved);
-						BrowserState.go( CaseUtil.getSampleURL(saved),newtitle, saved);
-						// Executions.getCurrent().sendRedirect(CaseUtil.getSampleURL(saved));
+						BrowserStateUtil.go(saved);
 					}
 				}
 			});
@@ -324,8 +321,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
 				// only work when updated to a case view.
-				if (evt.getData() != null && evt.getData() instanceof Case) {
-					Case _case = (Case) evt.getData();
+				URLData data = (URLData) evt.getData();
+
+				if (data == null ){
+					throw new IllegalStateException("not expected type");
+				}else if(FiddleConstant.URL_DATA_CASE_VIEW.equals(data.getType())) {
+					Case _case = (Case) data.getData();
 					caseModel.setCase(_case);
 					updateCaseView(caseModel);
 					updateTopNavigation();
@@ -494,7 +495,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				lbl.setHref(tagurl);
 				lbl.addEventListener("onClick", new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						BrowserState.go(tagurl, "ZK Fiddle - Tag "+tagurl, tag);
+						//FIXME this title is weird
+						BrowserStateUtil.go(tag);
 					}
 				});
 				lbl.setSclass("case-tag");

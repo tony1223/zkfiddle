@@ -10,9 +10,10 @@ import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
+import org.zkoss.fiddle.composer.viewmodel.URLData;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.model.Case;
-import org.zkoss.fiddle.util.BrowserState;
+import org.zkoss.fiddle.util.BrowserStateUtil;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.visualmodel.UserVO;
@@ -61,14 +62,14 @@ public class UserListComposer extends GenericForwardComposer {
 	//TODO add page index to URL
 	private List<Case> updatePage(int pageIndex, int pageSize) {
 		ICaseDao caseDao = (ICaseDao) SpringUtil.getBean("caseDao");
-		
+
 		List<Case> cases = caseDao.findByAuthor(userName, isGuest, pageIndex, pageSize);
 		userCaseList.setModel(new ListModelList(cases));
 		userCaseList.setAttribute("pagestart", (pageIndex - 1) * pageSize);
 		userCasePaging.setActivePage(pageIndex - 1);
 		userCasePaging.setPageSize(pageSize);
 		userCasePaging.setTotalSize(caseDao.countByAuthor(userName, isGuest));
-		
+
 		return cases;
 	}
 
@@ -94,7 +95,7 @@ public class UserListComposer extends GenericForwardComposer {
 		if(initSEO){
 			SEOUtils.render(desktop,"User "+userName +"'s case List", cases);
 		}
-		
+
 		userCaption.setLabel("User: "+ userName );
 	}
 
@@ -121,10 +122,7 @@ public class UserListComposer extends GenericForwardComposer {
 
 					titlelink.addEventListener("onClick", new EventListener() {
 						public void onEvent(Event event) throws Exception {
-							//TODO clean all the title string and generating them in a util methd.
-							//"ZK Fiddle - "
-							BrowserState.go(CaseUtil.getSampleURL(theCase),
-									"ZK Fiddle - " + CaseUtil.getPublicTitle(theCase), theCase);
+							BrowserStateUtil.go(theCase);
 						}
 					});
 					titlecont.appendChild(titlelink);
@@ -139,37 +137,6 @@ public class UserListComposer extends GenericForwardComposer {
 				{
 					row.appendChild(new Label(theCase.getCreateDate().toString()));
 				}
-
-				//TODO review and clean this.
-				// {
-				// // implements tag cloud
-				// Div tagcont = new Div();
-				// tagcont.setSclass("tag-container");
-				// TagCloudVO tcvo = new TagCloudVO(tclvo.getTags());
-				//
-				// for (int i = 0, size = tclvo.getTags().size(); i < size; ++i)
-				// {
-				// final Tag tag = tclvo.getTags().get(i);
-				// Hyperlink taglink = new Hyperlink(tag.getName() +
-				// (tag.getAmount() > 1 ? "(" + tag.getAmount() + ") " :"") );
-				// if(currentTag.equals(tag)){
-				// taglink.setSclass("tag-cloud tag-cloud-sel tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));
-				// }else{
-				// taglink.setSclass("tag-cloud tag-cloud"+tcvo.getLevel(tag.getAmount().intValue()));
-				// }
-				//
-				// final String url = TagUtil.getViewURL(tag);
-				// taglink.setHref(url);
-				// taglink.addEventListener("onClick", new EventListener() {
-				// public void onEvent(Event event) throws Exception {
-				// BrowserState.go(url, "ZK Fiddle - Tag - "+ tag.getName() ,
-				// tag);
-				// }
-				// });
-				// tagcont.appendChild(taglink);
-				// }
-				// row.appendChild(tagcont);
-				// }
 
 			}
 		});
@@ -191,8 +158,12 @@ public class UserListComposer extends GenericForwardComposer {
 
 			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
 				// only work when updated to a user view.
-				if(evt.getData() instanceof UserVO){
-					UserVO user = (UserVO) evt.getData();
+				URLData data = (URLData) evt.getData();
+
+				if (data == null ){
+					throw new IllegalStateException("not expected type");
+				}else if(FiddleConstant.URL_DATA_CASE_VIEW.equals(data.getType())) {
+					UserVO user = (UserVO) data.getData();
 					userName = user.getUserName();
 					isGuest = user.isGuest();
 
