@@ -8,6 +8,11 @@ import org.zkoss.fiddle.visualmodel.UserVO;
 
 
 public class BrowserStateUtil {
+	public static void goHome(){
+		BrowserState.go("/",
+				 "ZK Fiddle",
+				 new URLData(FiddleConstant.URL_DATA_CASE_VIEW, null));
+	}
 
 	public static void go(Tag tag){
 		BrowserState.go(TagUtil.getViewURL(tag), SiteTitleUtils.getTitle(tag),

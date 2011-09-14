@@ -5,8 +5,6 @@ import org.zkoss.fiddle.composer.event.URLChangeEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.viewmodel.URLData;
-import org.zkoss.fiddle.model.Case;
-import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
@@ -58,7 +56,6 @@ public class ContentComposer extends GenericForwardComposer {
 				}else{
 					throw new IllegalStateException("not expected type");
 				}
-
 				contentInclude.setSrc(getContentURL());
 			}
 		});

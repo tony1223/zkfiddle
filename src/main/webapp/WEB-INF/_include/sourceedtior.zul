@@ -31,10 +31,10 @@
 				</div>
 			</div>
 			<separator bar="true" spacing="5px" />
-			<tabbox height="380px" sclass="sourcetabs">
+			<tabbox id="sourceTabbox" height="380px" sclass="sourcetabs">
 				<fiddletabs id="sourcetabs" addable="true" />
 				<tabpanels id="sourcetabpanels" />
-			    <toolbar>
+			    <toolbar id="sourcetoolbar">
     				<toolbarbutton id="download" label="Download" src="/img/archive.png"/>
 			    </toolbar>
 			</tabbox>

@@ -66,8 +66,10 @@ import org.zkoss.zul.Div;
 import org.zkoss.zul.Hlayout;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Tabpanels;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Toolbar;
 import org.zkoss.zul.Toolbarbutton;
 import org.zkoss.zul.Window;
 
@@ -126,6 +128,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	/* login end */
 
 	private Toolbarbutton download;
+
+	private Tabbox sourceTabbox;
+
+	private Toolbar sourcetoolbar;
 
 	private Label poserIp;
 
@@ -398,6 +404,8 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		if (!newCase) {
 			Case thecase = caseModel.getCurrentCase();
 			caseTitle.setValue(thecase.getTitle());
+			sourcetoolbar.setVisible(true);
+			sourceTabbox.invalidate();
 			download.setHref(caseModel.getDownloadLink());
 
 			//The invalidate is fixing the issue for #147,
@@ -418,7 +426,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 			authorControl.setSclass("author-saved");
 		}else{
+			sourcetoolbar.setVisible(false);
+			sourceTabbox.invalidate();
 			authorControl.setSclass("author-new");
+			caseTitle.setValue("Another new ZK fiddle");
+
+			caseToolbar.invalidate();
+			caseToolbar.setVisible(false);
+			authorLink.setVisible(false);
 		}
 		updateLoginState();
 
