@@ -110,6 +110,7 @@ public class CaseModel {
 			sourceChange = true;
 			resources.addAll(getDefaultResources());
 		} else {
+			sourceChange = false;
 			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 			manager.increase(CaseRecord.Type.View, _case);
 

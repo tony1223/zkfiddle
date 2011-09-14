@@ -45,11 +45,6 @@ public class ContentComposer extends GenericForwardComposer {
 				// only work when updated to a case view.
 
 				URLData data = (URLData) evt.getData();
-				Execution exec = Executions.getCurrent();
-//				FilterUtil.checkAndLoginIfCookieExist(((HttpServletRequest)exec.getNativeRequest()),
-//						((HttpServletResponse) exec.getNativeResponse()),
-//						(HttpSession)session.getNativeSession());
-
 				if (data == null ){
 					throw new IllegalStateException("not expected type");
 				}else if(FiddleConstant.URL_DATA_CASE_VIEW.equals(data.getType())) {
