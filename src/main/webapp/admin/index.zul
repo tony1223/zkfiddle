@@ -1,15 +1,17 @@
 <?page title="ZK Fiddle Backend" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:w="client" xmlns:n="native" >
 
-	<div style="float:right"> 
+	<div style="float:right">
 		<include src="/WEB-INF/_admin/_userbar.zul" />
 	</div>
-	
+
 	Hello , This is backend page.
-	
-	
-	<a href="caselist.zul" >Case List</a>
-	
-	
+
+
+	<hlayout>
+		<a href="caselist.zul" >Case List</a>
+		<a href="sandboxlist.zul" >Sandbox List</a>
+	</hlayout>
+
 	<include src="/WEB-INF/_include/footer.zul" />
 </zk>

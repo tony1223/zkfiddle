@@ -13,9 +13,9 @@ import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 /**
  * We store this data in system wild and not persisting, this should be used as
  * a singleton
- * 
+ *
  * @author tony
- * 
+ *
  */
 public class FiddleSandboxManager {
 
@@ -68,12 +68,12 @@ public class FiddleSandboxManager {
 	}
 
 	public FiddleSandbox getFiddleSandboxByVersion(String version) {
-		
+
 		if(version == null)
 			return null;
-		
+
 		version = version.trim();
-		
+
 		for (FiddleSandbox fi : getVersionList(version)) {
 			FiddleSandbox sandbox = checkDate(fi);
 			if (sandbox != null)
@@ -106,7 +106,7 @@ public class FiddleSandboxManager {
 		return os;
 	}
 
-	private void removeSandbox(String hash) {
+	public void removeSandbox(String hash) {
 
 		FiddleSandbox ins = sandboxesByHash.get(hash);
 		sandboxesByHash.remove(hash);
