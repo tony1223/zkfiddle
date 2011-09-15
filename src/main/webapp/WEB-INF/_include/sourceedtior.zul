@@ -31,10 +31,10 @@
 				</div>
 			</div>
 			<separator bar="true" spacing="5px" />
-			<tabbox height="440px" sclass="sourcetabs">
+			<tabbox id="sourceTabbox" height="440px" sclass="sourcetabs">
 				<fiddletabs id="sourcetabs" addable="true" />
 				<tabpanels id="sourcetabpanels" />
-			    <toolbar>
+			    <toolbar id="sourcetoolbar">
     				<toolbarbutton id="download" label="Download" src="/img/archive.png"/>
 			    </toolbar>
 			</tabbox>
@@ -85,7 +85,7 @@
 		</vlayout>
 		<div>
 			<window id="loginWin" minimizable="true" minimized="true"
-				title="Login" width="420px" height="150px" border="normal" position="center, center">
+				title="Login" width="420px" height="200px" border="normal" position="center, center">
 				Used ZK Forum account to login:
 				<n:table>
 					<n:tr>
@@ -98,6 +98,12 @@
 						<n:td>Password</n:td>
 						<n:td>
 							<textbox id="password" type="password" constraint="no empty" />
+						</n:td>
+					</n:tr>
+					<n:tr>
+						<n:td>Remember Me</n:td>
+						<n:td>
+							<checkbox id="rembember" checked="true" />
 						</n:td>
 					</n:tr>
 				</n:table>

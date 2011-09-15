@@ -1,13 +1,18 @@
 package org.zkoss.fiddle.composer;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.URLChangeEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
-import org.zkoss.fiddle.model.Case;
-import org.zkoss.fiddle.model.Tag;
+import org.zkoss.fiddle.composer.viewmodel.URLData;
+import org.zkoss.fiddle.util.FilterUtil;
 import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.metainfo.ComponentInfo;
@@ -39,25 +44,23 @@ public class ContentComposer extends GenericForwardComposer {
 			public void onFiddleEvent(URLChangeEvent evt) throws Exception {
 				// only work when updated to a case view.
 
-				Object data = evt.getData();
-
+				URLData data = (URLData) evt.getData();
 				if (data == null ){
 					throw new IllegalStateException("not expected type");
-				}else if(data instanceof Case) {
+				}else if(FiddleConstant.URL_DATA_CASE_VIEW.equals(data.getType())) {
 					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_SOURCE;
-					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_CASE, data);
-				}else if(data instanceof Tag){
+					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_CASE, data.getData());
+				}else if(FiddleConstant.URL_DATA_TAG_VIEW.equals(data.getType())){
 					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_TAG;
-					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_TAG, data);
-				}else if(data instanceof UserVO){
-					UserVO userVO = (UserVO) data;
+					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_TAG, data.getData());
+				}else if(FiddleConstant.URL_DATA_USER_VIEW.equals(data.getType())){
+					UserVO userVO = (UserVO) data.getData();
 					currentState = FiddleConstant.REQUEST_VALUE_PAGE_TYPE_USER;
 					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_GUEST, userVO.isGuest());
 					Executions.getCurrent().setAttribute(FiddleConstant.REQUEST_ATTR_USERNAME, userVO.getUserName());
 				}else{
 					throw new IllegalStateException("not expected type");
 				}
-
 				contentInclude.setSrc(getContentURL());
 			}
 		});

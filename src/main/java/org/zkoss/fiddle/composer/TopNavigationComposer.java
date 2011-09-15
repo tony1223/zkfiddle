@@ -10,7 +10,9 @@ import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
+import org.zkoss.fiddle.util.BrowserStateUtil;
 import org.zkoss.fiddle.util.CookieUtil;
+import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
@@ -25,6 +27,8 @@ import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.api.Button;
 import org.zkoss.zul.event.ZulEvents;
+
+import ork.zkoss.fiddle.hyperlink.Hyperlink;
 
 public class TopNavigationComposer extends GenericForwardComposer {
 
@@ -41,6 +45,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 	private Combobox sandboxes = null;
 
+	private Hyperlink logolink;
+
 	private Button viewBtn;
 
 	private Button forkBtn;
@@ -49,6 +55,8 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
+
+		logolink.setHref(FiddleConfig.getHostName());
 
 		initSandbox();
 
@@ -69,6 +77,10 @@ public class TopNavigationComposer extends GenericForwardComposer {
 				};
 			});
 
+	}
+
+	public void onClick$logolink(){
+		BrowserStateUtil.goHome();
 	}
 
 	public void updateStatus(State state) {

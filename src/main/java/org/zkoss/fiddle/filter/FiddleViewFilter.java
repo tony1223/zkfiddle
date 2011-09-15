@@ -2,10 +2,7 @@ package org.zkoss.fiddle.filter;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -26,13 +23,11 @@ import org.zkoss.fiddle.visualmodel.CaseRequest.Type;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.web.servlet.Servlets;
 
-public class FiddleViewFilter implements Filter {
+public class FiddleViewFilter extends FiddleViewBaseFilter {
 
 	private static final String FIDDLE_HOST_NAME = "fiddleHostName";
 
 	private static final Logger logger = Logger.getLogger(FiddleViewFilter.class);
-
-	private ServletContext ctx;
 
 	private ICaseDao caseDao;
 
@@ -46,6 +41,7 @@ public class FiddleViewFilter implements Filter {
 		String path = FilterUtil.getPath(request2);
 
 		if (path == null || "/".equals(path) || "/service/try".equals(path)) {
+			super.doFilter(request, response, chain);
 			Boolean tryCase = path.equals("/service/try");
 			if(tryCase){
 				request.setAttribute(FiddleConstant.REQUEST_ATTR_TRY_CASE, tryCase);
@@ -58,6 +54,8 @@ public class FiddleViewFilter implements Filter {
 
 		CaseRequest viewRequest = getAttributeFromURL(path);
 		if (viewRequest != null) {
+			super.doFilter(request, response, chain);
+
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_CONTENT_PAGE, FiddleConstant.REQUEST_VALUE_PAGE_TYPE_SOURCE);
 			request.setAttribute(FIDDLE_HOST_NAME, FiddleConfig.getHostName());
 			ICase $case = handleCaseInRequest(request, viewRequest);
@@ -195,13 +193,6 @@ public class FiddleViewFilter implements Filter {
 
 	protected CaseRequest getAttributeFromURL(String path) {
 		return CaseRequest.getCaseRequest(path);
-	}
-
-	public void init(FilterConfig filterConfig) throws ServletException {
-		ctx = filterConfig.getServletContext();
-	}
-
-	public void destroy() {
 	}
 
 	public void setCaseDao(ICaseDao caseDao) {

@@ -27,6 +27,8 @@
 
 	<bean id="caseTagDao" class="org.zkoss.fiddle.dao.CaseTagDaoImpl"  parent="baseDao" />
 
+	<bean id="userRememberTokenDao" class="org.zkoss.fiddle.dao.UserRememberTokenDaoImpl"  parent="baseDao" />
+
 	<!-- services -->
 
 	<bean id="caseManager" class="org.zkoss.fiddle.manager.CaseManager">

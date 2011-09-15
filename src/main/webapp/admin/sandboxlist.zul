@@ -1,0 +1,24 @@
+<?page title="ZK Fiddle Backend" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="client" xmlns:n="native" >
+
+	<vlayout>
+		<div>
+			<include src="/WEB-INF/_admin/_userbar.zul" />
+		</div>
+
+		<div apply="org.zkoss.fiddle.admin.composer.SandboxListComposer">
+			<grid id="sampleboxs">
+				<columns>
+					<column label="#" />
+					<column label="Version" />
+					<column label="Path" />
+					<column label="Last Update Date" />
+					<column label="Control" />
+				</columns>
+			</grid>
+			<paging id="casesPaging" activePage="0" pageSize="30" />
+		</div>
+
+	</vlayout>
+	<include src="/WEB-INF/_include/footer.zul" />
+</zk>

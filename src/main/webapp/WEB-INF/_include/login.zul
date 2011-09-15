@@ -13,6 +13,17 @@
 					<textbox id="password" type="password" constraint="no empty" />
 				</n:td>
 			</n:tr>
+			<n:tr>
+				<n:td>Remember Me</n:td>
+				<n:td>
+					<checkbox id="rembember" checked="true" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td colspan="2">
+					<button id="okBtn" forward="password.onOK" />
+				</n:td>
+			</n:tr>
 		</n:table>
 	</div>
 </zk>

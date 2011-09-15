@@ -6,10 +6,7 @@ import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -23,7 +20,7 @@ import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.util.SpringUtilz;
 import org.zkoss.web.servlet.Servlets;
 
-public class FiddleTagFilter implements Filter {
+public class FiddleTagFilter extends FiddleViewBaseFilter {
 
 
 	private static final String FIDDLE_HOST_NAME = "fiddleHostName";
@@ -35,8 +32,6 @@ public class FiddleTagFilter implements Filter {
 
 	private Pattern tagPattern = Pattern.compile("^/tag/(.*?)(;jsessionid=.*)?$");
 
-	private ServletContext ctx;
-
 	public void doFilter(ServletRequest request2, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest request = ((HttpServletRequest) request2);
@@ -47,6 +42,8 @@ public class FiddleTagFilter implements Filter {
 
 		Matcher m = tagPattern.matcher(path);
 		if(m.find()){
+			super.doFilter(request2, response, chain);
+
 			request.setAttribute(FiddleConstant.REQUEST_ATTR_CONTENT_PAGE, FiddleConstant.REQUEST_VALUE_PAGE_TYPE_TAG);
 			final Tag t = getTag(m.group(1));
 			if( t == null ){
@@ -79,12 +76,5 @@ public class FiddleTagFilter implements Filter {
 		return tagDao.getTag(tagName);
 
 	}
-	public void init(FilterConfig filterConfig) throws ServletException {
-		ctx = filterConfig.getServletContext();
-	}
-
-	public void destroy() {
-	}
-
 
 }
