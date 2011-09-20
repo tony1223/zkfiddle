@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.PreparingShowResultEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
@@ -25,6 +26,7 @@ import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
+import org.zkoss.fiddle.util.GAUtil;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.fiddle.visualmodel.VirtualCase;
 import org.zkoss.zkplus.spring.SpringUtil;
@@ -51,16 +53,16 @@ public class CaseModel {
 
 	private List<Resource> resources;
 
-	public CaseModel(Case pCase, boolean tryCase,String zulData) {
+	public CaseModel(Case pCase, boolean tryCase, String zulData) {
 		resources = new ArrayList<Resource>();
 
 		_case = pCase;
 		newCase = (_case == null || _case.getId() == null);
 		if (newCase) { // new case!
 			sourceChange = true;
-			if(tryCase){
+			if (tryCase) {
 				resources.add(getIndexZulWithZulData(zulData));
-			}else{
+			} else {
 				resources.addAll(getDefaultResources());
 			}
 		} else {
@@ -85,23 +87,23 @@ public class CaseModel {
 
 		FiddleSourceEventQueue.lookup().subscribeResourceChanged(
 				new FiddleEventListener<ResourceChangedEvent>(ResourceChangedEvent.class) {
-			public void onFiddleEvent(ResourceChangedEvent event) throws Exception {
-				if(event.getType() == Type.Removed){
-					removeResource(event.getResource());
-				}
-				sourceChange = true;
-			}
-		});
-		FiddleSourceEventQueue.lookup().subscribeShowResult(new FiddleEventListener<PreparingShowResultEvent>(
-				PreparingShowResultEvent.class) {
+					public void onFiddleEvent(ResourceChangedEvent event) throws Exception {
+						if (event.getType() == Type.Removed) {
+							removeResource(event.getResource());
+						}
+						sourceChange = true;
+					}
+				});
+		FiddleSourceEventQueue.lookup().subscribeShowResult(
+				new FiddleEventListener<PreparingShowResultEvent>(PreparingShowResultEvent.class) {
 
-			public void onFiddleEvent(PreparingShowResultEvent evt) throws Exception {
-				ShowResult(evt.getSandbox());
-			}
-		});
+					public void onFiddleEvent(PreparingShowResultEvent evt) throws Exception {
+						showResult(evt.getSandbox());
+					}
+				});
 	}
 
-	public void setCase(Case pCase){
+	public void setCase(Case pCase) {
 		resources.clear();
 
 		_case = pCase;
@@ -147,8 +149,7 @@ public class CaseModel {
 		resources.add(resource);
 	}
 
-
-	public String getDownloadLink(){
+	public String getDownloadLink() {
 		return CaseUtil.getDownloadURL(getCurrentCase());
 	}
 
@@ -183,26 +184,29 @@ public class CaseModel {
 		return _case;
 	}
 
-	public void ShowResult(FiddleSandbox sandbox) {
-		ShowResultEvent result = new ShowResultEvent(null, sandbox);
-
+	public void showResult(FiddleSandbox sandbox) {
 		ICase rcase = null;
 		if (sourceChange) {
 			rcase = prepareVirtualCase();
+			if (_case == null) {
+				GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "run-temp", sandbox.getZKVersion() + "-new");
+			} else {
+				GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "run-temp", sandbox.getZKVersion() + "-" + _case.getCaseUrl());
+			}
 		} else {
-			result.setCase(_case);
 			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 			manager.increase(CaseRecord.Type.Run, _case);
 			if (logger.isDebugEnabled()) {
 				logger.debug(_case.getToken() + ":" + _case.getVersion() + ":run");
 			}
 			rcase = _case;
+			GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "run", sandbox.getZKVersion() + "-" + _case.getCaseUrl());
 		}
 		FiddleSourceEventQueue.lookup().fireShowResult(rcase, sandbox);
 
 	}
 
-	private ICase prepareVirtualCase(){
+	private ICase prepareVirtualCase() {
 		if (_case != null && _case.getId() != null) {
 			ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
 			manager.increase(CaseRecord.Type.RunTemp, _case);
@@ -237,11 +241,11 @@ public class CaseModel {
 
 		return resources;
 	}
+
 	private static Resource getIndexZulWithZulData(String zulData) {
 		Resource res = ResourceFactory.getDefaultResource(Resource.TYPE_ZUL);
 		res.setContent(zulData);
 		return res;
 	}
-
 
 }

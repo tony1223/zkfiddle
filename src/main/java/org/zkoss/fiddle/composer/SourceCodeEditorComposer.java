@@ -38,6 +38,7 @@ import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.notification.Notification;
 import org.zkoss.fiddle.util.BrowserStateUtil;
 import org.zkoss.fiddle.util.CookieUtil;
+import org.zkoss.fiddle.util.GAUtil;
 import org.zkoss.fiddle.util.NotificationUtil;
 import org.zkoss.fiddle.util.SEOUtils;
 import org.zkoss.fiddle.util.TagUtil;
@@ -295,12 +296,22 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 						autherName = user.getName();
 						isGuest = false;
 					}
+
+					boolean isSave = caseModel.getCurrentCase() == null;
 					Case saved = caseManager.saveCase(
 							caseModel.getCurrentCase(),
 							caseModel.getResources(),
 							title,
 							autherName,	isGuest,
 							saveEvt.isFork(), ip, cbSaveTag.isChecked());
+
+					if(isSave){//save
+						GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "save", saved.getCaseUrl());
+					}else if(saveEvt.isFork()){
+						GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "fork", saved.getCaseUrl());
+					}else{
+						GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "update", saved.getCaseUrl());
+					}
 
 					if (saved != null) {
 						List<String> notifications = NotificationUtil
@@ -456,6 +467,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				sourceQueue.fireResourceChanged(resource, Type.Created);
 			}
 		}
+	}
+
+	public void onClick$download(Event evt){
+		GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "download", caseModel.getCurrentCase().getCaseUrl());
 	}
 
 	public void onRating$caseRating(RatingEvent evt){
@@ -643,7 +658,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			return;
 		}
 
-		caseModel.ShowResult(sandbox);
+		caseModel.showResult(sandbox);
 	}
 
 	public void onClick$loginBtn(Event evt){
