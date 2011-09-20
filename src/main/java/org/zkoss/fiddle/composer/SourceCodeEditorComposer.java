@@ -392,6 +392,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 			IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
 			loginedAuthorName.setLabel(user.getName());
+			loginedAuthorName.setHref(UserUtil.getUserView(user.getName(),false));
 			loginedAuthorName.setVisible(true);
 
 			authorName.setValue(user.getName());
@@ -404,6 +405,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 
 			authorName.setVisible(true);
 			loginedAuthorName.setVisible(false);
+			loginedAuthorName.setHref("");
 			logoffBtn.setVisible(false);
 			loginBtn.setVisible(true);
 		}
@@ -466,6 +468,14 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				// scope eventQueue,it will not be a performance issue.
 				sourceQueue.fireResourceChanged(resource, Type.Created);
 			}
+		}
+	}
+
+	public void onClick$loginedAuthorName(Event evt) {
+		IUser user = UserUtil.getLoginUser(session);
+		if (user != null) {
+			UserVO userVO = new UserVO(user.getName(), false);
+			BrowserStateUtil.go(userVO);
 		}
 	}
 
