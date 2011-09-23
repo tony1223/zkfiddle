@@ -1,6 +1,6 @@
 <?page title="ZK Fiddle${_pgtitle}" contentType="text/html;charset=UTF-8"?>
 <?meta name="keywords" content="ZK, Sample, HTML, CSS, XML, Fiddle, DEMO" ?>
-<?meta name="description" content="${_pgdescription} survey and run ZK (A Java Web Ajax OpenSource Framework) sameples right now!" ?>
+<?meta name="description" content="${_pgdescription}" ?>
 <?link rel="stylesheet" type="text/css" href="/css/zkfiddle.css"?>
 <?script type="text/javascript" src="/js/fiddle.js.dsp"?>
 <?script type="text/javascript" src="/js/fiddle.his.js.dsp"?>

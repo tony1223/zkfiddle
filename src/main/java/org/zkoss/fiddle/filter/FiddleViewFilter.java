@@ -1,6 +1,7 @@
 package org.zkoss.fiddle.filter;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,12 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.dao.api.ICaseDao;
+import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.exception.SandboxNotFoundException;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
+import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.util.FilterUtil;
+import org.zkoss.fiddle.util.SpringUtilz;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.CaseRequest.Type;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
@@ -41,6 +45,7 @@ public class FiddleViewFilter extends FiddleViewBaseFilter {
 		String path = FilterUtil.getPath(request2);
 
 		if (path == null || "/".equals(path) || "/service/try".equals(path)) {
+			request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_DESCRIPTION, "Write your own sample and experience the power of ZK right now.");
 			super.doFilter(request, response, chain);
 			Boolean tryCase = path.equals("/service/try");
 			if(tryCase){
@@ -68,6 +73,10 @@ public class FiddleViewFilter extends FiddleViewBaseFilter {
 				}
 				return;
 			}
+			
+
+			request.setAttribute(FiddleConstant.REQUEST_ATTR_PAGE_DESCRIPTION, getSampleDescription($case));
+
 			if (viewRequest.needInitSandbox()) {
 				try {
 					initSandbox(response, request, viewRequest);
@@ -88,6 +97,44 @@ public class FiddleViewFilter extends FiddleViewBaseFilter {
 			chain.doFilter(request2, response);
 		}
 
+	}
+
+	private String getSampleDescription(ICase $case) {
+		String taglist = getTagList($case);
+		return "This's a user contributed ZK sample"+
+			((taglist == null ) ?"": " for [" + taglist + "]")
+			+", post by " + getPostName($case) + " , "
+					+ $case.getCreateDate().toLocaleString() + ".";
+	}
+
+	private String getPostName(ICase $case){
+		
+		if($case.isGuest()){
+			if("guest".equals($case.getAuthorName())){
+				return	"Guest";
+			}else{
+				return	"Guest["+$case.getAuthorName()+"]";
+			}
+		}else{
+			return "ZK Forum User["+$case.getAuthorName()+"] ";
+		}
+	}
+
+	private String getTagList(ICase $case) {
+		ICaseTagDao casetagDao = (ICaseTagDao) SpringUtilz.getBean(this.ctx, "caseTagDao");
+		List<Tag> tagList = casetagDao.findTagsBy($case);
+		if (tagList.size() == 0)
+			return null;
+
+		StringBuffer taglist = new StringBuffer();
+		for (int i = 0; i < tagList.size(); ++i) {
+			if (i != 0) {
+				taglist.append(",");
+			}
+
+			taglist.append(tagList.get(i).getName());
+		}
+		return taglist.toString();
 	}
 
 	/* ------------ internal implemenation ------------- */

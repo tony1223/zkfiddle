@@ -19,7 +19,9 @@ public class FiddleConstant {
 	 * Note index.zul using this key as EL.
 	 */
 	public static final String REQUEST_ATTR_PAGE_TITLE = "_pgtitle";
-
+	
+	public static final String REQUEST_ATTR_PAGE_DESCRIPTION = "_pgdescription";
+	
 	public static final String REQUEST_ATTR_TRY_CASE = "_trycase";
 
 	public static final String REQUEST_VALUE_PAGE_TYPE_SOURCE = "_source_view";
