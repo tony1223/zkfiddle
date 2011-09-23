@@ -1,6 +1,8 @@
 package org.zkoss.fiddle.filter;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.FilterChain;
@@ -100,11 +102,13 @@ public class FiddleViewFilter extends FiddleViewBaseFilter {
 	}
 
 	private String getSampleDescription(ICase $case) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
 		String taglist = getTagList($case);
 		return "This's a user contributed ZK sample"+
 			((taglist == null ) ?"": " for [" + taglist + "]")
 			+", post by " + getPostName($case) + " , "
-					+ $case.getCreateDate().toLocaleString() + ".";
+					+ formatter.format($case.getCreateDate()) + ".";
+		
 	}
 
 	private String getPostName(ICase $case){
