@@ -9,10 +9,16 @@
 			<tabs>
 				<tab id="suggestedtab" label="Suggested fiddles :" />
 				<tab id="likestab" visible="false" label="Top 10 Favorites :" />
-				<tab id="recentlytab" label="Latest 10 Fiddles :" />				
+				<tab id="recentlytab" label="Latest 10 Fiddles :" />
 			</tabs>
 			<tabpanels>
-				<tabpanel>
+				<tabpanel  vflex="1" >
+					<attribute w:name="bind_">
+						function(evt){
+							this.$bind_.apply(this,arguments);
+							jq(this.$n("cave")).css("overflow", "auto");
+						}
+					</attribute>
 					<listbox id="suggests" sclass="likes"  nonselectableTags="" emptyMessage="Coming soon" >
 						<listhead>
 							<listheader label="#" width="25px" />
@@ -21,8 +27,14 @@
 						</listhead>
 					</listbox>
 					<hyperlink id="moreSuggests" href="/tag/suggest" label="more..." style="float:right;" />
-				</tabpanel>			
+				</tabpanel>
 				<tabpanel visible="false" >
+					<attribute w:name="bind_">
+						function(evt){
+							this.$bind_.apply(this,arguments);
+							jq(this.$n("cave")).css("overflow", "auto");
+						}
+					</attribute>
 					<!-- No Favorite ? Create your favorite fiddle now ! -->
 					<listbox id="likes" sclass="likes"  nonselectableTags="" emptyMessage="Coming soon" >
 						<listhead>
@@ -32,7 +44,13 @@
 						</listhead>
 					</listbox>
 				</tabpanel>
-				<tabpanel>
+				<tabpanel vflex="1" >
+					<attribute w:name="bind_">
+						function(evt){
+							this.$bind_.apply(this,arguments);
+							jq(this.$n("cave")).css("overflow", "auto");
+						}
+					</attribute>
 					<listbox id="recentlys" sclass="recentlys" nonselectableTags="" emptyMessage="No latest ? Need your contribute !" >
 						<listhead>
 							<listheader label="#" width="25px" />
@@ -40,7 +58,7 @@
 							<listheader label="Version" width="70px" />
 						</listhead>
 					</listbox>
-				</tabpanel>				
+				</tabpanel>
 			</tabpanels>
 		</tabbox>
 		<groupbox sclass="leftabout left-tag" mold="3d" closable="false" >

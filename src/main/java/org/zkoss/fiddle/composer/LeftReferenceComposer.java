@@ -246,31 +246,25 @@ public class LeftReferenceComposer extends GenericForwardComposer {
 		if (list.size() != 0) {
 			SEOUtils.render(desktop, "Suggested case list:", list);
 		}
-		moreSuggests.setVisible((list.size() >= 20));
+
+		ITagDao tagDao = (ITagDao) SpringUtil.getBean("tagDao");
+		Tag tag = tagDao.getTag(TAG_SUGGEST);
+		if(tag != null){
+			moreSuggests.setVisible((list.size() >= 20));
+			moreSuggests.setAttribute("target", tag);
+		}else{
+			moreSuggests.setVisible(false);
+		}
+
 		suggests.setModel(new ListModelList(list));
 	}
 
-	// private void updateLikeModel() {
-	//
-	// List<CaseRecord> list = (List<CaseRecord>)
-	// FiddleCache.Top10liked.execute(new CacheHandler<List<CaseRecord>>() {
-	//
-	// protected List<CaseRecord> execute() {
-	// ICaseRecordDao caseRecordDao = (ICaseRecordDao)
-	// SpringUtil.getBean("caseRecordDao");
-	// return caseRecordDao.listByType(CaseRecord.Type.Like, true, 1, 50);
-	// }
-	//
-	// protected String getKey() {
-	// return CaseRecord.Type.Like + ":" + true + ":" + 1 + ":" + 50;
-	// }
-	// });
-	//
-	// if (list.size() != 0) {
-	// SEOUtils.render(desktop, "Top 10 Favorites :", list);
-	// }
-	// likes.setModel(new ListModelList(list));
-	// }
+	public void onClick$moreSuggests(Event e){
+		Tag tag = (Tag) moreSuggests.getAttribute("target");
+		if(tag != null){
+			BrowserStateUtil.go(tag);
+		}
+	}
 
 	private void updateTags() {
 		if (!"".equals(tagFilter.getValue().trim())) {

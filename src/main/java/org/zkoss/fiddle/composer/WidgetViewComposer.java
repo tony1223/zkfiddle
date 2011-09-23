@@ -12,10 +12,12 @@ import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
+import org.zkoss.fiddle.util.GAUtil;
 import org.zkoss.fiddle.util.ResourceUtil;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Tab;
@@ -82,6 +84,18 @@ public class WidgetViewComposer extends GenericForwardComposer {
 		runBtn.setHref(hostName + CaseUtil.getViewURL($case, zkVer));
 		goBtn.setHref(hostName + CaseUtil.getSampleURL($case));
 		downloadBtn.setHref(hostName + CaseUtil.getDownloadURL($case));
+	}
+
+	public void onClick$downloadBtn(Event evt){
+		GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "widget-download", caseModel.getCurrentCase().getCaseUrl());
+	}
+
+	public void onClick$goBtn(Event evt){
+		GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "widget-go", caseModel.getCurrentCase().getCaseUrl());
+	}
+
+	public void onClick$runBtn(Event evt){
+		GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "widget-run", caseModel.getCurrentCase().getCaseUrl());
 	}
 
 	private void renderTabAndTabpanels(List<Resource> list, int height) {

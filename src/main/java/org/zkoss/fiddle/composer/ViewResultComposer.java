@@ -1,11 +1,14 @@
 package org.zkoss.fiddle.composer;
 
+import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.util.FiddleConfig;
+import org.zkoss.fiddle.util.GAUtil;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
@@ -63,6 +66,10 @@ public class ViewResultComposer extends GenericForwardComposer {
 		openNewWindow.setVisible(show);
 		directUrl.setVisible(show);
 
+	}
+
+	public void onClick$openNewWindow(Event ev){
+		GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "go-direct", openNewWindow.getHref());
 	}
 
 	public void onClick$closeWindow(ForwardEvent e) {

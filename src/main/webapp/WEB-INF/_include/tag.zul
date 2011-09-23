@@ -3,7 +3,7 @@
 		<caption id="tagCaption" />
 		<grid sclass="zkfiddle-taglist" id="tagCaseList" emptyMessage="Oops! No any cases related to this tag.">
 			<columns>
-				<column label="#" width="2%" sclass="zkfiddle-index" />
+				<column label="#" width="3%" sclass="zkfiddle-index" />
 				<column label="Title" width="40%" />
 				<column label="Tags" />
 				<column label="Poster"/>
