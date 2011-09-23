@@ -15,7 +15,6 @@ import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent.Type;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
-import org.zkoss.fiddle.composer.event.ShowResultEvent;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
 import org.zkoss.fiddle.core.utils.ResourceFactory;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;

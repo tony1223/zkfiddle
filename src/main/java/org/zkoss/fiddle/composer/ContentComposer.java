@@ -1,18 +1,12 @@
 package org.zkoss.fiddle.composer;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.composer.event.URLChangeEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleBrowserStateEventQueue;
 import org.zkoss.fiddle.composer.viewmodel.URLData;
-import org.zkoss.fiddle.util.FilterUtil;
 import org.zkoss.fiddle.visualmodel.UserVO;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Page;
 import org.zkoss.zk.ui.metainfo.ComponentInfo;

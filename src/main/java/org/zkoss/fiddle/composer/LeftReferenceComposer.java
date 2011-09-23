@@ -13,6 +13,7 @@ import org.zkoss.fiddle.core.utils.FiddleCache;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.ITagDao;
+import org.zkoss.fiddle.hyperlink.Hyperlink;
 import org.zkoss.fiddle.model.Case;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Tag;
@@ -36,8 +37,6 @@ import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
-
-import ork.zkoss.fiddle.hyperlink.Hyperlink;
 
 public class LeftReferenceComposer extends GenericForwardComposer {
 
