@@ -1,7 +1,7 @@
 <?page title="ZK Fiddle Backend" contentType="text/html;charset=UTF-8"?>
 <zk xmlns:w="client" xmlns:n="native" >
 	
-	<div apply="org.zkoss.fiddle.admin.composer.LoginComposer">
+	<div id="loginContainer" apply="org.zkoss.fiddle.admin.composer.LoginComposer">
 		<n:table>
 			<n:tr>
 				<n:td>Account</n:td>
@@ -15,6 +15,17 @@
 					<textbox id="password" type="password" constraint="no empty" />
 				</n:td>
 			</n:tr>
+			<n:tr>
+				<n:td>Remember Me</n:td>
+				<n:td>
+					<checkbox id="rembember" checked="true" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td colspan="2">
+					<button id="okBtn" label="login" forward="loginContainer.onOK" />
+				</n:td>
+			</n:tr>			
 		</n:table>
 	</div>
 
