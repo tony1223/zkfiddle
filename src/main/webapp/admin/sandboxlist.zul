@@ -17,6 +17,8 @@
 				</columns>
 			</grid>
 			<paging id="casesPaging" activePage="0" pageSize="30" />
+			<button label="Clear All" id="clearAll" />
+			<button label="Refresh" id="refresh" />
 		</div>
 
 	</vlayout>

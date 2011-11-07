@@ -105,6 +105,11 @@ public class FiddleSandboxManager {
 		}
 		return os;
 	}
+	
+	public void clear(){
+		sandboxesByHash.clear();
+		sandboxesByVersion.clear();
+	}
 
 	public void removeSandbox(String hash) {
 

@@ -26,7 +26,6 @@ public class SandboxListComposer extends GenericForwardComposer {
 
 	private Grid sampleboxs;
 
-
 	public void updateList(){
 		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil
 		.getBean("sandboxManager");
@@ -35,6 +34,17 @@ public class SandboxListComposer extends GenericForwardComposer {
 		sampleboxs.setModel(new ListModelList(acounts));
 	}
 
+	public void onClick$clearAll(Event e){
+		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil
+		.getBean("sandboxManager");
+		sandboxManager.clear();
+		updateList();
+	}
+	
+	public void onClick$refresh(Event e){
+		updateList();
+	}
+	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		updateList();
@@ -48,6 +58,7 @@ public class SandboxListComposer extends GenericForwardComposer {
 
 				int rowIndex = row.getParent().getChildren().indexOf(row);
 
+				row.appendChild(new Label(""+rowIndex));
 
 				row.appendChild(new Label(sandbox.getZKVersion()));
 				row.appendChild(new Label(sandbox.getPath()));
