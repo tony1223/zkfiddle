@@ -13,11 +13,7 @@ public class ${class-name} extends GenericForwardComposer{
 
 	}
 
-	public void onClick$btn(Event e){
-		try {
-			Messagebox.show("Hi btn");
-		} catch (InterruptedException ex) {
-			ex.printStackTrace();
-		}
+	public void onClick$btn(Event e) throws InterruptedException{
+		Messagebox.show("Hi btn");
 	}
 }
