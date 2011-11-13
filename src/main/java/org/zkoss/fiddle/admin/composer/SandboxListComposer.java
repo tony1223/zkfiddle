@@ -29,9 +29,9 @@ public class SandboxListComposer extends GenericForwardComposer {
 	public void updateList(){
 		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil
 		.getBean("sandboxManager");
-		Collection<FiddleSandbox> acounts = sandboxManager
+		Collection<FiddleSandbox> sandboxs = sandboxManager
 				.listFiddleInstances().values();
-		sampleboxs.setModel(new ListModelList(acounts));
+		sampleboxs.setModel(new ListModelList(sandboxs));
 	}
 
 	public void onClick$clearAll(Event e){

@@ -18,14 +18,7 @@
 				<div id="views" style="margin-left:100px;width:500px;">
 					<button width="100px" id="saveBtn" label="Save" image="/img/database_save.png" />
 					<button width="100px" id="forkBtn" label="Fork" image="/img/arrow_branch.png" />
-					<combobox id="sandboxes" readonly="true" width="180px" height="26px">
-						<attribute w:name="slideDown_">
-							function (pp) {
-								jq(pp).show();  //remove slidedown effect -_-#
-								this._afterSlideDown();
-							}
-						</attribute>
-					</combobox>
+					<selectboxrw id="sandboxes" width="180px" height="26px" />
 					<button width="100px" id="viewBtn" style="color:red;" label="Run" dir="reverse" image="/img/resultset_next.png" />
 
 				</div>

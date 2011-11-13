@@ -7,12 +7,19 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.zkoss.fiddle.core.utils.CRCCaseIDEncoder;
 import org.zkoss.fiddle.model.api.ICase;
+import org.zkoss.fiddle.visualmodel.comparator.VersionComparator;
 
 public class FiddleSandbox implements Comparable<Object> {
+
+	public enum Theme implements Comparable<Theme> {
+		breeze, silvertail, sapphire
+	}
 
 	private String hash;
 
 	private String name;
+
+	private Theme theme;
 
 	private String path;
 
@@ -68,31 +75,50 @@ public class FiddleSandbox implements Comparable<Object> {
 		return new HashCodeBuilder().append(hash).toHashCode();
 	}
 
-	public String getSrc(ICase _case){
-		return getSrc(_case.getToken() , _case.getVersion());
+	public String getSrc(ICase _case) {
+		return getSrc(_case.getToken(), _case.getVersion());
 	}
 
-	public String getSrc(String token,Integer ver){
-		return 	getPath() + token + "/" + ver;
+	public String getSrc(String token, Integer ver) {
+		return getPath() + token + "/" + ver;
+	}
+
+	public int compareVersion(FiddleSandbox other) {
+
+		return new VersionComparator().compare(version, other.version);
+
 	}
 
 	public int compareTo(final Object other) {
 		if (other != null && other instanceof FiddleSandbox) {
 			FiddleSandbox castOther = (FiddleSandbox) other;
 
-//			if (version != null && castOther.version != null) {
-//				if ("freshly".equals(version) && (!"freshly".equals(castOther.version))) {
-//					return 1;
-//				} else if ((!"freshly".equals(version)) && "freshly".equals(castOther.version)) {
-//					return -1;
-//				}
-//			}
+			if (version != null && castOther.version != null) {
+				if (version.indexOf("FL") != -1 && (castOther.version.indexOf("FL") == -1)) {
+					return 1;
+				} else if ((version.indexOf("FL") == -1) && (castOther.version.indexOf("FL") != -1)) {
+					return -1;
+				}
 
-			return new CompareToBuilder().append(castOther.version,version).
-				append(castOther.lastUpdate,lastUpdate).toComparison();
+				int ver = compareVersion(castOther);
+				if (ver != 0)
+					return ver;
+			}
+
+			return new CompareToBuilder()
+			.append(theme, castOther.theme)
+			.append(castOther.lastUpdate, lastUpdate).toComparison();
 		} else {
 			throw new IllegalArgumentException("FiddleSandbox can't compare to " + other == null ? "null" : other
 					.getClass().getName());
 		}
+	}
+
+	public Theme getTheme() {
+		return theme;
+	}
+
+	public void setTheme(Theme theme) {
+		this.theme = theme;
 	}
 }

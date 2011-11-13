@@ -36,6 +36,10 @@ public class CookieUtil {
 		return ((HttpServletRequest) Executions.getCurrent().getNativeRequest());
 	}
 
+	public static void removeCookie(HttpServletResponse response, String name) {
+		setCookie(response, name, null, 0);
+	}
+	
 	public static void setCookie(HttpServletResponse response, String name, String value) {
 		setCookie(response, name, value, -1);
 	}
@@ -58,15 +62,40 @@ public class CookieUtil {
 		return null;
 	}
 
+	/**
+	 * Must run in ZK Execution.
+	 * @param name
+	 * @param value
+	 * @param maxage
+	 */
 	public static void setCookie(String name, String value, int maxage) {
 		setCookie(getExecutionResponse(), name, value, maxage);
 	}
 	
+	/**
+	 * Must run in ZK Execution.
+	 * @param name
+	 * @param value
+	 */
 	public static void setCookie(String name, String value) {
 		setCookie(getExecutionResponse(), name, value);
 	}
 
+	/**
+	 * Must run in ZK Execution.
+	 * @param name
+	 * @return
+	 */
 	public static String getCookie(String name) {
 		return getCookie(getExecutionRequest(), name);
+	}
+	
+	
+	/**
+	 * Must run in ZK Execution.
+	 * @param name
+	 */
+	public static void removeCookie(String name) {
+		setCookie(getExecutionResponse(), name, null, 0);
 	}
 }

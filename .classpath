@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/LoginServiceApi-0.8.0.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/rating-0.9.0.jar"/>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/codeeditor-0.9.6.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/selectbox-0.9.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

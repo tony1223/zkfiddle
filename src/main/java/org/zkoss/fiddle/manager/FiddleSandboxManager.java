@@ -6,9 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
+import org.zkoss.fiddle.visualmodel.FiddleSandboxGroup;
+import org.zkoss.fiddle.visualmodel.comparator.VersionComparator;
 
 /**
  * We store this data in system wild and not persisting, this should be used as
@@ -31,38 +35,67 @@ public class FiddleSandboxManager {
 
 		boolean debugMode = Boolean.getBoolean("fiddle.debug");
 		if (debugMode) {
-			FiddleSandbox sandbox = new FiddleSandbox() {
-
-				public String getSrc(String token, Integer ver) {
-					return "http://www.google.com";
-				}
-			};
-			sandbox.setLastUpdate(new Date());
-			sandbox.setName("localtest");
-			sandbox.setVersion("5.0.8");
-			sandbox.setPath("http://localhost/test1");
-			this.addFiddleSandbox(sandbox);
-
-			// open two sandboxes to help designer finetune the features.
-			sandbox = new FiddleSandbox() {
-
-				public String getSrc(String token, Integer ver) {
-					return "http://www.google.com";
-				}
-			};
-			sandbox.setLastUpdate(new Date());
-			sandbox.setName("localtest2");
-			sandbox.setVersion("5.0.7.1");
-			sandbox.setPath("http://localhost/test2");
-			this.addFiddleSandbox(sandbox);
+			
+			
+			createFakeSandbox("Breeze",FiddleSandbox.Theme.breeze,"5.0.8","http://localhost/test1");
+			createFakeSandbox("Breeze",FiddleSandbox.Theme.breeze,"5.0.7.1","http://localhost/test2");
+			createFakeSandbox("Breeze",FiddleSandbox.Theme.breeze,"5.0.10","http://localhost/test3");
+			createFakeSandbox("Breeze",FiddleSandbox.Theme.breeze,"5.0.10.FL","http://localhost/test4");
+			createFakeSandbox("Breeze",FiddleSandbox.Theme.breeze,"6.0.0.FL","http://localhost/test5");
+			createFakeSandbox("Sapphire",FiddleSandbox.Theme.sapphire,"6.0.0.FL","http://localhost/test51");
+			createFakeSandbox("Sapphire",FiddleSandbox.Theme.sapphire,"6.0.0.FL","http://localhost/test52");
+			createFakeSandbox("Silvertail",FiddleSandbox.Theme.silvertail,"6.0.0.FL","http://localhost/test53");
+			createFakeSandbox("Breeze",FiddleSandbox.Theme.breeze,"6.0.0","http://localhost/test6");
+			createFakeSandbox("Breeze",FiddleSandbox.Theme.breeze,"3.6.4","http://localhost/test7");
 		}
+	}
+	
+	private void createFakeSandbox(String name,FiddleSandbox.Theme theme,String version,String path){
+		FiddleSandbox sandbox = new FiddleSandbox() {
+
+			public String getSrc(String token, Integer ver) {
+				return "https://www.google.com";
+			}
+		};
+		sandbox.setLastUpdate(new Date());
+		sandbox.setName(name);
+		sandbox.setTheme(theme);
+		sandbox.setVersion(version);
+		sandbox.setPath(path);
+		this.addFiddleSandbox(sandbox);
 	}
 
 	public FiddleSandbox getFiddleSandbox(String hash) {
 		return checkDate(sandboxesByHash.get(hash));
 
 	}
+	
+	public int getAmount(){
+		return sandboxesByHash.size();
+	}
 
+	/**
+	 * organize by version
+	 * @return
+	 */
+	public List<FiddleSandboxGroup> getFiddleSandboxGroups(){
+		
+	
+		Set<String> keyset = new TreeSet(new VersionComparator());
+		keyset.addAll(sandboxesByVersion.keySet());
+
+		List<FiddleSandboxGroup> groups = new ArrayList<FiddleSandboxGroup>();
+		
+		for(String key:keyset){
+			List<FiddleSandbox> sandboxs = sandboxesByVersion.get(key);
+			Collections.sort(sandboxs);
+			
+			groups.add(new FiddleSandboxGroup(key, sandboxs));
+		}
+		
+		return groups;
+	}
+	
 	public FiddleSandbox getFiddleSandboxForLastestVersion() {
 		return getFiddleSandboxByVersion(latest);
 	}

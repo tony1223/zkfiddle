@@ -45,7 +45,9 @@ public class FiddleSandboxFilter implements Filter {
 			for (int i = 0; i < size; ++i) {
 				boolean curSuccess = addSandbox(httprequest.getParameter("name"+i), 
 						httprequest.getParameter("path"+i),
-						httprequest.getParameter("ver"+i)) ;
+						httprequest.getParameter("ver"+i),
+						httprequest.getParameter("theme"+i)		
+				) ;
 				success = success && curSuccess;
 				
 			}
@@ -60,7 +62,8 @@ public class FiddleSandboxFilter implements Filter {
 		}else {
 			//2011/11/8 Tony: Currently nobody is using this way , plan to remove this in future.
 			boolean success = addSandbox(httprequest.getParameter("name"), httprequest.getParameter("path"),
-					httprequest.getParameter("ver"));
+					httprequest.getParameter("ver"),
+					httprequest.getParameter("theme"));
 
 			if (success) {
 				response.getWriter().println("true");
@@ -73,11 +76,16 @@ public class FiddleSandboxFilter implements Filter {
 		}
 	}
 
-	private boolean addSandbox(String name, String path, String ver) {
+	private boolean addSandbox(String name, String path, String ver,String theme) {
 		FiddleSandbox in = new FiddleSandbox();
 		in.setName(name);
 		in.setPath(path);
 		in.setVersion(ver);
+		try{
+			in.setTheme(FiddleSandbox.Theme.valueOf(theme));
+		}catch(IllegalArgumentException ex){
+			logger.warn("Theme information not found for "+path,ex);
+		}
 		in.setLastUpdate(new Date());
 
 		try {
