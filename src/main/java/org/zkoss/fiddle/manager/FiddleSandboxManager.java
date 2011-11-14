@@ -87,7 +87,8 @@ public class FiddleSandboxManager {
 		List<FiddleSandboxGroup> groups = new ArrayList<FiddleSandboxGroup>();
 		
 		for(String key:keyset){
-			List<FiddleSandbox> sandboxs = sandboxesByVersion.get(key);
+			List<FiddleSandbox> sandboxs = new ArrayList<FiddleSandbox>(sandboxesByVersion.get(key));
+			
 			Collections.sort(sandboxs);
 			
 			groups.add(new FiddleSandboxGroup(key, sandboxs));
@@ -159,10 +160,11 @@ public class FiddleSandboxManager {
 			throw new IllegalArgumentException("sandbox and sandbox path can't be null ");
 		}
 
+		if(!sandboxesByHash.containsKey(sandbox.getHash())){
+			getVersionList(sandbox.getZKVersion()).add(sandbox);
+		}
+
 		sandboxesByHash.put(sandbox.getHash(), sandbox);
-
-		getVersionList(sandbox.getZKVersion()).add(sandbox);
-
 		Date d = new Date();
 
 		for (String hash : sandboxesByHash.keySet()) {

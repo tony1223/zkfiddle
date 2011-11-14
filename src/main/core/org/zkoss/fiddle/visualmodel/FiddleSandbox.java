@@ -12,7 +12,7 @@ import org.zkoss.fiddle.visualmodel.comparator.VersionComparator;
 public class FiddleSandbox implements Comparable<Object> {
 
 	public enum Theme implements Comparable<Theme> {
-		breeze, silvertail, sapphire
+		breeze, silvertail, sapphire, classicblue
 	}
 
 	private String hash;
