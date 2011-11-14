@@ -1,0 +1,45 @@
+<?page title="ZK Fiddle Backend" contentType="text/html;charset=UTF-8"?>
+<zk xmlns:w="client" xmlns:n="native" >
+	
+	<div id="loginContainer" apply="org.zkoss.fiddle.admin.composer.LoginComposer">
+		<n:table>
+			<n:tr>
+				<n:td>Account</n:td>
+				<n:td>
+					<textbox id="account" constraint="no empty" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>Password</n:td>
+				<n:td>
+					<textbox id="password" type="password" constraint="no empty" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td>Remember Me</n:td>
+				<n:td>
+					<checkbox id="rembember" checked="true" />
+				</n:td>
+			</n:tr>
+			<n:tr>
+				<n:td colspan="2">
+					<button id="okBtn" label="login" forward="loginContainer.onOK" />
+				</n:td>
+			</n:tr>			
+		</n:table>
+	</div>
+
+	<script type="text/javascript">
+
+		var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-23849188-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() { var ga = document.createElement('script'); ga.type =
+		'text/javascript'; ga.async = true; ga.src = ('https:' ==
+		document.location.protocol ? 'https://ssl' : 'http://www') +
+		'.google-analytics.com/ga.js'; var s =
+		document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(ga, s); })();
+
+	</script>
+</zk>
