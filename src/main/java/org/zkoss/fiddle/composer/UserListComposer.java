@@ -161,7 +161,7 @@ public class UserListComposer extends GenericForwardComposer {
 
 				if (data == null ){
 					throw new IllegalStateException("not expected type");
-				}else if(FiddleConstant.URL_DATA_CASE_VIEW.equals(data.getType())) {
+				}else if(FiddleConstant.URL_DATA_CASE_VIEW.equals(data.getType()) && data.getData() instanceof UserVO) {
 					UserVO user = (UserVO) data.getData();
 					userName = user.getUserName();
 					isGuest = user.isGuest();
