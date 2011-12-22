@@ -368,12 +368,12 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		});
 	}
 	private void initTagEditor(){
-		tagInput.addEventListener("onOK", new EventListener() {
+		tagInput.addEventListener(Events.ON_OK, new EventListener() {
 			public void onEvent(Event event) throws Exception {
 				performUpdateTag();
 			}
 		});
-		tagInput.addEventListener("onCancel", new EventListener() {
+		tagInput.addEventListener(Events.ON_CANCEL, new EventListener() {
 
 			public void onEvent(Event event) throws Exception {
 				tagInput.setValue(lastVal);
@@ -532,7 +532,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 				lbl.setHref(tagurl);
 				lbl.addEventListener("onClick", new EventListener() {
 					public void onEvent(Event event) throws Exception {
-						//FIXME this title is weird
 						BrowserStateUtil.go(tag);
 					}
 				});
