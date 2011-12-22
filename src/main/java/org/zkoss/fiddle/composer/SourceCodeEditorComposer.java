@@ -20,7 +20,6 @@ import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
 import org.zkoss.fiddle.composer.viewmodel.CaseModel;
 import org.zkoss.fiddle.composer.viewmodel.URLData;
-import org.zkoss.fiddle.dao.api.ICaseRatingdDao;
 import org.zkoss.fiddle.dao.api.ICaseRecordDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
 import org.zkoss.fiddle.dao.api.ITagDao;
@@ -30,13 +29,13 @@ import org.zkoss.fiddle.hyperlink.Hyperlink;
 import org.zkoss.fiddle.manager.CaseManager;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.model.Case;
-import org.zkoss.fiddle.model.CaseRating;
 import org.zkoss.fiddle.model.CaseRecord;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.UserRememberToken;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.notification.Notification;
+import org.zkoss.fiddle.plus1.Plus1;
 import org.zkoss.fiddle.util.BrowserStateUtil;
 import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.util.GAUtil;
@@ -46,13 +45,9 @@ import org.zkoss.fiddle.util.TagUtil;
 import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
-import org.zkoss.fiddle.visualmodel.RatingAmount;
 import org.zkoss.fiddle.visualmodel.UserVO;
-import org.zkoss.rating.Rating;
-import org.zkoss.rating.event.RatingEvent;
 import org.zkoss.service.login.IReadonlyLoginService;
 import org.zkoss.service.login.IUser;
-import org.zkoss.social.facebook.event.LikeEvent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Execution;
@@ -155,8 +150,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	private Checkbox cbSaveTag;
 
 	/* for rating */
-
-	private Rating caseRating;
+	private Plus1 caseRating;
 
 	/* for notifications */
 	private Div notifications;
@@ -383,7 +377,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 
 	private void updateLoginState(){
-		caseRating.setReadOnly(! UserUtil.isLogin(Sessions.getCurrent()));
 
 		if(UserUtil.isLogin(Sessions.getCurrent())){
 			if(!caseModel.isStartWithNewCase())
@@ -399,8 +392,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			logoffBtn.setVisible(true);
 			loginBtn.setVisible(false);
 		}else{
-
-			caseRating.setRated(false);
 
 			authorName.setVisible(true);
 			loginedAuthorName.setVisible(false);
@@ -469,6 +460,10 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			}
 		}
 	}
+	
+	public void updateCaseRating(ICase $case){
+		caseRating.invalidate();
+	}
 
 	public void onClick$loginedAuthorName(Event evt) {
 		IUser user = UserUtil.getLoginUser(session);
@@ -482,42 +477,25 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		GAUtil.logAction(FiddleConstant.GA_CATEGORY_SOURCE, "download", caseModel.getCurrentCase().getCaseUrl());
 	}
 
-	public void onRating$caseRating(RatingEvent evt){
-		if(UserUtil.isLogin(Sessions.getCurrent()) && ! caseModel.isStartWithNewCase()){
-			IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
-			CaseManager caseManager = (CaseManager) SpringUtil.getBean("caseManager");
-			RatingAmount ratingResultAmount = caseManager.rankCase(caseModel.getCurrentCase(), user.getName(), evt.getValue());
-			caseRating.setValue((int) ratingResultAmount.getAmount());
-			caseRating.setRatedvalue(evt.getValue());
-		}
-	}
-
-	private void updateCaseRating(final Case thecase){
-
-		caseRating.setReadOnly(! UserUtil.isLogin(Sessions.getCurrent()));
-
-		ICaseRecordDao caseRecordDao = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
-		CaseRecord record = caseRecordDao.get(CaseRecord.Type.Rating,thecase.getId());
-		caseRating.setRatedvalue(0);
-		caseRating.setRated(false);
-		if(record == null){
-			caseRating.setValue(0);
-		}else{
-			caseRating.setValue(record.getAmount().intValue());
-
-			if(UserUtil.isLogin(Sessions.getCurrent())){
-				IUser user = UserUtil.getLoginUser(Sessions.getCurrent());
-				ICaseRatingdDao caseRatingDao = (ICaseRatingdDao) SpringUtil.getBean("caseRatingDao");
-				CaseRating userRating = caseRatingDao.findBy(thecase, user.getName());
-				if(userRating != null){
-					caseRating.setRatedvalue(userRating.getAmount().intValue());
+	public void onLike$caseRating(org.zkoss.fiddle.plus1.event.LikeEvent evt){
+		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil.getBean("caseRecordDao");
+		boolean newCase = caseModel.isStartWithNewCase();
+		if (!newCase) {
+			Case _case = caseModel.getCurrentCase();
+			if(evt.isLike()){
+				manager.increase(CaseRecord.Type.Plus1, _case);
+				if (logger.isDebugEnabled()) {
+					logger.debug(_case.getToken() + ":" + _case.getVersion() + ":+1");
+				}
+			}else{
+				manager.decrease(CaseRecord.Type.Plus1, _case.getId());
+				if (logger.isDebugEnabled()) {
+					logger.debug(_case.getToken() + ":" + _case.getVersion() + ":-1");
 				}
 			}
-
 		}
-
 	}
-
+	
 	private void updateTagEditor(final Case pCase) {
 		lastVal = null;
 		ICaseTagDao caseTagDao = (ICaseTagDao) SpringUtil.getBean("caseTagDao");
@@ -614,27 +592,6 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		CookieUtil.setCookie(FiddleConstant.COOKIE_ATTR_AUTHOR_NAME, newname, CookieUtil.AGE_ONE_YEAR);
 
 	}
-
-	//TODO review this and remove it.
-	public void onLike$fblike(LikeEvent evt) {
-		ICaseRecordDao manager = (ICaseRecordDao) SpringUtil
-				.getBean("caseRecordDao");
-		ICase $case = caseModel.getCurrentCase();
-		if (evt.isLiked()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion()
-						+ ":like");
-			}
-			manager.increase(CaseRecord.Type.Like, $case);
-		} else {
-			if (logger.isDebugEnabled()) {
-				logger.debug($case.getToken() + ":" + $case.getVersion()
-						+ ":unlike");
-			}
-			manager.decrease(CaseRecord.Type.Like, $case.getId());
-		}
-	}
-
 	public void onShowResult(Event e) {
 		CaseRequest viewRequestParam = (CaseRequest) e.getData();
 		if (viewRequestParam != null) {

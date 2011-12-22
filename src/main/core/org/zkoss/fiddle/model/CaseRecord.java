@@ -31,7 +31,7 @@ public class CaseRecord implements Serializable,IRenderCase{
 
 	public enum Type {
 		View(0), Like(1), RunTemp(2), Run(3), Download(4), Widget(5),
-		Rating(6) ;
+		Rating(6), Plus1(7) ;
 		private Integer type;
 		Type(int type) {
 			this.type = type;

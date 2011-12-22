@@ -76,7 +76,7 @@
 						(separate with comma ,ex. "grid,listbox,test" )
 					</hlayout>
 
-					<rating id="caseRating" />
+					<plus1 id="caseRating" />
 					<div style="float:right;">
 						Posted from <label id="poserIp" />
 					</div>
