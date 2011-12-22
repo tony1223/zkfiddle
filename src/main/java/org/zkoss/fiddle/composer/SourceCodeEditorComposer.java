@@ -36,6 +36,7 @@ import org.zkoss.fiddle.model.UserRememberToken;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.notification.Notification;
 import org.zkoss.fiddle.plus1.Plus1;
+import org.zkoss.fiddle.util.BookmarkUtil;
 import org.zkoss.fiddle.util.BrowserStateUtil;
 import org.zkoss.fiddle.util.CookieUtil;
 import org.zkoss.fiddle.util.GAUtil;
@@ -355,11 +356,9 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 		EventQueues.lookup(FiddleEventQueues.Bookmark,true).subscribe(
 			new	FiddleEventListener<BookmarkEvent>(BookmarkEvent.class,self) {
 			public void onFiddleEvent(BookmarkEvent evt) throws Exception {
-				String prefix = "source-";
-				if(evt.getBookmark().startsWith(prefix)){
-					int index = Integer.parseInt(evt.getBookmark().substring(prefix.length())) -1;
+				int index = BookmarkUtil.getSourceIndex(evt.getBookmark());
+				if(index != -1){
 					List<Tab> tabs = sourcetabs.getChildren();
-					
 					if(index >= 0 && index < tabs.size() ) {
 						tabs.get(index).setSelected(true);
 					}

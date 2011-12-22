@@ -6,6 +6,7 @@ import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.model.Resource;
+import org.zkoss.fiddle.util.BookmarkUtil;
 import org.zkoss.fiddle.util.ResourceUtil;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
@@ -120,7 +121,7 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 			public void onEvent(Event event) throws Exception {
 				int ind = sourcetabs.getChildren().indexOf(tab);
 				if(ind != -1 ){
-					Executions.getCurrent().getDesktop().setBookmark("source-"+ (ind+1) );
+					Executions.getCurrent().getDesktop().setBookmark(BookmarkUtil.SOURCE_PREFIX + (ind+1) );
 				}
 			}
 		});
