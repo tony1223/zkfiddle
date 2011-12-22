@@ -7,6 +7,7 @@ import org.zkoss.fiddle.Selectbox;
 import org.zkoss.fiddle.composer.event.ResourceChangedEvent;
 import org.zkoss.fiddle.composer.event.TopStateChangeEvent;
 import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
+import org.zkoss.fiddle.composer.eventqueue.FiddleEventQueues;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleTopNavigationEventQueue;
 import org.zkoss.fiddle.event.OptionSelectedEvent;
@@ -19,6 +20,8 @@ import org.zkoss.fiddle.visualmodel.FiddleSandbox;
 import org.zkoss.fiddle.visualmodel.FiddleSandboxGroup;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.BookmarkEvent;
+import org.zkoss.zk.ui.event.EventQueues;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Div;
 import org.zkoss.zul.ListModel;
@@ -48,6 +51,12 @@ public class TopNavigationComposer extends GenericForwardComposer {
 
 	private Button saveBtn;
 
+	
+	public void onBookmarkChange(BookmarkEvent event) throws Exception {
+		EventQueues.lookup(FiddleEventQueues.Bookmark,true).publish(event);		
+	}
+
+	
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 

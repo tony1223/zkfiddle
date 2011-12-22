@@ -7,6 +7,7 @@ import org.zkoss.fiddle.composer.eventqueue.FiddleEventListener;
 import org.zkoss.fiddle.composer.eventqueue.impl.FiddleSourceEventQueue;
 import org.zkoss.fiddle.model.Resource;
 import org.zkoss.fiddle.util.ResourceUtil;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
@@ -106,13 +107,24 @@ public class SourceTabRenderer implements ISourceTabRenderer {
 	 * (org.zkoss.zul.api.Tabs, org.zkoss.zul.api.Tabpanels,
 	 * org.zkoss.fiddle.model.api.IResource)
 	 */
-	public void appendSourceTab(Tabs sourcetabs, Tabpanels sourcetabpanels, final Resource resource) {
+	public void appendSourceTab(final Tabs sourcetabs, Tabpanels sourcetabpanels, final Resource resource) {
 		if (sourcetabs == null || sourcetabpanels == null) {
 			throw new IllegalStateException("sourcetabpanels/sourcetabs is not ready !!\n"
 					+ " do you call this after doAfterCompose "
 					+ "(and be sure you called super.doAfterCompose()) or using in wrong page? ");
 		}
-		sourcetabs.appendChild(renderTab(resource));
+		
+		final Tab tab = renderTab(resource);
+		
+		tab.addEventListener(Events.ON_SELECT, new EventListener() {
+			public void onEvent(Event event) throws Exception {
+				int ind = sourcetabs.getChildren().indexOf(tab);
+				if(ind != -1 ){
+					Executions.getCurrent().getDesktop().setBookmark("source-"+ (ind+1) );
+				}
+			}
+		});
+		sourcetabs.appendChild(tab);
 		sourcetabpanels.appendChild(renderTabpanel(resource));
 	}
 }

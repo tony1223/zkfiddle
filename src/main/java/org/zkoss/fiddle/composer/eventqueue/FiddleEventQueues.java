@@ -11,5 +11,7 @@ public class FiddleEventQueues {
 	public static final String LeftRefresh = "LeftRefresh";
 
 	public static final String TopNavigation = "TopNav";
+	
+	public static final String Bookmark = "bookmark";
 
 }

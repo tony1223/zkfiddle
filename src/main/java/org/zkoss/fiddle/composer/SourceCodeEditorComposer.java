@@ -53,6 +53,7 @@ import org.zkoss.zk.ui.Desktop;
 import org.zkoss.zk.ui.Execution;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Sessions;
+import org.zkoss.zk.ui.event.BookmarkEvent;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.EventQueues;
@@ -246,7 +247,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			loginWin$account.setValue(cookieAuthor);
 		}
 	}
-
+	
 	private void initEventQueue() {
 
 		final FiddleSourceEventQueue sourceQueue = FiddleSourceEventQueue
@@ -347,6 +348,21 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 					updateNotifications();
 					EventQueues.lookup(FiddleEventQueues.LeftRefresh).publish(
 							new Event(FiddleEvents.ON_LEFT_REFRESH, null));
+				}
+			}
+		});
+		
+		EventQueues.lookup(FiddleEventQueues.Bookmark,true).subscribe(
+			new	FiddleEventListener<BookmarkEvent>(BookmarkEvent.class,self) {
+			public void onFiddleEvent(BookmarkEvent evt) throws Exception {
+				String prefix = "source-";
+				if(evt.getBookmark().startsWith(prefix)){
+					int index = Integer.parseInt(evt.getBookmark().substring(prefix.length())) -1;
+					List<Tab> tabs = sourcetabs.getChildren();
+					
+					if(index >= 0 && index < tabs.size() ) {
+						tabs.get(index).setSelected(true);
+					}
 				}
 			}
 		});
