@@ -6,6 +6,7 @@ import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.zkoss.spring.SpringUtil;
 
 public class SpringUtilz {
 
@@ -16,10 +17,16 @@ public class SpringUtilz {
 		return WebApplicationContextUtils.getRequiredWebApplicationContext(context);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> T getBean(String name){
+		return (T) SpringUtil.getBean(name);
+	}
+	
 	/**
 	 * Get the spring bean by the specified name.
 	 */
-	public static Object getBean(ServletContext context, String name) {
+	@SuppressWarnings("unchecked")
+	public static <T> T getBean(ServletContext context, String name) {
 		Object o = null;
 		try {
 			if (getApplicationContext(context).containsBean(name)) {
@@ -28,14 +35,14 @@ public class SpringUtilz {
 		} catch (NoSuchBeanDefinitionException ex) {
 			// ignore
 		}
-		return o;
+		return (T) o;
 	}
 
 	/**
 	 * Get the spring bean by the specified name and class.
 	 */
 	@SuppressWarnings("unchecked")
-	public static Object getBean(ServletContext context, String name, @SuppressWarnings("rawtypes") Class cls) {
+	public static <T> T  getBean(ServletContext context, String name, @SuppressWarnings("rawtypes") Class cls) {
 		Object o = null;
 		try {
 			if (getApplicationContext(context).containsBean(name)) {
@@ -44,7 +51,7 @@ public class SpringUtilz {
 		} catch (BeanNotOfRequiredTypeException e) {
 			// ignore
 		}
-		return o;
+		return (T)o;
 	}
 
 }

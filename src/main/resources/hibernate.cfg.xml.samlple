@@ -60,7 +60,7 @@
 		<mapping class="org.zkoss.fiddle.model.Tag" />
 		<mapping class="org.zkoss.fiddle.model.CaseTag" />
 		<mapping class="org.zkoss.fiddle.model.UserRememberToken" />
-
+		<mapping class="org.zkoss.fiddle.model.ReferLog" />
     </session-factory>
 
 </hibernate-configuration>

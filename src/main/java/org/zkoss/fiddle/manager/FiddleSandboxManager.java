@@ -81,7 +81,7 @@ public class FiddleSandboxManager {
 	public List<FiddleSandboxGroup> getFiddleSandboxGroups(){
 		
 	
-		Set<String> keyset = new TreeSet(new VersionComparator());
+		Set<String> keyset = new TreeSet<String>(new VersionComparator());
 		keyset.addAll(sandboxesByVersion.keySet());
 
 		List<FiddleSandboxGroup> groups = new ArrayList<FiddleSandboxGroup>();

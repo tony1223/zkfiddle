@@ -108,6 +108,7 @@ public class WidgetViewComposer extends GenericForwardComposer {
 				public void onFiddleEvent(BookmarkEvent evt) throws Exception {
 					int index = BookmarkUtil.getSourceIndex(evt.getBookmark());
 					if(index != -1){
+						@SuppressWarnings("unchecked")
 						List<Tab> tabs = resourceTabs.getChildren();
 						if(index >= 0 && index < tabs.size() ) {
 							tabs.get(index).setSelected(true);

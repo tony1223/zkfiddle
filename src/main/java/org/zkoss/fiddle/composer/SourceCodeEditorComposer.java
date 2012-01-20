@@ -358,6 +358,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 			public void onFiddleEvent(BookmarkEvent evt) throws Exception {
 				int index = BookmarkUtil.getSourceIndex(evt.getBookmark());
 				if(index != -1){
+					@SuppressWarnings("unchecked")
 					List<Tab> tabs = sourcetabs.getChildren();
 					if(index >= 0 && index < tabs.size() ) {
 						tabs.get(index).setSelected(true);

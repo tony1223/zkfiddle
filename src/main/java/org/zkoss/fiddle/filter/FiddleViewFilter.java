@@ -16,17 +16,23 @@ import org.apache.log4j.Logger;
 import org.zkoss.fiddle.FiddleConstant;
 import org.zkoss.fiddle.dao.api.ICaseDao;
 import org.zkoss.fiddle.dao.api.ICaseTagDao;
+import org.zkoss.fiddle.dao.api.IReferLogDao;
 import org.zkoss.fiddle.exception.SandboxNotFoundException;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
+import org.zkoss.fiddle.model.CaseRecord;
+import org.zkoss.fiddle.model.ReferLog;
 import org.zkoss.fiddle.model.Tag;
 import org.zkoss.fiddle.model.api.ICase;
 import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.util.FilterUtil;
+import org.zkoss.fiddle.util.ReferUtil;
 import org.zkoss.fiddle.util.SpringUtilz;
+import org.zkoss.fiddle.util.UserUtil;
 import org.zkoss.fiddle.visualmodel.CaseRequest;
 import org.zkoss.fiddle.visualmodel.CaseRequest.Type;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
+import org.zkoss.service.login.IUser;
 import org.zkoss.web.servlet.Servlets;
 
 public class FiddleViewFilter extends FiddleViewBaseFilter {
@@ -36,9 +42,9 @@ public class FiddleViewFilter extends FiddleViewBaseFilter {
 	private static final Logger logger = Logger.getLogger(FiddleViewFilter.class);
 
 	private ICaseDao caseDao;
-
+	
 	private FiddleSandboxManager sandboxManager;
-
+	
 	public void doFilter(ServletRequest request2, ServletResponse response2, FilterChain chain) throws IOException,
 			ServletException {
 		HttpServletRequest request = ((HttpServletRequest) request2);
@@ -88,10 +94,13 @@ public class FiddleViewFilter extends FiddleViewBaseFilter {
 			}
 
 			if (viewRequest.getType() == Type.Direct) {
+				saveRefer(request,CaseRecord.Type.Run,$case.getId());
 				response.sendRedirect(viewRequest.getFiddleDirectURL());
 			} else if(viewRequest.getType() == Type.Widget){
+				saveRefer(request,CaseRecord.Type.Widget,$case.getId());
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/widget.zul");
 			} else {
+				saveRefer(request,CaseRecord.Type.View,$case.getId());
 				Servlets.forward(ctx, request, response, "/WEB-INF/_include/index.zul");
 			}
 
@@ -101,6 +110,22 @@ public class FiddleViewFilter extends FiddleViewBaseFilter {
 
 	}
 
+	private void saveRefer(HttpServletRequest request,CaseRecord.Type type,Long caseId){
+		String refer = ReferUtil.getRefer( request);
+		if(refer != null){
+			ReferLog log = new ReferLog();
+			log.setFromIP(request.getRemoteAddr());
+			log.setCreateDate(new Date());
+			log.setRefer(refer);
+			log.setType(type.value());
+			log.setCaseId(caseId);
+			
+			IUser user = UserUtil.getLoginUser(request.getSession(true));
+			log.setAccount(user == null ? null : user.getName());
+			IReferLogDao referLogDao = SpringUtilz.getBean(this.ctx, "referLogDao");
+			referLogDao.saveOrUdate(log);					
+		}
+	}
 	private String getSampleDescription(ICase $case) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
 		String taglist = getTagList($case);
