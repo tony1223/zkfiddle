@@ -38,8 +38,8 @@ import org.zkoss.fiddle.notification.Notification;
 import org.zkoss.fiddle.plus1.Plus1;
 import org.zkoss.fiddle.util.BookmarkUtil;
 import org.zkoss.fiddle.util.BrowserStateUtil;
+import org.zkoss.fiddle.util.CaseUtil;
 import org.zkoss.fiddle.util.CookieUtil;
-import org.zkoss.fiddle.util.FiddleConfig;
 import org.zkoss.fiddle.util.GAUtil;
 import org.zkoss.fiddle.util.NotificationUtil;
 import org.zkoss.fiddle.util.SEOUtils;
@@ -479,7 +479,7 @@ public class SourceCodeEditorComposer extends GenericForwardComposer {
 	}
 	
 	public void updateCaseRating(ICase $case){
-		caseRating.setHref(FiddleConfig.getAbsoluteURL($case.getCaseUrl()));
+		caseRating.setHref(CaseUtil.getSampleURL($case));
 		caseRating.invalidate();
 	}
 

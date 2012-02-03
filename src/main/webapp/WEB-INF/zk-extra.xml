@@ -11,7 +11,9 @@
         <name>org.zkoss.fiddle.hostname</name>
         <value>http://localhost:9999/datahandler</value>
     </library-property>
-
+	<client-config>
+		<debug-js>true</debug-js>
+	</client-config>
     <!--
     <library-property>
         <name>org.zkoss.fiddle.hostname</name>

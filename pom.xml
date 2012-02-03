@@ -287,45 +287,5 @@
   </dependencies>
   <build>
     <finalName>datahandler</finalName>
-    <plugins>
-      <plugin>
-	  <groupId>org.apache.maven.plugins</groupId>
-	  <artifactId>maven-compiler-plugin</artifactId>
-	  <configuration>
-	    <includes>
-	      <include implementation="java.lang.String">src/main/java/**/*.java</include>
-	      <include implementation="java.lang.String">src/main/core/**/*.java</include>
-	    </includes>
-	  </configuration>
-	</plugin>    
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>model</classifier>
-              <includes>
-                <include>org/**/*</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>      
-    </plugins>    
   </build>
 </project>

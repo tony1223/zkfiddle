@@ -11,7 +11,7 @@ public class FiddleConfig {
 	
 	public static String getAbsoluteURL(String url){
 		if( url == null)  throw new IllegalStateException("url shouldn't be null ");
-		return getHostName()+  (url.startsWith("/") ? url : "/" + url);
+		return getHostName() +  (url.startsWith("/") ? url : "/" + url);
 		
 	}
 }
