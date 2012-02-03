@@ -18,6 +18,20 @@
 		<zuljsp.version>1.4.1</zuljsp.version>
 		<spring.version>3.0.5.RELEASE</spring.version>
 		<hibernate.version>3.6.4.Final</hibernate.version>
+		
+		<!-- local -->
+		<codeeditor.version>0.9.6</codeeditor.version>
+		<hyperlink.version>0.8.0</hyperlink.version>
+		<loginServiceApi.version>0.8.0</loginServiceApi.version>
+		<notification.version>0.8.0</notification.version>
+		<plus1.version>0.9.0</plus1.version>
+		<rating.version>0.9.0</rating.version>
+		<reflections.version>0.9.5-RC2</reflections.version>
+		<selectbox.version>0.9.0</selectbox.version>
+		<socialwidget.version>0.8.0.fiddle</socialwidget.version>
+		<texttab.version>0.8.0</texttab.version>
+		<fiddletabs.version>0.8.0</fiddletabs.version>
+		
 	</properties>
   <version>1.2.3</version>
   <name>ZK Fiddle Data handler</name>
@@ -284,8 +298,151 @@
     </dependency>
 
     <!--  logging end -->
+	
+	<!-- Jars in WEB-INF/lib start -->
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>codeeditor</artifactId>
+        <version>${codeeditor.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/codeeditor-${codeeditor.version}.jar</systemPath>
+    </dependency>
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>hyperlink</artifactId>
+        <version>${hyperlink.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/hyperlink-${hyperlink.version}.jar</systemPath>
+    </dependency>
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>loginServiceApi</artifactId>
+        <version>${loginServiceApi.version}</version>
+        <scope>system</scope> 
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/LoginServiceApi-${loginServiceApi.version}.jar</systemPath>
+    </dependency>	
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>notification</artifactId>
+        <version>${notification.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/notification-${notification.version}.jar</systemPath>
+    </dependency>
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>plus1</artifactId>
+        <version>${plus1.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/plus1-${plus1.version}.jar</systemPath>
+    </dependency>
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>rating</artifactId>
+        <version>${rating.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/rating-${rating.version}.jar</systemPath>
+    </dependency>
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/reflections-${reflections.version}.jar</systemPath>
+    </dependency>
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>selectbox</artifactId>
+        <version>${selectbox.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/selectbox-${selectbox.version}.jar</systemPath>
+    </dependency>			
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>social-widget</artifactId>
+        <version>${socialwidget.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/social-widget-${socialwidget.version}.jar</systemPath>
+    </dependency>
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>texttab</artifactId>
+        <version>${texttab.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/texttab-${texttab.version}.jar</systemPath>
+    </dependency>
+	<dependency>
+        <groupId>org.zkfiddle.file</groupId>
+        <artifactId>zk-fiddletabs</artifactId>
+        <version>${fiddletabs.version}</version>
+        <scope>system</scope>
+        <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/zk-fiddletabs-${fiddletabs.version}.jar</systemPath>
+    </dependency>
+	<!-- Jars in WEB-INF/lib end -->
   </dependencies>
   <build>
     <finalName>datahandler</finalName>
+    <plugins>
+	  <plugin>
+	    <groupId>org.codehaus.mojo</groupId>
+	    <artifactId>build-helper-maven-plugin</artifactId>
+	    <executions>
+	        <execution>
+	            <phase>generate-sources</phase>
+	            <goals><goal>add-source</goal></goals>
+	            <configuration>
+	                <sources>
+	                    <source>src/main/core</source>
+	                </sources>
+	            </configuration>
+	        </execution>
+	    </executions>
+	  </plugin>
+      <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>	  
+	<plugin>
+		<artifactId>maven-war-plugin</artifactId>
+		<configuration>
+			<archiveClasses>true</archiveClasses>
+		</configuration>
+	</plugin>
+	  <!--
+      <plugin>
+	  <groupId>org.apache.maven.plugins</groupId>
+	  <artifactId>maven-compiler-plugin</artifactId>
+	  <configuration>
+	    <includes>
+	      <include implementation="java.lang.String">**/*.java</include>
+	    </includes>
+	  </configuration>
+	</plugin>    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>model</classifier>
+              <includes>
+                <include>org/**/*</include>
+              </includes>
+			  <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+	  -->      
+    </plugins>    
   </build>
 </project>

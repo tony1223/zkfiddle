@@ -10,16 +10,5 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/reflections-0.9.5-RC2.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/social-widget-0.8.0.fiddle.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/texttab-0.8.0.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/zk-fiddletabs-0.8.0.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/notification-0.8.0.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/hyperlink-0.8.0.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/LoginServiceApi-0.8.0.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/rating-0.9.0.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/codeeditor-0.9.6.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/selectbox-0.9.0.jar"/>
-	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/plus1-0.9.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
