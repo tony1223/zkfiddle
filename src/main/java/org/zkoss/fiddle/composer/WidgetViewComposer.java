@@ -147,7 +147,7 @@ public class WidgetViewComposer extends GenericForwardComposer {
 			{
 				String type = ResourceUtil.getTypeName(resource);
 				String tabTitle =  " " + resource.getName();
-				resourceTabs.appendChild(preparedTab(tabTitle,"/img/types/"+type+".png"));
+				resourceTabs.appendChild(preparedTab(tabTitle,type));
 			}
 			{
 				Tabpanel tabpanel = new Tabpanel();
