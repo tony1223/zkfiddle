@@ -1,9 +1,15 @@
 package org.zkoss.fiddle.admin.composer;
 
+import java.net.ConnectException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
+import java.util.Set;
 
+import org.zkoss.fiddle.core.utils.UrlUtil;
 import org.zkoss.fiddle.manager.FiddleSandboxManager;
 import org.zkoss.fiddle.visualmodel.FiddleSandbox;
+import org.zkoss.json.JSONObject;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
@@ -11,11 +17,11 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Grid;
-import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
-import org.zkoss.zul.Row;
-import org.zkoss.zul.RowRenderer;
+import org.zkoss.zul.Listbox;
+import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listitem;
+import org.zkoss.zul.ListitemRenderer;
 
 public class SandboxListComposer extends GenericForwardComposer {
 
@@ -24,7 +30,7 @@ public class SandboxListComposer extends GenericForwardComposer {
 	 */
 	private static final long serialVersionUID = -8939520006607012735L;
 
-	private Grid sampleboxs;
+	private Listbox sampleboxs;
 
 	public void updateList(){
 		FiddleSandboxManager sandboxManager = (FiddleSandboxManager) SpringUtil
@@ -41,6 +47,27 @@ public class SandboxListComposer extends GenericForwardComposer {
 		updateList();
 	}
 	
+	public void onClick$ping(Event e){
+		
+		@SuppressWarnings("unchecked")
+		Set<Listitem> items = (Set<Listitem>) sampleboxs.getSelectedItems();
+		
+		for(Listitem item:items){
+			FiddleSandbox sandbox = (FiddleSandbox) item.getValue();
+			try {
+				JSONObject obj = UrlUtil.fetchJSON(new URL(sandbox.getPath()+"pong"));
+				if(obj.containsKey("work") && Boolean.TRUE.equals(obj.get("work"))){
+					sandbox.setStatus(FiddleSandbox.Status.pong);
+				}
+			} catch (Exception e1) {
+				sandbox.setStatus(FiddleSandbox.Status.lost);
+			}
+			
+		}
+		sampleboxs.setModel(sampleboxs.getModel());
+		
+	}
+	
 	public void onClick$refresh(Event e){
 		updateList();
 	}
@@ -49,24 +76,24 @@ public class SandboxListComposer extends GenericForwardComposer {
 		super.doAfterCompose(comp);
 		updateList();
 
-		sampleboxs.setRowRenderer(new RowRenderer() {
-
+		sampleboxs.setItemRenderer(new ListitemRenderer() {
 			@SuppressWarnings("deprecation")
-
-			public void render(Row row, Object data) throws Exception {
+			public void render(Listitem item, Object data) throws Exception {
 				final FiddleSandbox sandbox = (FiddleSandbox) data;
+				item.setValue(data);
+				int rowIndex = item.getParent().getChildren().indexOf(item);
 
-				int rowIndex = row.getParent().getChildren().indexOf(row);
+				item.appendChild(new Listcell(""+rowIndex));
 
-				row.appendChild(new Label(""+rowIndex));
-
-				row.appendChild(new Label(sandbox.getZKVersion()));
-				row.appendChild(new Label(sandbox.getPath()));
+				item.appendChild(new Listcell(sandbox.getZKVersion()));
+				item.appendChild(new Listcell(sandbox.getPath()));
 
 
-				row.appendChild(new Label(sandbox.getLastUpdate()
+				item.appendChild(new Listcell(sandbox.getLastUpdate()
 						.toLocaleString()));
 
+				item.appendChild(new Listcell(sandbox.getStatus().toString()));
+				
 				{
 					Button remove = new Button("Remove");
 					remove.addEventListener(Events.ON_CLICK,
@@ -81,7 +108,9 @@ public class SandboxListComposer extends GenericForwardComposer {
 								}
 							});
 
-					row.appendChild(remove);
+					Listcell cell = new Listcell();
+					cell.appendChild(remove);
+					item.appendChild(cell);
 				}
 
 			}

@@ -35,6 +35,7 @@
 				<fiddletabs id="sourcetabs" addable="true" />
 				<tabpanels id="sourcetabpanels" />
 			    <toolbar id="sourcetoolbar">
+					<plus1 id="caseRating" style="float:left;margin-top:2px;" />			    
     				<toolbarbutton id="download" label="Download" src="/img/archive.png"/>
 			    </toolbar>
 			</tabbox>
@@ -76,7 +77,6 @@
 						(separate with comma ,ex. "grid,listbox,test" )
 					</hlayout>
 
-					<plus1 id="caseRating" />
 					<div style="float:right;">
 						Posted from <label id="poserIp" />
 					</div>

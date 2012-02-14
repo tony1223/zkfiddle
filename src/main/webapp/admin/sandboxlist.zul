@@ -6,19 +6,21 @@
 			<include src="/WEB-INF/_admin/_userbar.zul" />
 		</div>
 
-		<div apply="org.zkoss.fiddle.admin.composer.SandboxListComposer">
-			<grid id="sampleboxs">
-				<columns>
-					<column label="#" />
-					<column label="Version" />
-					<column label="Path" />
-					<column label="Last Update Date" />
-					<column label="Control" />
-				</columns>
-			</grid>
+		<div apply="org.zkoss.fiddle.admin.composer.SandboxListComposer" >
+			<listbox id="sampleboxs" checkmark="true" multiple="true">
+				<listhead>
+					<listheader label="#" />
+					<listheader label="Version" />
+					<listheader label="Path" />
+					<listheader label="Last Update Date" />
+					<listheader label="Status" />
+					<listheader label="Control" />
+				</listhead>
+			</listbox>
 			<paging id="casesPaging" activePage="0" pageSize="30" />
 			<button label="Clear All" id="clearAll" />
 			<button label="Refresh" id="refresh" />
+			<button label="Ping all" id="ping" />
 		</div>
 
 	</vlayout>

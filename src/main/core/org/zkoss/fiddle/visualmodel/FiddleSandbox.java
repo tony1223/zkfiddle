@@ -14,6 +14,10 @@ public class FiddleSandbox implements Comparable<Object> {
 	public enum Theme implements Comparable<Theme> {
 		breeze, silvertail, sapphire, classicblue
 	}
+	
+	public enum Status implements Comparable<Status> {
+		unknown,pong,lost
+	}
 
 	private String hash;
 
@@ -27,6 +31,12 @@ public class FiddleSandbox implements Comparable<Object> {
 
 	private String version;
 
+	private Status status;
+	
+	public FiddleSandbox() {
+		status = Status.unknown;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -120,5 +130,19 @@ public class FiddleSandbox implements Comparable<Object> {
 
 	public void setTheme(Theme theme) {
 		this.theme = theme;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public Status getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 }
