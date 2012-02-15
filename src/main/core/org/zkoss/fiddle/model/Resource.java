@@ -26,15 +26,17 @@ public class Resource implements  Cloneable, Serializable {
 	 */
 	private static final long serialVersionUID = -4759386406027188251L;
 
-	public static final int TYPE_ZUL = 0;
+	public static final int TYPE_ZUL = 0; //NOTE the type have to sync with sandbox , don't change the code.
 
-	public static final int TYPE_JAVA = 1; // actually it's beanshell
+	public static final int TYPE_JAVA = 1; 
 
 	public static final int TYPE_JS = 2;
 
 	public static final int TYPE_HTML = 3;
 
 	public static final int TYPE_CSS = 4;
+	
+	public static final int TYPE_IMAGE = 5;
 	
 	public static final String PACKAGE_TOKEN = "pkg$";
 

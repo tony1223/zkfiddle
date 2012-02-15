@@ -22,7 +22,7 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 	private Label extension;
 	private Textbox fileName;
 	private static final String[] DATA = new String[] { "zul", "java", "html",
-			"js", "js.dsp", "css", "css.dsp" };
+			"js", "js.dsp", "css", "css.dsp", "image" };
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -66,6 +66,7 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 		extension.setValue(getTypeExtension(tpStr));
 	}
 	private static int getType(String tpStr) {
+		
 		if("zul".equals(tpStr)){
 			return Resource.TYPE_ZUL;
 		}else if("java".equals(tpStr)){
@@ -76,11 +77,16 @@ public class SourceCodeEditorInsertComposer extends GenericForwardComposer {
 			return Resource.TYPE_JS;
 		}else if("css".equals(tpStr) || "css.dsp".equals(tpStr)){
 			return Resource.TYPE_CSS;
+		}else if("image".equals(tpStr)){
+			return Resource.TYPE_IMAGE;
 		}
 
 		return Resource.TYPE_HTML;
 	}
 	private static String getTypeExtension(String tpStr) {
+		if("image".equals(tpStr)){
+			return ".jpg";
+		}
 		return "." + tpStr;
 	}
 }

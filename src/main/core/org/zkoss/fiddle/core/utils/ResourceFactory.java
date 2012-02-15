@@ -33,8 +33,11 @@ public class ResourceFactory {
 
 			String template = readThenReaplce("/WEB-INF/_templates/TestComposer.java", "\\$\\{class-name\\}", clsName);
 			return new Resource(Resource.TYPE_JAVA, name, template);
-		}  else
-			return null;
+		} else if (Resource.TYPE_IMAGE == type) {
+			return new Resource(Resource.TYPE_IMAGE, name, null);
+		}  else{
+			throw new IllegalStateException("unsupport type");
+		}
 	}
 
 	public static Resource getDefaultResource(int type) {
