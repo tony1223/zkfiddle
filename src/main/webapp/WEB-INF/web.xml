@@ -301,6 +301,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>ViewFilter</filter-name>
+        <url-pattern>/index.zul</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>ViewFilter</filter-name>
         <url-pattern>/service/try</url-pattern>
     </filter-mapping>
     <filter-mapping>
